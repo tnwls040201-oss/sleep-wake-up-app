@@ -73,17 +73,15 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .sleep-report-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; }
 
 /* ==========================================
-   ☀️ 3. 날씨 탭 정렬 배치 서식 (두 번째 사진 완벽 이식)
+   ☀️ 3. 날씨 탭 정렬 배치 서식
    ========================================== */
 .weather-grid { 
     display: grid !important; 
-    grid-template-columns: repeat(3, 1fr) !important; /* 💡 수리 핵심: 3열 격자 배치 복구 */
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 12px !important; 
     width: 100% !important;
     margin-bottom: 20px !important;
 }
-
-/* 💡 수리 핵심: 글자만 날아가던 현상을 잡기 위해 카드 사각형 백그라운드 상자 이식 고정 */
 .weather-grid .weather-card {
     background: var(--card-bg) !important;
     border-radius: 18px !important;
@@ -95,11 +93,23 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
     text-align: center !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+
+/* 💡 서울 날씨 카드 2칸 병합 서식 */
+.weather-grid .seoul-card {
+    grid-column: span 2 !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 15px;
+}
+.weather-grid .seoul-card .sky-icon {
+    margin: 0 !important;
+}
+
 .weather-grid .weather-card .region { font-size: 13px !important; font-weight: bold !important; color: var(--text-main) !important; margin-bottom: 4px; }
 .weather-grid .weather-card .sky-icon { font-size: 24px !important; margin: 4px 0 !important; }
 .weather-grid .weather-card .temp { font-size: 14px !important; font-weight: 700 !important; color: var(--text-main) !important; }
 
-/* 아침 보조 기능 단추 정렬 구역 (3열 정사각형 플랫 박스 적용) */
+/* 아침 보조 기능 단추 정렬 구역 */
 .morning-menu-grid.alternative-layout { 
     display: grid !important; 
     grid-template-columns: repeat(3, 1fr) !important; 
@@ -132,9 +142,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 #lap-list { list-style: none; }
 #lap-list li { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; }
 
-/* ==========================================
-   🚨 7. 알람 미션 화면 및 가위바위보 (일렬 찌그러짐 완벽 방어 수리 완료)
-   ========================================== */
+/* 알람 미션 화면 및 가위바위보 */
 .alarm-flash-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(229,62,62,0.12); pointer-events: none; animation: flash 1s infinite alternate; }
 @keyframes flash { from { opacity: 0; } to { opacity: 1; } }
 .mission-header { text-align: center; margin-bottom: 20px; width: 100%; }
@@ -143,7 +151,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .badge-step2 { background-color: var(--color-primary); }
 .badge-step3 { background-color: #805ad5; }
 
-/* 미션 내용 박스 컨테이너 확장 스펙 */
 .mission-content-area { 
     width: 100% !important; 
     display: flex !important; 
@@ -159,7 +166,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .mission-footer { text-align: center; width: 100%; }
 .warning-text { font-size: 12px; color: var(--color-danger); font-weight: bold; }
 
-/* 가위바위보 전용 마운트 모듈 레이아웃 스위치 */
 .interactive-box { 
     width: 100% !important; 
     display: flex !important;
@@ -168,10 +174,9 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
     justify-content: center !important;
 }
 
-/* ✊ VS 🤖 수평 정렬 일렬 강제 복원 규칙 */
 .rps-hands { 
     display: flex !important;
-    flex-direction: row !important; /* 세로 찌그러짐 방지 핵심 */
+    flex-direction: row !important;
     justify-content: space-around !important;
     align-items: center !important;
     width: 100% !important;
@@ -180,16 +185,14 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
     margin: 20px 0 !important;
 }
 
-/* 가위바위보 3종 클릭 단추 배열 수평 전개 고정 */
 .rps-buttons { 
     display: flex !important;
-    flex-direction: row !important; /* 수평 정렬 규칙 */
+    flex-direction: row !important;
     justify-content: center !important;
     gap: 12px !important;
     width: 100% !important;
 }
 
-/* 이모지 선택 버튼 크기 정상 복구 */
 .rps-buttons .btn-rps {
     flex: 1 !important;
     max-width: 75px !important;
@@ -203,7 +206,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
     display: inline-block !important;
 }
 
-/* 기타 미션 요소 안정화 */
 .camera-view { width: 100%; height: 150px; background: #000; border: 2px dashed #4a5568; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 12px; }
 .camera-overlay-text { font-size: 13px; color: #a0aec0; margin-top: 5px; }
 .target-sentence { background: rgba(255,255,255,0.06); padding: 12px; border-radius: 8px; font-weight: bold; margin-bottom: 12px; border-left: 4px solid var(--color-primary); font-size: 14px; text-align: left; width: 100%; }
@@ -213,21 +215,16 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .progress-container { width: 100%; background: #3a3a40; height: 10px; border-radius: 5px; overflow: hidden; margin: 12px 0; }
 .progress-bar { width: 0%; height: 100%; background: var(--color-success); transition: width 1s linear; }
 
-/* 생존 알림 방 */
 .survival-box { text-align: center; padding-top: 40px; }
 .survival-icon { font-size: 60px; margin-bottom: 15px; }
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 구조 모달 엔진 */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* ==========================================
-   🗂️ 8. 하단 고정 탭 바 전용 서식 
-   ========================================== */
 .bottom-nav-bar.style-quad { 
     position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; 
     background: #18181c; border-top: 1px solid #27272a; 
@@ -238,8 +235,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .nav-item.active { color: #ffffff; }
 .nav-icon { font-size: 18px; margin-bottom: 4px; }
 .nav-label { font-size: 10px; font-weight: 600; }
-
-/* 💡 [여백의 미 세로선]: 도면 의도대로 하단 바 안쪽에만 기분 좋은 26px 높이로 깔끔하게 떨어지도록 조율 완료 */
 .bottom-nav-bar.style-quad .v-line {
     width: 1px;
     height: 26px; 
@@ -249,3 +244,58 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
     opacity: 0.4;
     transition: background-color 0.3s ease;
 }
+
+/* ==========================================
+   🎨 테마 변경 모달 그리드 서식
+   ========================================== */
+.theme-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+.btn-theme-select {
+    background: #2a2a2d;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s, border-color 0.2s;
+}
+.btn-theme-select:hover {
+    background: #3a3a40;
+    border-color: #666;
+}
+.color-preview {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.btn-theme-select span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 💡 백색소음 카드 서식 추가 */
+.noise-card {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-top: 15px !important;
+}
+.noise-info h4 { font-size: 14px; margin-bottom: 4px; color: var(--text-main); }
+.noise-info p { font-size: 12px; color: var(--text-muted); margin: 0; }
+.btn-noise-play {
+    width: 45px; height: 45px; border-radius: 50%; border: none;
+    background: var(--color-primary); color: white; cursor: pointer;
+    font-size: 16px; display: flex; justify-content: center; align-items: center;
+    transition: transform 0.1s;
+}
+.btn-noise-play:active { transform: scale(0.95); }
