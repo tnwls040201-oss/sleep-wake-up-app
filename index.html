@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기상 미션 앱</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">⏰</div>
+            <h1 class="splash-title">기상 미션 앱</h1>
+            <p class="splash-subtitle">절대 다시 누울 수 없는 아침</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <div id="screen-lobby" class="main-tab-screen active">
+            <header>
+                <h1>⏰ 알람 설정</h1>
+                <p class="subtitle">완벽한 아침을 위한 강력한 각성 루틴</p>
+            </header>
+            <main>
+                <div class="current-time-box">
+                    <div id="clock">00:00:00</div>
+                    <p id="date-string">오늘의 날짜</p>
+                </div>
+                <div class="card alarm-setter">
+                    <h3>알람 시간 설정</h3>
+                    <div class="input-group">
+                        <input type="time" id="alarm-time" value="07:00">
+                        <button id="btn-toggle-alarm" class="btn btn-primary">알람 켜기</button>
+                    </div>
+                    <p id="alarm-status-text">설정된 알람이 없습니다.</p>
+                </div>
+                <div class="card test-box">
+                    <h3>앱 미리보기</h3>
+                    <p>설정한 시간까지 기다리지 않고 바로 미션을 체험합니다.</p>
+                    <button id="btn-test-alarm" class="btn btn-danger">즉시 미션 시작 (테스트)</button>
+                </div>
+            </main>
+        </div>
+
+        <div id="screen-sleep-tab" class="main-tab-screen">
+            <header>
+                <h1>🌙 수면 측정</h1>
+            </header>
+            <main>
+                <div class="card sleep-tracker-card">
+                    <h2>나도 모르는<br>내 잠버릇은 뭘까?</h2>
+                    <p class="sleep-tracker-desc">내 뒤척임, 코골이 소리를 확인하세요</p>
+                    
+                    <div class="waveform-box">
+                        <span class="wave-time">오전 1:26 <br><strong style="color:#fc8181;">매우 큼</strong></span>
+                        <div class="wave-bars">
+                            <span class="bar side"></span><span class="bar"></span><span class="bar tall"></span>
+                            <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
+                            <span class="bar"></span><span class="bar side"></span><span class="bar tall"></span>
+                        </div>
+                    </div>
+
+                    <button id="btn-toggle-sleep" class="btn btn-success btn-lg">수면 측정하기</button>
+                </div>
+
+                <div id="btn-view-report" class="card sleep-report-row">
+                    <span>내 수면 리포트</span>
+                    <span class="arrow-icon">❯</span>
+                </div>
+            </main>
+        </div>
+
+        <div id="screen-weather-tab" class="main-tab-screen">
+            <header>
+                <h1>☀️ 아침 정보</h1>
+                <p class="subtitle">오늘의 전국 평균 날씨 현황</p>
+            </header>
+            <main>
+                <div class="weather-grid">
+                    <div class="weather-card"><span class="region">서울</span><span class="sky-icon">🌧️</span><span class="temp">15°C</span></div>
+                    <div class="weather-card"><span class="region">경기</span><span class="sky-icon">☁️</span><span class="temp">14°C</span></div>
+                    <div class="weather-card"><span class="region">충청도</span><span class="sky-icon">🌤️</span><span class="temp">16°C</span></div>
+                    <div class="weather-card"><span class="region">전라도</span><span class="sky-icon">☀️</span><span class="temp">18°C</span></div>
+                    <div class="weather-card"><span class="region">경상도</span><span class="sky-icon">☁️</span><span class="temp">17°C</span></div>
+                    <div class="weather-card"><span class="region">제주도</span><span class="sky-icon">🌤️</span><span class="temp">20°C</span></div>
+                </div>
+
+                <div class="morning-menu-grid alternative-layout">
+                    <div id="btn-mood-diary" class="menu-item"><span class="icon">😃</span><span>아침 기분 일기</span></div>
+                    <div id="btn-fortune" class="menu-item"><span class="icon">🔮</span><span>오늘의 운세</span></div>
+                </div>
+            </main>
+        </div>
+
+        <div id="screen-stopwatch-tab" class="main-tab-screen">
+            <header>
+                <h1>⏱️ 스톱워치</h1>
+                <p class="subtitle">기상 직후 루틴 속도를 기록하세요</p>
+            </header>
+            <main>
+                <div class="stopwatch-display-box">
+                    <div id="stopwatch-time">00:00.00</div>
+                </div>
+                
+                <div class="stopwatch-btn-group">
+                    <button id="btn-stopwatch-lap" class="btn btn-stopwatch-sub" disabled>랩타임</button>
+                    <button id="btn-stopwatch-start" class="btn btn-stopwatch-main">시작</button>
+                </div>
+
+                <div class="lap-records-container">
+                    <ul id="lap-list">
+                        </ul>
+                </div>
+            </main>
+        </div>
+
+        <div id="screen-mission" class="screen">
+            <div class="alarm-flash-overlay"></div>
+            <div class="mission-header">
+                <span id="mission-badge" class="badge">1단계: 침대 탈출</span>
+                <h2 id="mission-title">미션 제목</h2>
+                <p id="mission-desc">미션 설명문</p>
+            </div>
+            <div class="mission-content-area">
+                <div id="dynamic-mission-box"></div>
+            </div>
+            <div class="mission-footer">
+                <p class="warning-text">⚠️ 미션을 클리어하기 전까지는 알람이 꺼지지 않습니다!</p>
+            </div>
+        </div>
+
+        <div id="screen-survival" class="screen">
+            <div class="survival-box">
+                <div class="survival-icon">👀</div>
+                <h2>아직 안 누우셨죠?</h2>
+                <p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다. 제한 시간 안에 버튼을 누르세요!</p>
+                <div class="timer-circle">
+                    <span id="survival-countdown">30</span>초
+                </div>
+                <button id="btn-survival-confirm" class="btn btn-success btn-lg">정신 번쩍! 생존 신고 완료</button>
+            </div>
+        </div>
+
+        <div id="fortune-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="fortune-date">오늘의 운세</h2>
+                    <p class="modal-subtitle">오늘의 아침 타로 운세</p>
+                </div>
+                <div class="tarot-container">
+                    <div id="tarot-card-image" class="tarot-card">🃏</div>
+                    <h3 id="tarot-card-name">카드가 로딩 중입니다</h3>
+                    <p id="tarot-card-desc">운세 설명 자리입니다.</p>
+                </div>
+                <button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top: 15px;">하루 시작하기</button>
+            </div>
+        </div>
+
+        <div id="diary-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="diary-date">오늘의 아침 기분 일기</h2>
+                    <p class="modal-subtitle">기상 직후 나의 마음을 기록하세요</p>
+                </div>
+                <div class="diary-container">
+                    <div class="mood-selector">
+                        <button class="btn-mood" data-mood="기쁨">😃</button>
+                        <button class="btn-mood" data-mood="피곤">🥱</button>
+                        <button class="btn-mood" data-mood="상쾌">✨</button>
+                        <button class="btn-mood" data-mood="그저뵘">😑</button>
+                    </div>
+                    <textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 일어났을 때의 기분이나 다짐을 한 줄 일기로 적어보세요..."></textarea>
+                    <button id="btn-save-diary" class="btn btn-primary btn-lg" style="width: 100%;">일기 저장하기</button>
+                </div>
+                <button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top: 10px; background: #3a3a40;">닫기</button>
+            </div>
+        </div>
+
+        <nav class="bottom-nav-bar style-quad">
+            <button class="nav-item active" data-target="screen-lobby">
+                <span class="nav-icon">⏰</span><span class="nav-label">알람</span>
+            </button>
+            <button class="nav-item" data-target="screen-sleep-tab">
+                <span class="nav-icon">🌙</span><span class="nav-label">수면</span>
+            </button>
+            <button class="nav-item" data-target="screen-weather-tab">
+                <span class="nav-icon">☀️</span><span class="nav-label">아침</span>
+            </button>
+            <button class="nav-item" data-target="screen-stopwatch-tab">
+                <span class="nav-icon">⏱️</span><span class="nav-label">스톱워치</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
