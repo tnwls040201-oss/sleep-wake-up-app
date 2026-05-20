@@ -1,5 +1,5 @@
 // ==========================================
-// 1. 상태 제어 변수 정의
+// 1. 글로벌 바인딩 상태 제어 변수
 // ==========================================
 let alarmTime = null;
 let currentMission = null;
@@ -9,7 +9,7 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 스톱워치 전용 바인딩 변수
+// 스톱워치 전용 변수
 let stopwatchInterval = null;
 let stopwatchElapsedTime = 0; 
 let isStopwatchRunning = false;
@@ -39,18 +39,17 @@ const tarotCards = [
     { name: "VI. THE LOVERS (연인 카드)", icon: "💖", desc: "대인 관계와 소통 능력이 최고조에 달하는 하루입니다. 만나는 사람들과 기분 좋은 대화가 이어질 것입니다." },
     { name: "X. WHEEL OF FORTUNE (운명의 수레바퀴)", icon: "🎡", desc: "정체되어 있던 흐름이 좋은 방향으로 굴러가기 시작하는 전환점입니다. 다가오는 우연한 행운을 붙잡으세요." },
     { name: "XI. JUSTICE (정의 카드)", icon: "⚖️", desc: "명확한 판단력과 이성이 빛을 발하는 날입니다. 해야 할 업무나 공부 등 계획을 밀어붙이기에 최적의 기운입니다." },
-    { name: "XIX. THE SUN (태양 카드)", icon: "☀️", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
+    { name: "XIX. THE SUN (태양 카드)", icon: "☀️", desc: "오늘의 최고 길운! 활력과 에너지가 가득 차오르는 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
     { name: "XXI. THE WORLD (세계 카드)", icon: "🌍", desc: "노력해 온 프로젝트나 루틴이 마침내 아름다운 마무리를 짓게 됩니다. 완벽한 만족감이 찾아오는 행운의 날입니다." }
 ];
 
-// 💡 구름 IDE 로딩 오류 해결을 위해 함수 실행 구조 최적화 적용
 function initApp() {
     
-    // ⏱️ 스플래시 로고 비활성화 작동
+    // ⏱️ 스플래시 화면 페이드아웃 해제
     const splashScreen = document.getElementById('splash-screen');
     setTimeout(() => { if (splashScreen) splashScreen.classList.add('fade-out'); }, 1500);
 
-    // 하단 내비게이션 엔진
+    // 하단 탭 내비게이션 리스너
     const navItems = document.querySelectorAll('.nav-item');
     const tabScreens = document.querySelectorAll('.main-tab-screen');
 
@@ -87,6 +86,7 @@ function initApp() {
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const btnViewReport = document.getElementById('btn-view-report');
 
+    // 모달 제어 노드
     const btnFortune = document.getElementById('btn-fortune');
     const fortuneModal = document.getElementById('fortune-modal');
     const btnCloseFortune = document.getElementById('btn-close-fortune');
@@ -103,13 +103,62 @@ function initApp() {
     const diaryInput = document.getElementById('diary-input');
     const btnMoods = document.querySelectorAll('.btn-mood');
 
-    // 스톱워치 바인딩 노드
+    // 스톱워치 노드
     const stopwatchTime = document.getElementById('stopwatch-time');
     const btnStopwatchStart = document.getElementById('btn-stopwatch-start');
     const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
     const lapList = document.getElementById('lap-list');
 
-    // 스톱워치 구동 로직
+    // ==========================================
+    // 💡 [핵심 핵심 핵심 수정] 24시간제 -> 오전/오후 가공 헬퍼 함수
+    // ==========================================
+    function getFormattedAlarmText(timeValue) {
+        if (!timeValue) return "";
+        const parts = timeValue.split(':');
+        let hour = parseInt(parts[0], 10);
+        const minute = parts[1];
+        const ampm = hour >= 12 ? '오후' : '오전';
+        
+        if (hour > 12) hour -= 12;
+        if (hour === 0) hour = 12;
+        
+        const displayHour = String(hour).padStart(2, '0');
+        return `🔔 [${ampm} ${displayHour}:${minute}]에 미션 알람이 작동합니다.`;
+    }
+
+    // 💡 [실시간 연동] 알람 시간 조절 스크롤/입력값이 변경될 때마다 하단 문구 즉각 갱신
+    if (alarmTimeInput && alarmStatusText) {
+        alarmTimeInput.addEventListener('input', () => {
+            // 알람이 이미 활성화되어 켜져 있는 상태일 때만 실시간 매칭 업데이트 진행
+            if (alarmTime !== null) {
+                alarmTime = alarmTimeInput.value;
+                alarmStatusText.textContent = getFormattedAlarmText(alarmTime);
+            }
+        });
+    }
+
+    // 알람 버튼 토글 활성화 스위치 리스너
+    if(btnToggleAlarm) {
+        btnToggleAlarm.addEventListener('click', () => {
+            if (alarmTime === null) {
+                // 알람 On 작동 시점
+                alarmTime = alarmTimeInput.value;
+                btnToggleAlarm.textContent = "알람 끄기"; 
+                btnToggleAlarm.className = "btn btn-danger";
+                alarmStatusText.textContent = getFormattedAlarmText(alarmTime);
+            } else {
+                // 알람 Off 해제 시점
+                alarmTime = null;
+                btnToggleAlarm.textContent = "알람 켜기"; 
+                btnToggleAlarm.className = "btn btn-primary";
+                alarmStatusText.textContent = "설정된 알람이 없습니다.";
+            }
+        });
+    }
+
+    // ==========================================
+    // 스톱워치 실동작 알고리즘 엔진
+    // ==========================================
     if (btnStopwatchStart && btnStopwatchLap) {
         btnStopwatchStart.addEventListener('click', () => {
             isStopwatchRunning = !isStopwatchRunning;
@@ -178,7 +227,7 @@ function initApp() {
     }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
-    // 아침 한 줄 일기
+    // 아침 감정 일기
     if(btnMoodDiary) {
         btnMoodDiary.addEventListener('click', () => {
             const now = new Date();
@@ -200,8 +249,8 @@ function initApp() {
 
     if(btnSaveDiary) {
         btnSaveDiary.addEventListener('click', () => {
-            if(!selectedMood) { alert("오늘 아침의 이모지 상태를 찍어주세요!"); return; }
-            if(!diaryInput.value.trim()) { alert("일기장 내용을 입력창에 남겨주세요!"); return; }
+            if(!selectedMood) { alert("오늘 아침 나의 상태 이모지를 선택해 주세요!"); return; }
+            if(!diaryInput.value.trim()) { alert("오늘 아침의 기분을 일기장 양식에 작성해 주세요!"); return; }
             
             alert(`💾 [아침 감정 일기 저장 완료]\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
             if(diaryModal) diaryModal.classList.remove('active');
@@ -230,7 +279,7 @@ function initApp() {
         });
     }
 
-    // 메인 정밀 시계 작동 구조
+    // 실시간 메인 시계
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
         const now = new Date();
@@ -252,23 +301,9 @@ function initApp() {
     }
     setInterval(updateClock, 1000); updateClock();
 
-    if(btnToggleAlarm) {
-        btnToggleAlarm.addEventListener('click', () => {
-            if (!alarmTime) {
-                alarmTime = alarmTimeInput.value;
-                btnToggleAlarm.textContent = "알람 끄기"; btnToggleAlarm.className = "btn btn-danger";
-                alarmStatusText.textContent = `🔔 [오전/오후 ${alarmTime}]에 미션 알람이 작동합니다.`;
-            } else {
-                alarmTime = null;
-                btnToggleAlarm.textContent = "알람 켜기"; btnToggleAlarm.className = "btn btn-primary";
-                alarmStatusText.textContent = "설정된 알람이 없습니다.";
-            }
-        });
-    }
-
     if(btnTestAlarm) btnTestAlarm.addEventListener('click', () => { triggerAlarm(); });
 
-    // 웹 비프 스피커 엔진
+    // 알람 비프 사운드
     function startAlarmSound() {
         try {
             if (!activeAudioContext) activeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -507,5 +542,4 @@ function initApp() {
     }
 }
 
-// 💡 즉시 로드 가동
 initApp();
