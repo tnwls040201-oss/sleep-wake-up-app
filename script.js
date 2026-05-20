@@ -110,7 +110,7 @@ function initApp() {
     const lapList = document.getElementById('lap-list');
 
     if (btnThemeOpen) { btnThemeOpen.addEventListener('click', () => { if(themeModal) themeModal.classList.add('active'); }); }
-    if (btnThemeClose) { themeModal.classList.remove('active'); }
+    if (btnThemeClose) { btnThemeClose.addEventListener('click', () => { if(themeModal) themeModal.classList.remove('active'); }); }
 
     btnThemeSelects.forEach(btn => {
         btn.addEventListener('click', (e) => {
