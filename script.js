@@ -1,5 +1,5 @@
 // ==========================================
-// 1. 글로벌 바인딩 상태 제어 변수
+// 1. 상태 제어 변수 정의
 // ==========================================
 let alarmTime = null;
 let currentMission = null;
@@ -9,11 +9,11 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 스톱워치 상태 엔진 변수
+// 스톱워치 전용 바인딩 변수
 let stopwatchInterval = null;
-let stopwatchElapsedTime = 0; // 밀리초 단주기 단위 누적저장용 변수
+let stopwatchElapsedTime = 0; 
 let isStopwatchRunning = false;
-let lapCount = 0;
+let stopwatchLapCount = 0;
 
 const missionPool = [
     { id: 1, step: 1, stepName: "1단계: 침대 탈출형 미션", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 카메라 셔터를 누르세요!", type: "camera", target: "🥛 냉장고 내부" },
@@ -39,17 +39,18 @@ const tarotCards = [
     { name: "VI. THE LOVERS (연인 카드)", icon: "💖", desc: "대인 관계와 소통 능력이 최고조에 달하는 하루입니다. 만나는 사람들과 기분 좋은 대화가 이어질 것입니다." },
     { name: "X. WHEEL OF FORTUNE (운명의 수레바퀴)", icon: "🎡", desc: "정체되어 있던 흐름이 좋은 방향으로 굴러가기 시작하는 전환점입니다. 다가오는 우연한 행운을 붙잡으세요." },
     { name: "XI. JUSTICE (정의 카드)", icon: "⚖️", desc: "명확한 판단력과 이성이 빛을 발하는 날입니다. 해야 할 업무나 공부 등 계획을 밀어붙이기에 최적의 기운입니다." },
-    { name: "XIX. THE SUN (태양 카드)", icon: "☀️", desc: "오늘의 최고 길운! 활력과 에너지가 가득 차오르는 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
+    { name: "XIX. THE SUN (태양 카드)", icon: "☀️", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
     { name: "XXI. THE WORLD (세계 카드)", icon: "🌍", desc: "노력해 온 프로젝트나 루틴이 마침내 아름다운 마무리를 짓게 됩니다. 완벽한 만족감이 찾아오는 행운의 날입니다." }
 ];
 
+// 💡 구름 IDE 로딩 오류 해결을 위해 함수 실행 구조 최적화 적용
 function initApp() {
     
-    // ⏱️ 스플래시 화면 디졸브 해제
+    // ⏱️ 스플래시 로고 비활성화 작동
     const splashScreen = document.getElementById('splash-screen');
     setTimeout(() => { if (splashScreen) splashScreen.classList.add('fade-out'); }, 1500);
 
-    // 하단 탭 내비게이션 리스너 (4칸 제어로 자동 스케일 확장)
+    // 하단 내비게이션 엔진
     const navItems = document.querySelectorAll('.nav-item');
     const tabScreens = document.querySelectorAll('.main-tab-screen');
 
@@ -102,19 +103,18 @@ function initApp() {
     const diaryInput = document.getElementById('diary-input');
     const btnMoods = document.querySelectorAll('.btn-mood');
 
-    // ⏱️ 💡 [추가: 스톱워치 코어 비즈니스 제어 노드 바인딩]
+    // 스톱워치 바인딩 노드
     const stopwatchTime = document.getElementById('stopwatch-time');
     const btnStopwatchStart = document.getElementById('btn-stopwatch-start');
     const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
     const lapList = document.getElementById('lap-list');
 
-    // ⏱️ 💡 [추가: 스톱워치 실동작 알고리즘 엔진]
+    // 스톱워치 구동 로직
     if (btnStopwatchStart && btnStopwatchLap) {
         btnStopwatchStart.addEventListener('click', () => {
             isStopwatchRunning = !isStopwatchRunning;
 
             if (isStopwatchRunning) {
-                // 스톱워치 [시작] 구동 상태
                 btnStopwatchStart.textContent = "중단";
                 btnStopwatchStart.classList.add('running');
                 btnStopwatchLap.textContent = "랩타임";
@@ -124,9 +124,8 @@ function initApp() {
                 stopwatchInterval = setInterval(() => {
                     stopwatchElapsedTime = Date.now() - startTime;
                     stopwatchTime.textContent = formatStopwatchTime(stopwatchElapsedTime);
-                }, 10); // 10ms 단위 초정밀 인터벌 갱신 루프
+                }, 10); 
             } else {
-                // 스톱워치 [중단] 일시정지 상태
                 clearInterval(stopwatchInterval);
                 btnStopwatchStart.textContent = "시작";
                 btnStopwatchStart.classList.remove('running');
@@ -136,19 +135,17 @@ function initApp() {
 
         btnStopwatchLap.addEventListener('click', () => {
             if (isStopwatchRunning) {
-                // 실행 중일 때 누르면 랩타임 행을 리스트에 생성 및 누적
-                lapCount++;
+                stopwatchLapCount++;
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <span class="lap-index">랩 ${lapCount}</span>
+                    <span class="lap-index">랩 ${stopwatchLapCount}</span>
                     <span class="lap-timestamp">${formatStopwatchTime(stopwatchElapsedTime)}</span>
                 `;
-                if(lapList) lapList.insertBefore(li, lapList.firstChild); // 최신 기록 상단 적재
+                if(lapList) lapList.insertBefore(li, lapList.firstChild);
             } else {
-                // 정지 상태일 때 누르면 모든 데이터 클리어 리셋
                 clearInterval(stopwatchInterval);
                 stopwatchElapsedTime = 0;
-                lapCount = 0;
+                stopwatchLapCount = 0;
                 if(stopwatchTime) stopwatchTime.textContent = "00:00.00";
                 if(lapList) lapList.innerHTML = "";
                 btnStopwatchLap.textContent = "랩타임";
@@ -157,7 +154,6 @@ function initApp() {
         });
     }
 
-    // 시간 문자열 포맷 가공 보조 함수 (분:초.밀리초)
     function formatStopwatchTime(ms) {
         const totalSeconds = Math.floor(ms / 1000);
         const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -166,7 +162,7 @@ function initApp() {
         return `${minutes}:${seconds}.${miliseconds}`;
     }
 
-    // 🔮 타로 운세
+    // 타로 기능
     if(btnFortune) {
         btnFortune.addEventListener('click', () => {
             const now = new Date();
@@ -182,7 +178,7 @@ function initApp() {
     }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
-    // ✍️ 아침 기분 일기
+    // 아침 한 줄 일기
     if(btnMoodDiary) {
         btnMoodDiary.addEventListener('click', () => {
             const now = new Date();
@@ -204,27 +200,27 @@ function initApp() {
 
     if(btnSaveDiary) {
         btnSaveDiary.addEventListener('click', () => {
-            if(!selectedMood) { alert("오늘 아침 나의 상태 이모지를 선택해 주세요!"); return; }
-            if(!diaryInput.value.trim()) { alert("오늘 아침의 기분을 일기장 양식에 작성해 주세요!"); return; }
+            if(!selectedMood) { alert("오늘 아침의 이모지 상태를 찍어주세요!"); return; }
+            if(!diaryInput.value.trim()) { alert("일기장 내용을 입력창에 남겨주세요!"); return; }
             
-            alert(`💾 [아침 감정 일기 저장 완료]\n\n선택한 감정: ${selectedMood}\n내용: "${diaryInput.value}"\n\n기록이 성공적으로 저장되었습니다!`);
+            alert(`💾 [아침 감정 일기 저장 완료]\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
             if(diaryModal) diaryModal.classList.remove('active');
         });
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-    // 🌙 수면 측정
+    // 수면 측정
     if(btnToggleSleep) {
         btnToggleSleep.addEventListener('click', () => {
             isRecordingSleep = !isRecordingSleep;
             if(isRecordingSleep) {
                 btnToggleSleep.textContent = "측정 중단하기 (기록 저장)";
                 btnToggleSleep.style.background = "#e53e3e"; btnToggleSleep.style.color = "#ffffff";
-                alert("🎙️ 수면 소음 기록 시스템 구동을 시작합니다.");
+                alert("🎙️ 수면 소음 기록을 정상 가동합니다.");
             } else {
                 btnToggleSleep.textContent = "수면 측정하기";
                 btnToggleSleep.style.background = "#ffffff"; btnToggleSleep.style.color = "#000000";
-                alert("💾 수면 측정이 종료되었으며 데이터가 요약 리포트에 저장되었습니다.");
+                alert("💾 수면 측정이 종료되었으며 데이터가 저장되었습니다.");
             }
         });
     }
@@ -234,7 +230,7 @@ function initApp() {
         });
     }
 
-    // 시계 루틴
+    // 메인 정밀 시계 작동 구조
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
         const now = new Date();
@@ -272,7 +268,7 @@ function initApp() {
 
     if(btnTestAlarm) btnTestAlarm.addEventListener('click', () => { triggerAlarm(); });
 
-    // 알람 엔진
+    // 웹 비프 스피커 엔진
     function startAlarmSound() {
         try {
             if (!activeAudioContext) activeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -511,5 +507,5 @@ function initApp() {
     }
 }
 
-// 💡 스크립트 로드와 동시에 인스턴트 즉시 가동 (무한 로딩 디버깅 완료)
+// 💡 즉시 로드 가동
 initApp();
