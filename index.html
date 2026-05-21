@@ -38,8 +38,13 @@
                 </div>
                 <div class="card test-box">
                     <h3>앱 미리보기</h3>
-                    <p>설정한 시간까지 기다리지 않고 바로 미션을 체험합니다.</p>
+                    <p>기다리지 않고 바로 15가지 미션을 체험합니다.</p>
                     <button id="btn-test-alarm" class="btn btn-danger">즉시 미션 시작 (테스트)</button>
+                </div>
+                <div class="card schedule-box">
+                    <h3>📅 나의 오늘 일정</h3>
+                    <textarea id="my-schedule-input" placeholder="오늘의 핵심 일정을 기록해보세요..." spellcheck="false"></textarea>
+                    <button id="btn-save-schedule" class="btn btn-success" style="width:100%; margin-top:8px; padding:10px;">일정 저장하기</button>
                 </div>
             </main>
         </div>
@@ -51,8 +56,8 @@
                     <h2>나도 모르는<br>내 잠버릇은 뭘까?</h2>
                     <p class="sleep-tracker-desc">내 뒤척임, 코골이 소리를 확인하세요</p>
                     <div class="waveform-box">
-                        <span class="wave-time">오전 1:26 <br><strong style="color:#fc8181;">매우 큼</strong></span>
-                        <div class="wave-bars">
+                        <span class="wave-time" id="sleep-wave-status">측정 대기 중</span>
+                        <div id="sleep-wave-bars" class="wave-bars">
                             <span class="bar side"></span><span class="bar"></span><span class="bar tall"></span>
                             <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
                             <span class="bar"></span><span class="bar side"></span><span class="bar tall"></span>
@@ -81,7 +86,16 @@
             </header>
             <main>
                 <div class="weather-grid">
-                    <div class="weather-card seoul-card"><span class="region">서울</span><span class="sky-icon">🌧️</span><span class="temp">15°C</span></div>
+                    <div class="weather-card seoul-card">
+                        <div class="seoul-title-box">
+                            <span class="region">서울</span>
+                            <span class="luxury-label">PREMIUM CITY</span>
+                        </div>
+                        <div class="seoul-weather-box">
+                            <span class="sky-icon">🌧️</span>
+                            <span class="temp">15°C</span>
+                        </div>
+                    </div>
                     <div class="weather-card"><span class="region">경기도</span><span class="sky-icon">☁️</span><span class="temp">14°C</span></div>
                     <div class="weather-card"><span class="region">충청도</span><span class="sky-icon">🌤️</span><span class="temp">16°C</span></div>
                     <div class="weather-card"><span class="region">전라도</span><span class="sky-icon">☀️</span><span class="temp">18°C</span></div>
@@ -112,36 +126,86 @@
 
         <div id="screen-mission" class="screen"><div class="alarm-flash-overlay"></div><div class="mission-header"><span id="mission-badge" class="badge">1단계</span><h2 id="mission-title">미션 제목</h2><p id="mission-desc">미션 설명문</p></div><div class="mission-content-area"><div id="dynamic-mission-box"></div></div><div class="mission-footer"><p class="warning-text">⚠️ 미션을 클리어하기 전까지는 알람이 꺼지지 않습니다!</p></div></div>
         <div id="screen-survival" class="screen"><div class="survival-box"><div class="survival-icon">👀</div><h2>아직 안 누우셨죠?</h2><p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다.</p><div class="timer-circle"><span id="survival-countdown">30</span>초</div><button id="btn-survival-confirm" class="btn btn-success btn-lg">생존 신고 완료</button></div></div>
-        <div id="fortune-modal" class="modal-overlay"><div class="modal-content"><div id="fortune-confirm-view"><div class="modal-header"><h2>🔮 오늘의 타로 운세</h2><p class="modal-subtitle">오늘의 타로 기회는 하루에 단 한 번뿐입니다. 열람하시겠습니까?</p></div><div class="stopwatch-btn-group" style="margin-top:25px;"><button id="btn-fortune-cancel" class="btn btn-stopwatch-sub">아니오</button><button id="btn-fortune-confirm-yes" class="btn btn-primary" style="flex:2;">예</button></div></div><div id="fortune-result-view" style="display:none;"><div class="modal-header"><h2 id="fortune-date">오늘의 운세</h2><p class="modal-subtitle">오늘의 아침 타로 운세</p></div><div class="tarot-container"><div id="tarot-card-image" class="tarot-card">🃏</div><h3 id="tarot-card-name">로딩 중</h3><p id="tarot-card-desc">설명</p></div><button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top:15px;">하루 시작하기</button></div></div></div>
-        <div id="diary-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2>😃 아침 기분 일기</h2><p class="modal-subtitle">기상 직후 마음 기록하기</p></div><div class="diary-container"><div class="mood-selector"><button class="btn-mood" data-mood="기쁨">😃</button><button class="btn-mood" data-mood="피곤">🥱</button><button class="btn-mood" data-mood="상쾌">✨</button><button class="btn-mood" data-mood="그저뵘">😑</button></div><textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea><button id="btn-save-diary" class="btn btn-primary btn-lg" style="width:100%;">일기 저장하기</button></div><button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top:10px; background:#3a3a40;">닫기</button></div></div>
+        
+        <div id="fortune-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div id="fortune-confirm-view">
+                    <div class="modal-header"><h2>🔮 오늘의 타로 운세</h2><p class="modal-subtitle">오늘의 타로 기회는 하루에 단 한 번뿐입니다. 열람하시겠습니까?</p></div>
+                    <div class="stopwatch-btn-group" style="margin-top:25px;">
+                        <button id="btn-fortune-cancel" class="btn btn-stopwatch-sub">아니오</button>
+                        <button id="btn-fortune-confirm-yes" class="btn btn-primary" style="flex:2;">예</button>
+                    </div>
+                </div>
+                <div id="fortune-result-view" style="display:none;">
+                    <div class="modal-header"><h2 id="fortune-date">오늘의 운세</h2><p class="modal-subtitle">오늘의 아침 타로 운세</p></div>
+                    <div class="tarot-container" style="text-align: center;">
+                        <img id="tarot-card-image" class="tarot-card-img" src="" alt="타로 카드 이미지" onerror="this.style.display='none'; document.getElementById('tarot-fallback').style.display='block';">
+                        <div id="tarot-fallback" style="display:none; font-size:70px; margin-bottom:15px;">🃏</div>
+                        <h3 id="tarot-card-name">로딩 중</h3>
+                        <p id="tarot-card-desc">설명</p>
+                    </div>
+                    <button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top:15px;">하루 시작하기</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="diary-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>😃 아침 기분 일기</h2>
+                    <p id="diary-date" class="modal-subtitle">기상 직후 마음 기록하기</p>
+                </div>
+                <div class="diary-container">
+                    <div class="mood-selector">
+                        <button class="btn-mood" data-mood="기쁨">😃</button>
+                        <button class="btn-mood" data-mood="피곤">🥱</button>
+                        <button class="btn-mood" data-mood="상쾌">✨</button>
+                        <button class="btn-mood" data-mood="그저뵘">😑</button>
+                    </div>
+                    <textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea>
+                    <button id="btn-save-diary" class="btn btn-primary btn-lg" style="width:100%;">일기 저장하기</button>
+                </div>
+                <div class="event-banner">
+                    <strong>🎁 갓생러 아침 일기 이벤트!</strong><br>
+                    가장 인상적인 일기를 캡처하여 <br><span style="color:#2b6cb0;">event@wakeme.com</span> 으로 보내주시면<br>추첨을 통해 ☕<b>스타벅스 기프티콘</b>을 쏩니다!
+                </div>
+                <button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top:10px; background:#3a3a40;">닫기</button>
+            </div>
+        </div>
         
         <div id="theme-modal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 style="font-size:22px; margin-bottom:8px;">🎨 앱 컬러 테마 변경</h2>
-                    <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">원하는 맞춤형 배경 색상을 선택하세요</p>
+                    <h2 style="font-size:22px; margin-bottom:8px;">🎨 앱 테마 변경</h2>
+                    <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">원하는 맞춤형 배경 컬러를 선택하세요</p>
                 </div>
-                <div class="theme-picker-grid">
-                    <button class="btn-theme-select" data-theme="dark">
-                        <div class="color-preview" style="background:#121214;"></div>
-                        <span>기본 블랙</span>
-                    </button>
-                    <button class="btn-theme-select" data-theme="red">
-                        <div class="color-preview" style="background:#e53e3e;"></div>
-                        <span>패션 레드</span>
-                    </button>
-                    <button class="btn-theme-select" data-theme="blue">
-                        <div class="color-preview" style="background:#3b82f6;"></div>
-                        <span>네온 블루</span>
-                    </button>
-                    <button class="btn-theme-select" data-theme="green">
-                        <div class="color-preview" style="background:#10b981;"></div>
-                        <span>포레스트 그린</span>
-                    </button>
-                    <button class="btn-theme-select" data-theme="purple">
-                        <div class="color-preview" style="background:#8b5cf6;"></div>
-                        <span>미스틱 퍼플</span>
-                    </button>
+                <div class="theme-scroll-container">
+                    <div class="theme-picker-grid">
+                        <button class="btn-theme-select" data-theme="dark">
+                            <div class="color-preview" style="background:#121214;"></div><span>기본 블랙</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="red">
+                            <div class="color-preview" style="background:#e53e3e;"></div><span>패션 레드</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="blue">
+                            <div class="color-preview" style="background:#3b82f6;"></div><span>네온 블루</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="green">
+                            <div class="color-preview" style="background:#10b981;"></div><span>포레스트 그린</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="purple">
+                            <div class="color-preview" style="background:#8b5cf6;"></div><span>미스틱 퍼플</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="yellow">
+                            <div class="color-preview" style="background:#ecc94b;"></div><span>선샤인 옐로우</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="pink">
+                            <div class="color-preview" style="background:#ed64a6;"></div><span>체리 블라썸</span>
+                        </button>
+                        <button class="btn-theme-select" data-theme="mint">
+                            <div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span>
+                        </button>
+                    </div>
                 </div>
                 <button id="btn-theme-close" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%; background:#3a3a40; border-radius:12px; border:none;">닫기</button>
             </div>
