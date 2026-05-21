@@ -9,30 +9,42 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 🎧 백색소음 전용 신시사이저 변수 노드
 let noiseAudioContext = null;
 let noiseNode = null;
 let isPlayingNoise = false;
 
-// 스톱워치 기동 데이터 오프셋
 let stopwatchInterval = null;
 let stopwatchElapsedTime = 0; 
 let isStopwatchRunning = false;
 let stopwatchLapCount = 0;
 
+// 💡 15개의 다채로운 미션 풀 추가 완료!
 const missionPool = [
-    { id: 1, step: 1, stepName: "1단계: 침대 탈출형 미션", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 카메라 셔터를 누르세요!", type: "camera", target: "🥛 냉장고 내부" },
-    { id: 2, step: 1, stepName: "1단계: 침대 탈출형 미션", title: "화장실 거울 보며 스쿼트 5회", desc: "화장실 거울 앞에 전신이 나오게 폰을 들고 아래 버튼을 홀드하세요.", type: "hold", duration: 5, label: "스쿼트 감지 중... 꾹 누르기" },
-    { id: 12, step: 3, stepName: "갱신형 미션", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", type: "rps", target: 3 }
+    { type: "camera", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 셔터를 누르세요!", target: "🥛 냉장고 내부" },
+    { type: "camera", title: "창밖 풍경 찍기", desc: "커튼을 걷고 상쾌한 아침 하늘을 찍어보세요.", target: "⛅ 아침 하늘" },
+    { type: "hold", title: "화장실 거울 보며 스쿼트", desc: "화장실 거울 앞에 전신이 나오게 폰을 들고 홀드하세요.", duration: 5, label: "스쿼트 감지 중... 꾹 누르기" },
+    { type: "hold", title: "침대 위 플랭크 10초", desc: "엎드려 뻗쳐 자세를 10초간 꾹 눌러 유지하세요.", duration: 10, label: "플랭크 유지 중..." },
+    { type: "typing", title: "명언 따라 치기", desc: "오타 없이 정확하게 명언을 타이핑하세요.", target: "일찍 일어나는 새가 벌레를 잡는다" },
+    { type: "typing", title: "영어 명언 타이핑", desc: "정신을 번쩍 차리고 영어로 입력하세요.", target: "No pain No gain" },
+    { type: "math", title: "두뇌 풀가동 암산", desc: "잠든 뇌를 깨우는 간단한 산수 문제입니다.", question: "17 + 25 = ?", answer: "42" },
+    { type: "math", title: "구구단 암산", desc: "정확한 답을 입력하여 알람을 해제하세요.", question: "8 x 7 = ?", answer: "56" },
+    { type: "puzzle", title: "틀린 글자 찾기 (알파벳)", desc: "비슷한 글자들 사이에서 다른 하나를 찾아 누르세요.", baseChar: "O", targetChar: "Q" },
+    { type: "puzzle", title: "틀린 이모지 찾기", desc: "수많은 웃는 얼굴 중 윙크하는 얼굴을 찾으세요.", baseChar: "😊", targetChar: "😉" },
+    { type: "click-loop", title: "분노의 양치타", desc: "양치를 하며 버튼을 미친듯이 연타해서 게이지를 채우세요!", target: 30, btnLabel: "🪥 치카치카 연타!!" },
+    { type: "click-loop", title: "찬물 한 잔 마시기", desc: "물 마시는 속도에 맞춰 버튼을 연타하세요!", target: 25, btnLabel: "💧 벌컥벌컥 마시기!!" },
+    { type: "timer", title: "기지개 10초 유지", desc: "버튼을 누르고 10초간 팔을 뻗어 기지개를 켜세요.", duration: 10 },
+    { type: "voice", title: "기상 선언 외치기", desc: "마이크에 대고 크고 힘차게 기상 선언을 외치세요!", target: "나는 오늘 하루도 찢었다!" },
+    { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
 const tarotCards = [
-    { name: "XIX. THE SUN (태양 카드)", icon: "☀️", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
-    { name: "XXI. THE WORLD (세계 카드)", icon: "🌍", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." }
+    { name: "XIX. THE SUN (태양)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/RWS_Tarot_19_Sun.jpg/300px-RWS_Tarot_19_Sun.jpg", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
+    { name: "XXI. THE WORLD (세계)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/RWS_Tarot_21_World.jpg/300px-RWS_Tarot_21_World.jpg", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." },
+    { name: "I. THE MAGICIAN (마법사)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/RWS_Tarot_01_Magician.jpg/300px-RWS_Tarot_01_Magician.jpg", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
+    { name: "X. WHEEL OF Fortune (운명의 수레바퀴)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." }
 ];
 
 function initApp() {
-    // 스플래시 오버레이 제거
     const splashScreen = document.getElementById('splash-screen');
     setTimeout(() => { if (splashScreen) splashScreen.classList.add('fade-out'); }, 1500);
 
@@ -70,13 +82,22 @@ function initApp() {
     const survivalCountdown = document.getElementById('survival-countdown');
     const btnSurvivalConfirm = document.getElementById('btn-survival-confirm');
 
-    // 🌙 수면 관련 다이내믹 요소를 캐싱 연동
+    // 일정 연동
+    const scheduleInput = document.getElementById('my-schedule-input');
+    const btnSaveSchedule = document.getElementById('btn-save-schedule');
+    if (scheduleInput) { scheduleInput.value = localStorage.getItem('wakeme_my_schedule') || ''; }
+    if (btnSaveSchedule) {
+        btnSaveSchedule.addEventListener('click', () => {
+            localStorage.setItem('wakeme_my_schedule', scheduleInput.value);
+            alert("📅 오늘의 일정이 안전하게 저장되었습니다!");
+        });
+    }
+
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const btnViewReport = document.getElementById('btn-view-report');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
 
-    // 🎧 백색소음 컴포넌트 바인딩 노드 연동
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
 
@@ -97,6 +118,7 @@ function initApp() {
     const btnCloseDiary = document.getElementById('btn-close-diary');
     const btnSaveDiary = document.getElementById('btn-save-diary');
     const diaryInput = document.getElementById('diary-input');
+    const diaryDate = document.getElementById('diary-date');
     const btnMoods = document.querySelectorAll('.btn-mood');
 
     const btnThemeOpen = document.getElementById('btn-theme-open');
@@ -206,8 +228,13 @@ function initApp() {
             localStorage.setItem('last_tarot_view_date', todayKey);
 
             if(fortuneDate) fortuneDate.textContent = `${now.getFullYear()}년 ${String(now.getMonth() + 1).padStart(2, '0')}월 ${String(now.getDate()).padStart(2, '0')}일`;
+            
             const randomTarot = tarotCards[Math.floor(Math.random() * tarotCards.length)];
-            if(tarotCardImage) tarotCardImage.textContent = randomTarot.icon;
+            
+            if(tarotCardImage) {
+                tarotCardImage.src = randomTarot.imageUrl;
+                tarotCardImage.style.display = 'block';
+            }
             if(tarotCardName) tarotCardName.textContent = randomTarot.name;
             if(tarotCardDesc) tarotCardDesc.textContent = randomTarot.desc;
 
@@ -219,12 +246,13 @@ function initApp() {
     if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
-    // 아침 감정 일기장
+    // 일기장
     if(btnMoodDiary) {
         btnMoodDiary.addEventListener('click', () => {
             const now = new Date();
-            if(diaryDate) diaryDate.textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 아침 기분 기록`;
-            selectedMood = ""; if(diaryInput) diaryInput.value = "";
+            if(diaryDate) { diaryDate.textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 기상 직후의 마음 기록하기`; }
+            selectedMood = ""; 
+            if(diaryInput) diaryInput.value = "";
             btnMoods.forEach(b => b.classList.remove('selected'));
             if(diaryModal) diaryModal.classList.add('active');
         });
@@ -242,13 +270,13 @@ function initApp() {
         btnSaveDiary.addEventListener('click', () => {
             if(!selectedMood) { alert("오늘 아침 나의 상태 이모지를 선택해 주세요!"); return; }
             if(!diaryInput.value.trim()) { alert("오늘 아침의 기분을 일기장 양식에 작성해 주세요!"); return; }
-            alert(`💾 [아침 감정 일기 저장 완료]\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
+            alert(`💾 [아침 감정 일기 저장 완료]\n\n이벤트에 참여하시려면 지금 작성하신 화면을 캡처해서 event@wakeme.com 으로 보내주세요!\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
             if(diaryModal) diaryModal.classList.remove('active');
         });
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-    // 🌙 💡 [측정 및 주파수 무빙 트랙 바 연동 완료]: 수면 분석 모니터
+    // 수면 측정
     if(btnToggleSleep) {
         btnToggleSleep.addEventListener('click', () => {
             isRecordingSleep = !isRecordingSleep;
@@ -256,7 +284,6 @@ function initApp() {
                 btnToggleSleep.textContent = "측정 중단하기 (기록 저장)";
                 btnToggleSleep.style.background = "#e53e3e"; btnToggleSleep.style.color = "#ffffff";
                 
-                // 💡 애니메이션 클래스를 주입하여 오른쪽 주파수 막대 바를 연쇄적으로 춤추게 만듭니다.
                 if(sleepWaveBars) sleepWaveBars.classList.add('playing');
                 if(sleepWaveStatus) { sleepWaveStatus.textContent = "측정 중.."; sleepWaveStatus.style.color = "#fc8181"; }
                 alert("🎙️ 실시간 수면 소음 및 주파수 측정을 시작합니다.");
@@ -264,7 +291,6 @@ function initApp() {
                 btnToggleSleep.textContent = "수면 측정하기";
                 btnToggleSleep.style.background = "#ffffff"; btnToggleSleep.style.color = "#000000";
                 
-                // 애니메이션 중단 및 초기화
                 if(sleepWaveBars) sleepWaveBars.classList.remove('playing');
                 if(sleepWaveStatus) { sleepWaveStatus.textContent = "대기 중"; sleepWaveStatus.style.color = "#a0aec0"; }
                 alert("💾 수면 주파수 측정이 안전하게 종료되어 업로드되었습니다.");
@@ -273,7 +299,7 @@ function initApp() {
     }
     if(btnViewReport) { btnViewReport.addEventListener('click', () => { alert("📊 [수면 리포트 요약]\n\n총 수면 시간: 6시간 42분\n깊은 수면: 23% (정상)\n잠버릇 분석: 특이 소음 없음."); }); }
 
-    // 🎧 💡 [백색소음 브라우저 자체 오디오 생신 엔진 알고리즘 구현]
+    // 백색소음
     if(btnToggleNoise) {
         btnToggleNoise.addEventListener('click', () => {
             isPlayingNoise = !isPlayingNoise;
@@ -282,15 +308,11 @@ function initApp() {
                 btnToggleNoise.textContent = "■";
                 btnToggleNoise.classList.add('playing');
                 if(noiseStatusTxt) noiseStatusTxt.textContent = "🎵 편안한 수면 백색소음이 울려 퍼지는 중..";
-                
-                // 브라우저 백색소음 노드 가동 시동
                 startWhiteNoise();
             } else {
                 btnToggleNoise.textContent = "▶";
                 btnToggleNoise.classList.remove('playing');
                 if(noiseStatusTxt) noiseStatusTxt.textContent = "플레이 버튼을 누르면 꿀잠 소리가 재생됩니다";
-                
-                // 노드 종료 파괴
                 stopWhiteNoise();
             }
         });
@@ -299,8 +321,6 @@ function initApp() {
     function startWhiteNoise() {
         try {
             if (!noiseAudioContext) noiseAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // 💡 브라우저 오디오 시스템의 버퍼 배열을 빌드하여 실제 바람/빗소리 같은 화이트노이즈 파장 생성
             const bufferSize = 2 * noiseAudioContext.sampleRate;
             const noiseBuffer = noiseAudioContext.createBuffer(1, bufferSize, noiseAudioContext.sampleRate);
             const output = noiseBuffer.getChannelData(0);
@@ -313,13 +333,12 @@ function initApp() {
             noiseNode.buffer = noiseBuffer;
             noiseNode.loop = true;
             
-            // 소리가 너무 찢어지지 않게 ローパス(LowPass) 오디오 필터를 장착해 부드러운 아날로그 수면유도음으로 필터링
             const filter = noiseAudioContext.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(450, noiseAudioContext.currentTime); // 주파수 대역 안정화
+            filter.frequency.setValueAtTime(450, noiseAudioContext.currentTime); 
             
             const gainNode = noiseAudioContext.createGain();
-            gainNode.gain.setValueAtTime(0.06, noiseAudioContext.currentTime); // 귀에 편안한 은은한 볼륨
+            gainNode.gain.setValueAtTime(0.06, noiseAudioContext.currentTime); 
             
             noiseNode.connect(filter);
             filter.connect(gainNode);
@@ -337,7 +356,7 @@ function initApp() {
         }
     }
 
-    // 마스터 정밀 시계 회로 루프
+    // 시계 및 알람 트리거
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
         const now = new Date();
@@ -386,17 +405,17 @@ function initApp() {
         startAlarmSound();
         const randomIndex = Math.floor(Math.random() * missionPool.length);
         currentMission = missionPool[randomIndex];
+        
         if(missionTitle) missionTitle.textContent = currentMission.title;
         if(missionDesc) missionDesc.textContent = currentMission.desc;
         if(missionBadge) {
-            missionBadge.textContent = currentMission.stepName; missionBadge.className = "badge";
-            if (currentMission.step === 1) missionBadge.classList.add("badge-step1");
-            else if (currentMission.step === 2) missionBadge.classList.add("badge-step2");
-            else missionBadge.classList.add("badge-step3");
+            missionBadge.textContent = "미션 진행 중"; missionBadge.className = "badge";
+            missionBadge.classList.add("badge-step2");
         }
         if(dynamicMissionBox) { dynamicMissionBox.innerHTML = ""; buildInteractiveMission(currentMission); }
     }
 
+    // 💡 15개의 다채로운 미션을 화면에 그려주는 핵심 모듈
     function buildInteractiveMission(mission) {
         const box = document.createElement('div'); box.className = "interactive-box";
         switch (mission.type) {
@@ -407,6 +426,7 @@ function initApp() {
                     const view = document.querySelector('.camera-view'); if(view) view.style.background = "#059669"; setTimeout(completeMission, 600);
                 });
                 break;
+                
             case "typing":
                 box.innerHTML = `<p class="target-sentence">똑같이 치세요: <br>"${mission.target}"</p><input type="text" id="typing-input-field" class="typing-input" autocomplete="off"><button id="btn-action-trigger" class="btn btn-primary btn-lg">입력 확인</button>`;
                 dynamicMissionBox.appendChild(box);
@@ -415,6 +435,17 @@ function initApp() {
                     if (field.value.trim() === mission.target) completeMission(); else { alert("오타 발생! 다시 치세요."); field.value = ""; field.focus(); }
                 });
                 break;
+                
+            case "math":
+                box.innerHTML = `<p class="target-sentence">암산 문제: <br>"${mission.question}"</p><input type="number" id="math-input-field" class="typing-input" autocomplete="off"><button id="btn-action-trigger" class="btn btn-primary btn-lg">정답 제출</button>`;
+                dynamicMissionBox.appendChild(box);
+                document.getElementById('btn-action-trigger').addEventListener('click', () => {
+                    const field = document.getElementById('math-input-field');
+                    if (field.value.trim() === mission.answer) completeMission(); 
+                    else { alert("오답입니다! 잠이 덜 깨셨나요?"); field.value = ""; field.focus(); }
+                });
+                break;
+                
             case "hold":
                 box.innerHTML = `<div class="camera-view" style="height:90px;"><span class="camera-overlay-text">🧘 모션 센서 연동 중</span></div><button id="btn-action-hold" class="btn btn-warning btn-lg">${mission.label}</button>`;
                 dynamicMissionBox.appendChild(box);
@@ -425,16 +456,23 @@ function initApp() {
                 const endHold = () => { clearInterval(holdTimer); currentHoldCount = 0; holdBtn.textContent = mission.label; };
                 holdBtn.addEventListener('mousedown', startHold); holdBtn.addEventListener('mouseup', endHold); holdBtn.addEventListener('touchstart', startHold); holdBtn.addEventListener('touchend', endHold);
                 break;
+                
             case "timer":
                 box.innerHTML = `<p>⚠️ 팔을 위로 올리고 정지하세요!</p><div class="progress-container"><div id="stretch-progress-bar" class="progress-bar"></div></div>`;
                 dynamicMissionBox.appendChild(box);
                 setTimeout(() => { const b = document.getElementById('stretch-progress-bar'); if(b) b.style.width = "100%"; }, 50); setTimeout(completeMission, mission.duration * 1000);
                 break;
+                
             case "puzzle":
-                box.innerHTML = `<p>스펠링이 다른 한 자를 찾으세요!</p><div class="grid-puzzle"><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button><button id="correct-puzzle-piece" class="btn-puzzle">Q</button><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button><button class="btn-puzzle">O</button></div>`;
-                dynamicMissionBox.appendChild(box); const gp = document.querySelector('.grid-puzzle'); if(gp) { for (let i = gp.children.length; i >= 0; i--) gp.appendChild(gp.children[Math.random() * i | 0]); }
-                document.querySelectorAll('.btn-puzzle').forEach(btn => { btn.addEventListener('click', (e) => { if (e.target.id === 'correct-puzzle-piece') completeMission(); else alert('틀렸습니다!'); }); });
+                const bc = mission.baseChar || "O";
+                const tc = mission.targetChar || "Q";
+                box.innerHTML = `<p>다른 하나를 찾으세요!</p><div class="grid-puzzle"><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button><button id="correct-puzzle-piece" class="btn-puzzle">${tc}</button><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button><button class="btn-puzzle">${bc}</button></div>`;
+                dynamicMissionBox.appendChild(box); 
+                const gp = document.querySelector('.grid-puzzle'); 
+                if(gp) { for (let i = gp.children.length; i >= 0; i--) gp.appendChild(gp.children[Math.random() * i | 0]); }
+                document.querySelectorAll('.btn-puzzle').forEach(btn => { btn.addEventListener('click', (e) => { if (e.target.id === 'correct-puzzle-piece') completeMission(); else alert('틀렸습니다! 다시 찾으세요.'); }); });
                 break;
+                
             case "rps":
                 box.innerHTML = `<p>AI를 상대로 <strong>${mission.target}연승</strong> 하세요!</p><div class="rps-hands"><div id="hand-player">❔</div><div>VS</div><div id="hand-ai">🤖</div></div><div class="rps-buttons"><button class="btn-rps" data-choice="✊">✊</button><button class="btn-rps" data-choice="✌️">✌️</button><button class="btn-rps" data-choice="🖐️">🖐️</button></div>`;
                 dynamicMissionBox.appendChild(box); let wins = 0;
@@ -446,22 +484,19 @@ function initApp() {
                     });
                 });
                 break;
+                
             case "click-loop":
-                box.innerHTML = `<p>버튼을 난타하여 게이지를 완충하세요!</p><div class="progress-container"><div id="brush-progress-bar" class="progress-bar"></div></div><button id="btn-brush-click" class="btn btn-primary btn-lg">🪥 치카치카 연타!!</button>`;
+                const btnLbl = mission.btnLabel || "연타!!";
+                box.innerHTML = `<p>버튼을 난타하여 게이지를 완충하세요!</p><div class="progress-container"><div id="brush-progress-bar" class="progress-bar"></div></div><button id="btn-brush-click" class="btn btn-primary btn-lg">${btnLbl}</button>`;
                 dynamicMissionBox.appendChild(box); let clicks = 0;
                 document.getElementById('btn-brush-click').addEventListener('click', () => {
                     clicks++; const p = (clicks / mission.target) * 100; document.getElementById('brush-progress-bar').style.width = `${p}%`; if(clicks >= mission.target) completeMission();
                 });
                 break;
+                
             case "voice":
                 box.innerHTML = `<h3 style="color:#f6e05e; margin: 15px 0;">"${mission.target}"</h3><button id="btn-voice-rec" class="btn btn-danger btn-lg">🎤 크게 외치기</button>`;
                 dynamicMissionBox.appendChild(box); document.getElementById('btn-voice-rec').addEventListener('click', () => { setTimeout(completeMission, 1200); });
-                break;
-            case "survival-trap":
-                box.innerHTML = `<button id="btn-trap-clear" class="btn btn-warning btn-lg">임시로 알람 끄기</button>`;
-                dynamicMissionBox.appendChild(box); document.getElementById('btn-trap-clear').addEventListener('click', () => {
-                    stopAlarmSound(); if(screenMission) screenMission.classList.remove('active'); setTimeout(startSurvivalCheckMode, 6000); 
-                });
                 break;
         }
     }
