@@ -132,7 +132,7 @@ function initApp() {
         });
     });
 
-    // 💡 날씨 배너 슬라이드 자동화 (에러방지 및 타이밍 조절)
+    // 💡 날씨 배너 슬라이드 자동화
     const bannerTrack = document.getElementById('weather-banner-track');
     let bannerIndex = 0;
     if (bannerTrack) {
@@ -142,7 +142,7 @@ function initApp() {
         }, 3000);
     }
     
-    // 💡 미세먼지 데이터 세팅
+    // 미세먼지 데이터 세팅
     const dustStatus = document.querySelector('.dust-status');
     const dustBadge = document.getElementById('dust-badge');
     if(dustBadge) {
@@ -157,12 +157,12 @@ function initApp() {
         dustBadge.className = `dust-badge ${randomLevel.class}`;
     }
 
-    // 💡 수면 주파수 애니메이션 바인딩
+    // 수면 주파수 애니메이션 바인딩
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
 
-    // 💡 수면 기록 저장 및 불러오기
+    // 수면 기록 저장 및 불러오기
     const btnViewReport = document.getElementById('btn-view-report');
     const sleepHistoryModal = document.getElementById('sleep-history-modal');
     const sleepHistoryList = document.getElementById('sleep-history-list');
@@ -254,7 +254,7 @@ function initApp() {
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // 💡 구글 액션 무료 제공 고화질 오디오 링크 연동
+    // 💡 구글 액션 무료 제공 고화질 오디오 링크
     const soundUrls = {
         "campfire": "https://actions.google.com/sounds/v1/foley/fire_crackling.ogg",
         "forest": "https://actions.google.com/sounds/v1/nature/crickets_and_insects.ogg",
@@ -277,10 +277,10 @@ function initApp() {
                 if(isPlayingNoise) {
                     sleepAudio.play().catch(e => console.log(e));
                 } else {
-                    if(btnToggleNoise) btnToggleNoise.click(); // 자동 재생
+                    if(btnToggleNoise) btnToggleNoise.click();
                 }
             } else {
-                if(isPlayingNoise && btnToggleNoise) btnToggleNoise.click(); // 정지
+                if(isPlayingNoise && btnToggleNoise) btnToggleNoise.click();
             }
         });
     });
@@ -341,7 +341,6 @@ function initApp() {
     const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
     const lapList = document.getElementById('lap-list');
 
-    // 스톱워치 랩타임 저장 연동
     let savedLaps = JSON.parse(localStorage.getItem('wakeme_laps') || '[]');
     function renderLaps() {
         if(!lapList) return;
