@@ -18,7 +18,9 @@ let stopwatchElapsedTime = 0;
 let isStopwatchRunning = false;
 let stopwatchLapCount = 0;
 
-// 15개 미션
+let isTestMode = false;
+let wakemePoints = parseInt(localStorage.getItem('wakeme_points') || '0');
+
 const missionPool = [
     { type: "camera", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 셔터를 누르세요!", target: "🥛 냉장고 내부" },
     { type: "camera", title: "창밖 풍경 찍기", desc: "커튼을 걷고 상쾌한 아침 하늘을 찍어보세요.", target: "⛅ 아침 하늘" },
@@ -37,14 +39,21 @@ const missionPool = [
     { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
+// 💡 11종으로 대폭 확장된 타로카드 배열
 const tarotCards = [
     { name: "XIX. THE SUN (태양)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/RWS_Tarot_19_Sun.jpg/300px-RWS_Tarot_19_Sun.jpg", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
     { name: "XXI. THE WORLD (세계)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/RWS_Tarot_21_World.jpg/300px-RWS_Tarot_21_World.jpg", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." },
     { name: "I. THE MAGICIAN (마법사)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/RWS_Tarot_01_Magician.jpg/300px-RWS_Tarot_01_Magician.jpg", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
-    { name: "X. WHEEL OF Fortune (운명의 수레바퀴)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." }
+    { name: "X. WHEEL OF FORTUNE (운명의 수레바퀴)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." },
+    { name: "0. THE FOOL (바보)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/RWS_Tarot_00_Fool.jpg/300px-RWS_Tarot_00_Fool.jpg", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 당신의 직관을 믿고 자유롭게 나아가세요!" },
+    { name: "II. THE HIGH PRIESTESS (여사제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/300px-RWS_Tarot_02_High_Priestess.jpg", desc: "지혜와 통찰력이 빛나는 날입니다. 차분하게 내면의 목소리에 귀 기울이면 뜻밖의 훌륭한 해결책을 얻을 수 있습니다." },
+    { name: "III. THE EMPRESS (여황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/RWS_Tarot_03_Empress.jpg/300px-RWS_Tarot_03_Empress.jpg", desc: "풍요로움과 창조성이 넘치는 하루입니다. 주변 사람들과 따뜻한 마음을 나누며 일상의 행복을 만끽하세요." },
+    { name: "IV. THE EMPEROR (황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/RWS_Tarot_04_Emperor.jpg/300px-RWS_Tarot_04_Emperor.jpg", desc: "안정과 성취의 날입니다. 리더십을 발휘하여 계획했던 일들을 굳건하고 자신감 있게 추진해 보세요." },
+    { name: "VII. THE CHARIOT (전차)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RWS_Tarot_07_Chariot.jpg/300px-RWS_Tarot_07_Chariot.jpg", desc: "강한 추진력과 자신감이 필요한 날입니다. 망설이지 말고 당신의 목표를 향해 힘차게 전진하세요!" },
+    { name: "VIII. STRENGTH (힘)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/RWS_Tarot_08_Strength.jpg/300px-RWS_Tarot_08_Strength.jpg", desc: "내면의 용기와 인내심이 빛을 발하는 하루입니다. 부드러운 카리스마로 당면한 어려움을 지혜롭게 극복할 수 있습니다." },
+    { name: "XVII. THE STAR (별)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/RWS_Tarot_17_Star.jpg/300px-RWS_Tarot_17_Star.jpg", desc: "희망과 영감이 가득한 긍정적인 하루입니다. 당신의 숨겨진 재능이 반짝반짝 빛나며 좋은 결과를 가져올 것입니다." }
 ];
 
-// 💡 유튜브 뉴스 가상 데이터 로직
 const mockNewsData = [
     { id: "M7lc1UVf-VE", title: "[속보] 2026년 최신 AI 기술 트렌드 총정리", src: "IT/과학", desc: "생성형 AI의 발전과 앞으로의 미래 전망에 대해 유튜브로 자세히 알아봅니다." },
     { id: "jNQXAC9IVRw", title: "오늘의 글로벌 경제 지표 및 증시 현황", src: "경제/주식", desc: "간밤의 뉴욕 증시 흐름과 오늘 국내 시장에 미칠 영향을 분석합니다." },
@@ -89,7 +98,9 @@ function initApp() {
     const survivalCountdown = document.getElementById('survival-countdown');
     const btnSurvivalConfirm = document.getElementById('btn-survival-confirm');
 
-    // 일정 연동
+    const pointDisplay = document.getElementById('my-point-display');
+    if (pointDisplay) pointDisplay.textContent = wakemePoints + " P";
+
     const scheduleInput = document.getElementById('my-schedule-input');
     const btnSaveSchedule = document.getElementById('btn-save-schedule');
     if (scheduleInput) { scheduleInput.value = localStorage.getItem('wakeme_my_schedule') || ''; }
@@ -100,7 +111,26 @@ function initApp() {
         });
     }
 
-    // 💡 수면 주파수 애니메이션 바인딩
+    const btnAuHome = document.getElementById('btn-au-home');
+    if (btnAuHome) {
+        btnAuHome.addEventListener('click', () => {
+            window.open('https://www.ansan.ac.kr/', '_blank');
+        });
+    }
+
+    const settingShop = document.getElementById('setting-shop');
+    const shopModal = document.getElementById('shop-modal');
+    const btnCloseShop = document.getElementById('btn-close-shop');
+
+    if(settingShop) settingShop.addEventListener('click', () => { if(shopModal) shopModal.classList.add('active'); });
+    if(btnCloseShop) btnCloseShop.addEventListener('click', () => { if(shopModal) shopModal.classList.remove('active'); });
+
+    document.querySelectorAll('.shop-item').forEach(item => {
+        item.addEventListener('click', () => {
+            alert("❌ 죄송합니다. 현재 해당 상품의 재고가 모두 소진되었습니다.");
+        });
+    });
+
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
@@ -112,13 +142,13 @@ function initApp() {
                 btnToggleSleep.textContent = "측정 중단하기 (기록 저장)";
                 btnToggleSleep.style.background = "#e53e3e"; btnToggleSleep.style.color = "#ffffff";
                 
-                if(sleepWaveBars) sleepWaveBars.classList.add('playing'); // 파형 시작!
+                if(sleepWaveBars) sleepWaveBars.classList.add('playing'); 
                 if(sleepWaveStatus) { sleepWaveStatus.textContent = "🎙️ 수면 분석 중..."; sleepWaveStatus.style.color = "#fc8181"; }
             } else {
                 btnToggleSleep.textContent = "수면 측정하기";
                 btnToggleSleep.style.background = "#ffffff"; btnToggleSleep.style.color = "#000000";
                 
-                if(sleepWaveBars) sleepWaveBars.classList.remove('playing'); // 파형 정지
+                if(sleepWaveBars) sleepWaveBars.classList.remove('playing'); 
                 if(sleepWaveStatus) { sleepWaveStatus.textContent = "측정 대기 중"; sleepWaveStatus.style.color = "#a0aec0"; }
                 alert("💾 수면 주파수 분석이 안전하게 종료되어 저장되었습니다.");
             }
@@ -158,7 +188,6 @@ function initApp() {
     const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
     const lapList = document.getElementById('lap-list');
 
-    // 💡 유튜브 뉴스 생성기 연동
     const newsListEl = document.getElementById('news-list');
     if(newsListEl) {
         mockNewsData.forEach(news => {
@@ -173,7 +202,6 @@ function initApp() {
             `;
             el.addEventListener('click', () => {
                 document.getElementById('news-modal-title').textContent = news.title;
-                // 유튜브 아이프레임 비디오 자동재생 삽입
                 document.getElementById('news-modal-video').innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${news.id}?autoplay=1" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>`;
                 document.getElementById('news-modal-desc').textContent = news.desc;
                 document.getElementById('news-modal').classList.add('active');
@@ -186,9 +214,72 @@ function initApp() {
     if (btnCloseNews) {
         btnCloseNews.addEventListener('click', () => {
             document.getElementById('news-modal').classList.remove('active');
-            document.getElementById('news-modal-video').innerHTML = ""; // 영상 종료
+            document.getElementById('news-modal-video').innerHTML = ""; 
         });
     }
+
+    const settingsInfoModal = document.getElementById('settings-info-modal');
+    const settingsInfoTitle = document.getElementById('settings-info-title');
+    const settingsInfoContent = document.getElementById('settings-info-content');
+    const btnCloseSettingsInfo = document.getElementById('btn-close-settings-info');
+
+    if(btnCloseSettingsInfo) {
+        btnCloseSettingsInfo.addEventListener('click', () => {
+            settingsInfoModal.classList.remove('active');
+        });
+    }
+
+    const openSettingsModal = (title, htmlContent) => {
+        if(settingsInfoTitle) settingsInfoTitle.textContent = title;
+        if(settingsInfoContent) settingsInfoContent.innerHTML = htmlContent;
+        if(settingsInfoModal) settingsInfoModal.classList.add('active');
+    };
+
+    const sLogin = document.getElementById('setting-login');
+    const sPoints = document.getElementById('setting-points');
+    const sTheme = document.getElementById('setting-theme');
+    const sSound = document.getElementById('setting-sound');
+    const sNoti = document.getElementById('setting-noti');
+    const sNotice = document.getElementById('setting-notice');
+    const sFaq = document.getElementById('setting-faq');
+    const sFeedback = document.getElementById('setting-feedback');
+
+    if(sLogin) sLogin.onclick = () => alert("로그인 화면으로 이동합니다. (현재 베타 버전에서는 게스트 모드로 동작합니다)");
+    if(sPoints) sPoints.onclick = () => alert(`현재 보유 포인트: ${wakemePoints} P\n(알람 시간에 일어나 미션을 클리어하면 하루 50P가 적립됩니다!)`);
+    if(sTheme) sTheme.onclick = () => { if(themeModal) themeModal.classList.add('active'); };
+    if(sSound) sSound.onclick = () => alert("현재 모바일 기기의 스피커가 기본 출력으로 설정되어 있습니다.");
+    if(sNoti) sNoti.onclick = () => alert("시스템의 앱 알림 설정 창으로 이동합니다.");
+    
+    if(sNotice) sNotice.onclick = () => {
+        openSettingsModal("📢 공지사항", `
+            <b style="color:#f6e05e;">[업데이트] 웨이크미 v2.5 정식 배포!</b><br><br>
+            안녕하세요, 웨이크미 개발팀입니다.<br>
+            드디어 15종의 강력한 기상 미션과 수면 분석 기능이 추가된 새로운 버전이 출시되었습니다.<br><br>
+            - 15종 미션 풀 확장<br>
+            - 수면 주파수 애니메이션 추가<br>
+            - 유튜브 기반 실시간 뉴스 지원<br>
+            - 감정 일기장 이벤트 시작<br><br>
+            앞으로도 절대 다시 누울 수 없는 아침을 책임지겠습니다. 감사합니다!<br><br>
+            <span style="font-size:12px; color:#888;">- 2026년 5월 22일</span>
+        `);
+    };
+
+    if(sFaq) sFaq.onclick = () => {
+        openSettingsModal("❓ 자주묻는 질문 (FAQ)", `
+            <b style="color:#f6e05e;">Q. 알람이 울리지 않아요.</b><br>
+            A. 기기의 미디어 볼륨이 켜져 있는지 확인하고, 배터리 최적화 예외 앱으로 웨이크미를 설정해주세요.<br><br>
+            <b style="color:#f6e05e;">Q. 원하는 미션을 고를 수는 없나요?</b><br>
+            A. 현재 미션은 15종 중 랜덤으로 등장하여 두뇌를 매번 새롭게 자극하는 것이 목적이므로 수동 선택은 불가능합니다.<br><br>
+            <b style="color:#f6e05e;">Q. 백색소음은 배터리를 많이 소모하나요?</b><br>
+            A. 브라우저 내장 오디오 엔진을 최적화하여 밤새 틀어놓아도 배터리 소모가 극히 적습니다.
+        `);
+    };
+
+    if(sFeedback) sFeedback.onclick = () => {
+        const feedback = prompt("앱에 대한 소중한 의견을 남겨주세요:");
+        if(feedback) alert("의견이 성공적으로 전송되었습니다. 검토 후 더 나은 서비스로 보답하겠습니다!");
+    };
+
 
     if (btnThemeOpen) { btnThemeOpen.addEventListener('click', () => { if(themeModal) themeModal.classList.add('active'); }); }
     if (btnThemeClose) { btnThemeClose.addEventListener('click', () => { if(themeModal) themeModal.classList.remove('active'); }); }
@@ -229,7 +320,6 @@ function initApp() {
         });
     }
 
-    // 스톱워치
     if (btnStopwatchStart && btnStopwatchLap) {
         btnStopwatchStart.addEventListener('click', () => {
             isStopwatchRunning = !isStopwatchRunning;
@@ -264,7 +354,6 @@ function initApp() {
         return `${minutes}:${seconds}.${miliseconds}`;
     }
 
-    // 타로
     if(btnFortune) {
         btnFortune.addEventListener('click', () => {
             const now = new Date();
@@ -305,7 +394,6 @@ function initApp() {
     if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
-    // 일기장
     if(btnMoodDiary) {
         btnMoodDiary.addEventListener('click', () => {
             const now = new Date();
@@ -335,7 +423,6 @@ function initApp() {
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-    // 백색소음
     if(btnToggleNoise) {
         btnToggleNoise.addEventListener('click', () => {
             isPlayingNoise = !isPlayingNoise;
@@ -392,7 +479,6 @@ function initApp() {
         }
     }
 
-    // 시계 및 알람 트리거
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
         const now = new Date();
@@ -408,12 +494,17 @@ function initApp() {
             alarmTime = null;
             if(btnToggleAlarm) { btnToggleAlarm.textContent = "알람 켜기"; btnToggleAlarm.className = "btn btn-primary"; }
             if(alarmStatusText) alarmStatusText.textContent = "알람이 울리는 중입니다!";
+            
+            isTestMode = false; 
             triggerAlarm();
         }
     }
     setInterval(updateClock, 1000); updateClock();
 
-    if(btnTestAlarm) btnTestAlarm.addEventListener('click', () => { triggerAlarm(); });
+    if(btnTestAlarm) btnTestAlarm.addEventListener('click', () => { 
+        isTestMode = true; 
+        triggerAlarm(); 
+    });
 
     function startAlarmSound() {
         try {
@@ -525,12 +616,44 @@ function initApp() {
                 box.innerHTML = `<h3 style="color:#f6e05e; margin: 15px 0;">"${mission.target}"</h3><button id="btn-voice-rec" class="btn btn-danger btn-lg">🎤 크게 외치기</button>`;
                 dynamicMissionBox.appendChild(box); document.getElementById('btn-voice-rec').addEventListener('click', () => { setTimeout(completeMission, 1200); });
                 break;
+            case "survival-trap":
+                box.innerHTML = `<button id="btn-trap-clear" class="btn btn-warning btn-lg">임시로 알람 끄기</button>`;
+                dynamicMissionBox.appendChild(box); document.getElementById('btn-trap-clear').addEventListener('click', () => {
+                    stopAlarmSound(); if(screenMission) screenMission.classList.remove('active'); setTimeout(startSurvivalCheckMode, 6000); 
+                });
+                break;
         }
     }
 
     function completeMission() {
-        stopAlarmSound(); if(screenMission) screenMission.classList.remove('active');
-        if (currentMission && currentMission.type !== "survival-trap") { alert("🎉 미션 성공! 알람이 일시 해제됩니다.\n\n잠시 후 '다시 눕기 방지' 최종 불시 검문이 작동합니다."); setTimeout(startSurvivalCheckMode, 6000); }
+        stopAlarmSound(); 
+        if(screenMission) screenMission.classList.remove('active');
+        
+        if (currentMission && currentMission.type !== "survival-trap") {
+            
+            if (!isTestMode) {
+                const now = new Date();
+                const todayKey = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
+                const lastEarnDate = localStorage.getItem('last_point_earn_date');
+
+                if (lastEarnDate !== todayKey) {
+                    wakemePoints += 50;
+                    localStorage.setItem('wakeme_points', wakemePoints);
+                    localStorage.setItem('last_point_earn_date', todayKey);
+                    
+                    const pDisplay = document.getElementById('my-point-display');
+                    if(pDisplay) pDisplay.textContent = wakemePoints + " P";
+                    
+                    alert("🎉 아침 기상 미션 성공!\n\n부지런한 하루의 시작을 축하합니다.\n🎁 50 포인트가 지급되었습니다!\n\n잠시 후 '다시 눕기 방지' 최종 불시 검문이 작동합니다.");
+                } else {
+                    alert("🎉 미션 성공! 알람이 일시 해제됩니다.\n(오늘의 기상 포인트는 이미 지급되었습니다.)\n\n잠시 후 '다시 눕기 방지' 최종 불시 검문이 작동합니다.");
+                }
+            } else {
+                alert("🎉 미션 성공!\n(테스트 모드이므로 포인트는 지급되지 않습니다.)\n\n잠시 후 '다시 눕기 방지' 최종 불시 검문이 작동합니다.");
+            }
+
+            setTimeout(startSurvivalCheckMode, 6000); 
+        }
     }
 
     function startSurvivalCheckMode() {
