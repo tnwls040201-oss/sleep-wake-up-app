@@ -9,8 +9,9 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-let noiseAudioContext = null;
-let noiseNode = null;
+// 💡 백색소음용 실제 오디오 객체 (구글 공식 고음질 사운드 서버)
+let sleepAudio = new Audio();
+sleepAudio.loop = true;
 let isPlayingNoise = false;
 
 let stopwatchInterval = null;
@@ -21,6 +22,7 @@ let stopwatchLapCount = 0;
 let isTestMode = false;
 let wakemePoints = parseInt(localStorage.getItem('wakeme_points') || '0');
 
+// 15개 미션
 const missionPool = [
     { type: "camera", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 셔터를 누르세요!", target: "🥛 냉장고 내부" },
     { type: "camera", title: "창밖 풍경 찍기", desc: "커튼을 걷고 상쾌한 아침 하늘을 찍어보세요.", target: "⛅ 아침 하늘" },
@@ -39,19 +41,18 @@ const missionPool = [
     { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
-// 💡 11종으로 대폭 확장된 타로카드 배열
 const tarotCards = [
     { name: "XIX. THE SUN (태양)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/RWS_Tarot_19_Sun.jpg/300px-RWS_Tarot_19_Sun.jpg", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
     { name: "XXI. THE WORLD (세계)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/RWS_Tarot_21_World.jpg/300px-RWS_Tarot_21_World.jpg", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." },
     { name: "I. THE MAGICIAN (마법사)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/RWS_Tarot_01_Magician.jpg/300px-RWS_Tarot_01_Magician.jpg", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
-    { name: "X. WHEEL OF FORTUNE (운명의 수레바퀴)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." },
-    { name: "0. THE FOOL (바보)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/RWS_Tarot_00_Fool.jpg/300px-RWS_Tarot_00_Fool.jpg", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 당신의 직관을 믿고 자유롭게 나아가세요!" },
-    { name: "II. THE HIGH PRIESTESS (여사제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/300px-RWS_Tarot_02_High_Priestess.jpg", desc: "지혜와 통찰력이 빛나는 날입니다. 차분하게 내면의 목소리에 귀 기울이면 뜻밖의 훌륭한 해결책을 얻을 수 있습니다." },
-    { name: "III. THE EMPRESS (여황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/RWS_Tarot_03_Empress.jpg/300px-RWS_Tarot_03_Empress.jpg", desc: "풍요로움과 창조성이 넘치는 하루입니다. 주변 사람들과 따뜻한 마음을 나누며 일상의 행복을 만끽하세요." },
-    { name: "IV. THE EMPEROR (황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/RWS_Tarot_04_Emperor.jpg/300px-RWS_Tarot_04_Emperor.jpg", desc: "안정과 성취의 날입니다. 리더십을 발휘하여 계획했던 일들을 굳건하고 자신감 있게 추진해 보세요." },
+    { name: "X. WHEEL OF FORTUNE (운명)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." },
+    { name: "0. THE FOOL (바보)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/RWS_Tarot_00_Fool.jpg/300px-RWS_Tarot_00_Fool.jpg", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 직관을 믿고 나아가세요!" },
+    { name: "II. THE HIGH PRIESTESS", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/300px-RWS_Tarot_02_High_Priestess.jpg", desc: "지혜와 통찰력이 빛나는 날입니다. 차분하게 내면의 목소리에 귀 기울이면 뜻밖의 해결책을 얻습니다." },
+    { name: "III. THE EMPRESS (여황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/RWS_Tarot_03_Empress.jpg/300px-RWS_Tarot_03_Empress.jpg", desc: "풍요로움과 창조성이 넘치는 하루입니다. 주변 사람들과 따뜻한 마음을 나누며 행복을 만끽하세요." },
+    { name: "IV. THE EMPEROR (황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/RWS_Tarot_04_Emperor.jpg/300px-RWS_Tarot_04_Emperor.jpg", desc: "안정과 성취의 날입니다. 리더십을 발휘하여 계획했던 일들을 자신감 있게 추진해 보세요." },
     { name: "VII. THE CHARIOT (전차)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RWS_Tarot_07_Chariot.jpg/300px-RWS_Tarot_07_Chariot.jpg", desc: "강한 추진력과 자신감이 필요한 날입니다. 망설이지 말고 당신의 목표를 향해 힘차게 전진하세요!" },
-    { name: "VIII. STRENGTH (힘)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/RWS_Tarot_08_Strength.jpg/300px-RWS_Tarot_08_Strength.jpg", desc: "내면의 용기와 인내심이 빛을 발하는 하루입니다. 부드러운 카리스마로 당면한 어려움을 지혜롭게 극복할 수 있습니다." },
-    { name: "XVII. THE STAR (별)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/RWS_Tarot_17_Star.jpg/300px-RWS_Tarot_17_Star.jpg", desc: "희망과 영감이 가득한 긍정적인 하루입니다. 당신의 숨겨진 재능이 반짝반짝 빛나며 좋은 결과를 가져올 것입니다." }
+    { name: "VIII. STRENGTH (힘)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/RWS_Tarot_08_Strength.jpg/300px-RWS_Tarot_08_Strength.jpg", desc: "내면의 용기와 인내심이 빛을 발하는 하루입니다. 부드러운 카리스마로 어려움을 극복할 수 있습니다." },
+    { name: "XVII. THE STAR (별)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/RWS_Tarot_17_Star.jpg/300px-RWS_Tarot_17_Star.jpg", desc: "희망과 영감이 가득한 긍정적인 하루입니다. 당신의 숨겨진 재능이 반짝반짝 빛나며 좋은 결과를 가져옵니다." }
 ];
 
 const mockNewsData = [
@@ -131,9 +132,75 @@ function initApp() {
         });
     });
 
+    // 💡 날씨 배너 슬라이드 자동화 (에러방지 및 타이밍 조절)
+    const bannerTrack = document.getElementById('weather-banner-track');
+    let bannerIndex = 0;
+    if (bannerTrack) {
+        setInterval(() => {
+            bannerIndex = (bannerIndex === 0) ? 1 : 0;
+            bannerTrack.style.transform = `translateX(-${bannerIndex * 50}%)`;
+        }, 3000);
+    }
+    
+    // 💡 미세먼지 데이터 세팅
+    const dustStatus = document.querySelector('.dust-status');
+    const dustBadge = document.getElementById('dust-badge');
+    if(dustBadge) {
+        const levels = [
+            { text: "좋음 🔵", class: "good" },
+            { text: "보통 🟢", class: "normal" },
+            { text: "나쁨 🟠", class: "bad" },
+            { text: "매우 나쁨 🔴", class: "bad" }
+        ];
+        const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+        dustBadge.textContent = randomLevel.text;
+        dustBadge.className = `dust-badge ${randomLevel.class}`;
+    }
+
+    // 💡 수면 주파수 애니메이션 바인딩
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
+
+    // 💡 수면 기록 저장 및 불러오기
+    const btnViewReport = document.getElementById('btn-view-report');
+    const sleepHistoryModal = document.getElementById('sleep-history-modal');
+    const sleepHistoryList = document.getElementById('sleep-history-list');
+    const btnCloseSleepHistory = document.getElementById('btn-close-sleep-history');
+    
+    const sleepResultModal = document.getElementById('sleep-result-modal');
+    const sleepResultContent = document.getElementById('sleep-result-content');
+    const btnCloseSleepResult = document.getElementById('btn-close-sleep-result');
+
+    let sleepRecords = JSON.parse(localStorage.getItem('wakeme_sleep_records') || '[]');
+
+    function renderSleepHistory() {
+        if(!sleepHistoryList) return;
+        sleepHistoryList.innerHTML = '';
+        if (sleepRecords.length === 0) {
+            sleepHistoryList.innerHTML = '<p style="color:#a0aec0; padding:20px; text-align:center;">저장된 수면 리포트가 없습니다.</p>';
+            return;
+        }
+        sleepRecords.forEach(record => {
+            const div = document.createElement('div');
+            div.className = 'sleep-record-item';
+            div.innerHTML = `
+                <div style="font-size:12px; color:#a0aec0; margin-bottom:5px;">${record.date}</div>
+                <div style="font-size:16px; font-weight:bold; color:white; margin-bottom:5px;">수면 점수: ${record.score}점 😴</div>
+                <div style="font-size:13px; color:#cbd5e0;">수면 시간: ${record.duration} | 뒤척임: ${record.toss}회 | 코골이: ${record.snore}</div>
+            `;
+            sleepHistoryList.appendChild(div);
+        });
+    }
+
+    if(btnViewReport) {
+        btnViewReport.addEventListener('click', () => {
+            renderSleepHistory();
+            if(sleepHistoryModal) sleepHistoryModal.classList.add('active');
+        });
+    }
+    if(btnCloseSleepHistory) { btnCloseSleepHistory.addEventListener('click', () => { sleepHistoryModal.classList.remove('active'); }); }
+    if(btnCloseSleepResult) { btnCloseSleepResult.addEventListener('click', () => { sleepResultModal.classList.remove('active'); }); }
 
     if(btnToggleSleep) {
         btnToggleSleep.addEventListener('click', () => {
@@ -150,13 +217,98 @@ function initApp() {
                 
                 if(sleepWaveBars) sleepWaveBars.classList.remove('playing'); 
                 if(sleepWaveStatus) { sleepWaveStatus.textContent = "측정 대기 중"; sleepWaveStatus.style.color = "#a0aec0"; }
-                alert("💾 수면 주파수 분석이 안전하게 종료되어 저장되었습니다.");
+                
+                const score = Math.floor(Math.random() * 20) + 75;
+                const toss = Math.floor(Math.random() * 15);
+                const snoreTypes = ["경미", "거의 없음", "보통", "심함"];
+                const snore = snoreTypes[Math.floor(Math.random() * snoreTypes.length)];
+                const hrs = Math.floor(Math.random() * 3) + 5;
+                const mins = Math.floor(Math.random() * 60);
+                
+                const now = new Date();
+                const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
+
+                const newRecord = { date: dateStr, score: score, toss: toss, snore: snore, duration: `${hrs}시간 ${mins}분` };
+                
+                sleepRecords.unshift(newRecord);
+                localStorage.setItem('wakeme_sleep_records', JSON.stringify(sleepRecords));
+
+                if(sleepResultContent) {
+                    sleepResultContent.innerHTML = `
+                        <p style="font-size:20px; font-weight:800; color:#f6e05e; margin-bottom:15px;">오늘의 수면 점수 : ${score}점</p>
+                        <p style="margin-bottom:8px;">- 수면 시간: ${hrs}시간 ${mins}분</p>
+                        <p style="margin-bottom:8px;">- 뒤척임 횟수: ${toss}회</p>
+                        <p style="margin-bottom:8px;">- 코골이 위험도: ${snore}</p>
+                        <p style="color:#a0aec0; font-size:12px; margin-top:15px;">추천 취침 시간: 오늘 밤 11시 30분</p>
+                    `;
+                }
+                if(sleepResultModal) sleepResultModal.classList.add('active');
             }
         });
     }
 
+    // 💡 백색소음 멀티 선택 및 애니메이션/사운드 연동
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
+    const noiseVisualizer = document.getElementById('noise-visualizer');
+    const noiseCurrentText = document.getElementById('noise-current-text');
+    const noiseItems = document.querySelectorAll('.noise-item');
+    
+    // 💡 구글 액션 무료 제공 고화질 오디오 링크 연동
+    const soundUrls = {
+        "campfire": "https://actions.google.com/sounds/v1/foley/fire_crackling.ogg",
+        "forest": "https://actions.google.com/sounds/v1/nature/crickets_and_insects.ogg",
+        "waves": "https://actions.google.com/sounds/v1/water/waves_crashing_on_rock_beach.ogg",
+        "rain": "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
+        "thunder": "https://actions.google.com/sounds/v1/weather/thunderstorm.ogg"
+    };
+
+    let currentNoiseType = "none";
+
+    noiseItems.forEach(item => {
+        item.addEventListener('click', () => {
+            noiseItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            currentNoiseType = item.getAttribute('data-sound');
+            noiseCurrentText.textContent = item.querySelector('span').textContent;
+            
+            if (currentNoiseType !== "none") {
+                sleepAudio.src = soundUrls[currentNoiseType];
+                if(isPlayingNoise) {
+                    sleepAudio.play().catch(e => console.log(e));
+                } else {
+                    if(btnToggleNoise) btnToggleNoise.click(); // 자동 재생
+                }
+            } else {
+                if(isPlayingNoise && btnToggleNoise) btnToggleNoise.click(); // 정지
+            }
+        });
+    });
+
+    if(btnToggleNoise) {
+        btnToggleNoise.addEventListener('click', () => {
+            if(currentNoiseType === "none") {
+                alert("아래에서 듣고 싶은 소리를 먼저 선택해주세요!");
+                return;
+            }
+
+            isPlayingNoise = !isPlayingNoise;
+            
+            if(isPlayingNoise) {
+                btnToggleNoise.textContent = "■";
+                btnToggleNoise.classList.add('playing');
+                if(noiseStatusTxt) noiseStatusTxt.textContent = "🎵 편안한 수면 백색소음 재생 중..";
+                noiseVisualizer.classList.add('playing');
+                sleepAudio.play().catch(e => console.log("Audio Play Error:", e));
+            } else {
+                btnToggleNoise.textContent = "▶";
+                btnToggleNoise.classList.remove('playing');
+                if(noiseStatusTxt) noiseStatusTxt.textContent = "플레이 버튼을 누르면 꿀잠 소리가 재생됩니다";
+                noiseVisualizer.classList.remove('playing');
+                sleepAudio.pause();
+            }
+        });
+    }
 
     const btnFortune = document.getElementById('btn-fortune');
     const fortuneModal = document.getElementById('fortune-modal');
@@ -186,7 +338,57 @@ function initApp() {
     const stopwatchTime = document.getElementById('stopwatch-time');
     const btnStopwatchStart = document.getElementById('btn-stopwatch-start');
     const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
+    const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
     const lapList = document.getElementById('lap-list');
+
+    // 스톱워치 랩타임 저장 연동
+    let savedLaps = JSON.parse(localStorage.getItem('wakeme_laps') || '[]');
+    function renderLaps() {
+        if(!lapList) return;
+        lapList.innerHTML = '';
+        savedLaps.forEach((lap, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>랩 ${savedLaps.length - idx}</span><span>${lap}</span>`;
+            lapList.appendChild(li);
+        });
+    }
+    renderLaps();
+
+    if (btnStopwatchStart && btnStopwatchLap) {
+        btnStopwatchStart.addEventListener('click', () => {
+            isStopwatchRunning = !isStopwatchRunning;
+            if (isStopwatchRunning) {
+                btnStopwatchStart.textContent = "중단"; btnStopwatchStart.classList.add('running');
+                btnStopwatchLap.textContent = "랩타임"; btnStopwatchLap.disabled = false;
+                const startTime = Date.now() - stopwatchElapsedTime;
+                stopwatchInterval = setInterval(() => { stopwatchElapsedTime = Date.now() - startTime; stopwatchTime.textContent = formatStopwatchTime(stopwatchElapsedTime); }, 10); 
+            } else {
+                clearInterval(stopwatchInterval); btnStopwatchStart.textContent = "시작"; btnStopwatchStart.classList.remove('running'); btnStopwatchLap.textContent = "기록";
+            }
+        });
+
+        btnStopwatchLap.addEventListener('click', () => {
+            if (isStopwatchRunning) {
+                stopwatchLapCount++;
+                const timeString = formatStopwatchTime(stopwatchElapsedTime);
+                savedLaps.unshift(timeString);
+                localStorage.setItem('wakeme_laps', JSON.stringify(savedLaps));
+                renderLaps();
+            }
+        });
+    }
+
+    if (btnStopwatchReset) {
+        btnStopwatchReset.addEventListener('click', () => {
+            if(isStopwatchRunning) { alert("먼저 스톱워치를 중단해주세요."); return; }
+            clearInterval(stopwatchInterval); stopwatchElapsedTime = 0; stopwatchLapCount = 0;
+            if(stopwatchTime) stopwatchTime.textContent = "00:00.00"; 
+            savedLaps = [];
+            localStorage.setItem('wakeme_laps', JSON.stringify(savedLaps));
+            renderLaps();
+            btnStopwatchLap.disabled = true;
+        });
+    }
 
     const newsListEl = document.getElementById('news-list');
     if(newsListEl) {
@@ -242,6 +444,8 @@ function initApp() {
     const sNoti = document.getElementById('setting-noti');
     const sNotice = document.getElementById('setting-notice');
     const sFaq = document.getElementById('setting-faq');
+    const sTerms = document.getElementById('setting-terms');
+    const sPrivacy = document.getElementById('setting-privacy');
     const sFeedback = document.getElementById('setting-feedback');
 
     if(sLogin) sLogin.onclick = () => alert("로그인 화면으로 이동합니다. (현재 베타 버전에서는 게스트 모드로 동작합니다)");
@@ -272,6 +476,34 @@ function initApp() {
             A. 현재 미션은 15종 중 랜덤으로 등장하여 두뇌를 매번 새롭게 자극하는 것이 목적이므로 수동 선택은 불가능합니다.<br><br>
             <b style="color:#f6e05e;">Q. 백색소음은 배터리를 많이 소모하나요?</b><br>
             A. 브라우저 내장 오디오 엔진을 최적화하여 밤새 틀어놓아도 배터리 소모가 극히 적습니다.
+        `);
+    };
+
+    if(sTerms) sTerms.onclick = () => {
+        openSettingsModal("📜 이용 약관", `
+            <b>제 1 조 (목적)</b><br>
+            본 약관은 웨이크미(이하 "회사")가 제공하는 서비스의 이용과 관련하여 회사와 회원과의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.<br><br>
+            <b>제 2 조 (서비스의 제공)</b><br>
+            회사는 다음과 같은 서비스를 제공합니다.<br>
+            1. 기상 알람 및 미션 서비스<br>
+            2. 수면 분석 및 백색소음 제공<br>
+            3. 포인트 상점 및 기타 연계 서비스<br><br>
+            <b>제 3 조 (포인트의 소멸)</b><br>
+            적립된 포인트는 1년간 사용하지 않을 경우 자동 소멸됩니다.
+        `);
+    };
+
+    if(sPrivacy) sPrivacy.onclick = () => {
+        openSettingsModal("🔒 개인정보 처리방침", `
+            웨이크미는 사용자의 개인정보를 소중하게 생각합니다.<br><br>
+            <b>1. 수집하는 개인정보 항목</b><br>
+            - 수면 데이터 (디바이스 내 로컬 저장)<br>
+            - 알람 설정 기록<br><br>
+            <b>2. 개인정보의 이용 목적</b><br>
+            - 맞춤형 수면 리포트 제공<br>
+            - 서비스 품질 향상 및 신규 기능 개발<br><br>
+            <b>3. 개인정보의 파기</b><br>
+            앱 삭제 시 모든 로컬 데이터는 즉시 안전하게 파기됩니다. 서버에 불필요한 개인 식별 정보를 저장하지 않습니다.
         `);
     };
 
@@ -316,32 +548,6 @@ function initApp() {
             } else {
                 alarmTime = null; btnToggleAlarm.textContent = "알람 켜기"; btnToggleAlarm.className = "btn btn-primary";
                 alarmStatusText.textContent = "설정된 알람이 없습니다.";
-            }
-        });
-    }
-
-    if (btnStopwatchStart && btnStopwatchLap) {
-        btnStopwatchStart.addEventListener('click', () => {
-            isStopwatchRunning = !isStopwatchRunning;
-            if (isStopwatchRunning) {
-                btnStopwatchStart.textContent = "중단"; btnStopwatchStart.classList.add('running');
-                btnStopwatchLap.textContent = "랩타임"; btnStopwatchLap.disabled = false;
-                const startTime = Date.now() - stopwatchElapsedTime;
-                stopwatchInterval = setInterval(() => { stopwatchElapsedTime = Date.now() - startTime; stopwatchTime.textContent = formatStopwatchTime(stopwatchElapsedTime); }, 10); 
-            } else {
-                clearInterval(stopwatchInterval); btnStopwatchStart.textContent = "시작"; btnStopwatchStart.classList.remove('running'); btnStopwatchLap.textContent = "초기화";
-            }
-        });
-
-        btnStopwatchLap.addEventListener('click', () => {
-            if (isStopwatchRunning) {
-                stopwatchLapCount++;
-                const li = document.createElement('li'); li.innerHTML = `<span>랩 ${stopwatchLapCount}</span><span>${formatStopwatchTime(stopwatchElapsedTime)}</span>`;
-                if(lapList) lapList.insertBefore(li, lapList.firstChild);
-            } else {
-                clearInterval(stopwatchInterval); stopwatchElapsedTime = 0; stopwatchLapCount = 0;
-                if(stopwatchTime) stopwatchTime.textContent = "00:00.00"; if(lapList) lapList.innerHTML = "";
-                btnStopwatchLap.textContent = "랩타임"; btnStopwatchLap.disabled = true;
             }
         });
     }
@@ -423,61 +629,6 @@ function initApp() {
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-    if(btnToggleNoise) {
-        btnToggleNoise.addEventListener('click', () => {
-            isPlayingNoise = !isPlayingNoise;
-            
-            if(isPlayingNoise) {
-                btnToggleNoise.textContent = "■";
-                btnToggleNoise.classList.add('playing');
-                if(noiseStatusTxt) noiseStatusTxt.textContent = "🎵 편안한 수면 백색소음이 울려 퍼지는 중..";
-                startWhiteNoise();
-            } else {
-                btnToggleNoise.textContent = "▶";
-                btnToggleNoise.classList.remove('playing');
-                if(noiseStatusTxt) noiseStatusTxt.textContent = "플레이 버튼을 누르면 꿀잠 소리가 재생됩니다";
-                stopWhiteNoise();
-            }
-        });
-    }
-
-    function startWhiteNoise() {
-        try {
-            if (!noiseAudioContext) noiseAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const bufferSize = 2 * noiseAudioContext.sampleRate;
-            const noiseBuffer = noiseAudioContext.createBuffer(1, bufferSize, noiseAudioContext.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = Math.random() * 2.0 - 1.0;
-            }
-            
-            noiseNode = noiseAudioContext.createBufferSource();
-            noiseNode.buffer = noiseBuffer;
-            noiseNode.loop = true;
-            
-            const filter = noiseAudioContext.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(450, noiseAudioContext.currentTime); 
-            
-            const gainNode = noiseAudioContext.createGain();
-            gainNode.gain.setValueAtTime(0.06, noiseAudioContext.currentTime); 
-            
-            noiseNode.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(noiseAudioContext.destination);
-            
-            noiseNode.start();
-        } catch(e) { console.log("오디오 가동 에러: ", e); }
-    }
-
-    function stopWhiteNoise() {
-        if (noiseNode) {
-            try { noiseNode.stop(); } catch(e){}
-            noiseNode.disconnect();
-            noiseNode = null;
-        }
-    }
 
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
@@ -630,7 +781,6 @@ function initApp() {
         if(screenMission) screenMission.classList.remove('active');
         
         if (currentMission && currentMission.type !== "survival-trap") {
-            
             if (!isTestMode) {
                 const now = new Date();
                 const todayKey = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
@@ -651,7 +801,6 @@ function initApp() {
             } else {
                 alert("🎉 미션 성공!\n(테스트 모드이므로 포인트는 지급되지 않습니다.)\n\n잠시 후 '다시 눕기 방지' 최종 불시 검문이 작동합니다.");
             }
-
             setTimeout(startSurvivalCheckMode, 6000); 
         }
     }
