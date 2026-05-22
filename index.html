@@ -38,7 +38,7 @@
                 </div>
                 <div class="card test-box">
                     <h3>앱 미리보기</h3>
-                    <p>기다리지 않고 바로 15가지 미션을 체험합니다.</p>
+                    <p>기다리지 않고 바로 다양한 미션을 체험합니다.</p>
                     <button id="btn-test-alarm" class="btn btn-danger">즉시 미션 시작 (테스트)</button>
                 </div>
                 <div class="card schedule-box">
@@ -58,9 +58,9 @@
                     <div class="waveform-box">
                         <span class="wave-time" id="sleep-wave-status">측정 대기 중</span>
                         <div id="sleep-wave-bars" class="wave-bars">
-                            <span class="bar side"></span><span class="bar"></span><span class="bar tall"></span>
                             <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
-                            <span class="bar"></span><span class="bar side"></span><span class="bar tall"></span>
+                            <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
+                            <span class="bar"></span>
                         </div>
                     </div>
                     <button id="btn-toggle-sleep" class="btn btn-success btn-lg">수면 측정하기</button>
@@ -92,16 +92,21 @@
                             <span class="luxury-label">PREMIUM CITY</span>
                         </div>
                         <div class="seoul-weather-box">
-                            <span class="sky-icon">🌧️</span>
+                            <div class="weather-anim">
+                                <span class="anim-cloud">☁️</span>
+                                <span class="anim-rain">💧</span>
+                            </div>
                             <span class="temp">15°C</span>
                         </div>
                     </div>
-                    <div class="weather-card"><span class="region">경기도</span><span class="sky-icon">☁️</span><span class="temp">14°C</span></div>
-                    <div class="weather-card"><span class="region">충청도</span><span class="sky-icon">🌤️</span><span class="temp">16°C</span></div>
-                    <div class="weather-card"><span class="region">전라도</span><span class="sky-icon">☀️</span><span class="temp">18°C</span></div>
-                    <div class="weather-card"><span class="region">경상도</span><span class="sky-icon">☁️</span><span class="temp">17°C</span></div>
-                    <div class="weather-card"><span class="region">강원도</span><span class="sky-icon">❄️</span><span class="temp">12°C</span></div>
-                    <div class="weather-card"><span class="region">제주도</span><span class="sky-icon">🌤️</span><span class="temp">20°C</span></div>
+                    
+                    <div class="weather-card"><span class="region">경기도</span><span class="sky-icon anim-float">☁️</span><span class="temp">14°C</span></div>
+                    <div class="weather-card"><span class="region">충청도</span><span class="sky-icon anim-float-delay">🌤️</span><span class="temp">16°C</span></div>
+                    <div class="weather-card"><span class="region">전라도</span><span class="sky-icon anim-spin">☀️</span><span class="temp">18°C</span></div>
+                    
+                    <div class="weather-card"><span class="region">경상도</span><span class="sky-icon anim-float">☁️</span><span class="temp">17°C</span></div>
+                    <div class="weather-card"><span class="region">강원도</span><span class="sky-icon anim-float-delay">❄️</span><span class="temp">12°C</span></div>
+                    <div class="weather-card"><span class="region">제주도</span><span class="sky-icon anim-float">🌤️</span><span class="temp">20°C</span></div>
                 </div>
 
                 <div class="morning-menu-grid alternative-layout">
@@ -113,14 +118,19 @@
         </div>
 
         <div id="screen-stopwatch-tab" class="main-tab-screen">
-            <header><h1>⏱️ 스톱워치</h1><p class="subtitle">기상 직후 루틴 속도를 기록하세요</p></header>
+            <header><h1>⏱️ 스톱워치 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
             <main>
                 <div class="stopwatch-display-box"><div id="stopwatch-time">00:00.00</div></div>
                 <div class="stopwatch-btn-group">
                     <button id="btn-stopwatch-lap" class="btn btn-stopwatch-sub" disabled>랩타임</button>
                     <button id="btn-stopwatch-start" class="btn btn-stopwatch-main">시작</button>
                 </div>
-                <div class="lap-records-container"><ul id="lap-list"></ul></div>
+                
+                <div class="card news-section" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 12px;">📺 실시간 모닝 뉴스</h3>
+                    <div id="news-list" class="news-list">
+                        </div>
+                </div>
             </main>
         </div>
 
@@ -181,33 +191,28 @@
                 </div>
                 <div class="theme-scroll-container">
                     <div class="theme-picker-grid">
-                        <button class="btn-theme-select" data-theme="dark">
-                            <div class="color-preview" style="background:#121214;"></div><span>기본 블랙</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="red">
-                            <div class="color-preview" style="background:#e53e3e;"></div><span>패션 레드</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="blue">
-                            <div class="color-preview" style="background:#3b82f6;"></div><span>네온 블루</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="green">
-                            <div class="color-preview" style="background:#10b981;"></div><span>포레스트 그린</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="purple">
-                            <div class="color-preview" style="background:#8b5cf6;"></div><span>미스틱 퍼플</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="yellow">
-                            <div class="color-preview" style="background:#ecc94b;"></div><span>선샤인 옐로우</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="pink">
-                            <div class="color-preview" style="background:#ed64a6;"></div><span>체리 블라썸</span>
-                        </button>
-                        <button class="btn-theme-select" data-theme="mint">
-                            <div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span>
-                        </button>
+                        <button class="btn-theme-select" data-theme="dark"><div class="color-preview" style="background:#121214;"></div><span>기본 블랙</span></button>
+                        <button class="btn-theme-select" data-theme="red"><div class="color-preview" style="background:#e53e3e;"></div><span>패션 레드</span></button>
+                        <button class="btn-theme-select" data-theme="blue"><div class="color-preview" style="background:#3b82f6;"></div><span>네온 블루</span></button>
+                        <button class="btn-theme-select" data-theme="green"><div class="color-preview" style="background:#10b981;"></div><span>포레스트 그린</span></button>
+                        <button class="btn-theme-select" data-theme="purple"><div class="color-preview" style="background:#8b5cf6;"></div><span>미스틱 퍼플</span></button>
+                        <button class="btn-theme-select" data-theme="yellow"><div class="color-preview" style="background:#ecc94b;"></div><span>선샤인 옐로우</span></button>
+                        <button class="btn-theme-select" data-theme="pink"><div class="color-preview" style="background:#ed64a6;"></div><span>체리 블라썸</span></button>
+                        <button class="btn-theme-select" data-theme="mint"><div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span></button>
                     </div>
                 </div>
                 <button id="btn-theme-close" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%; background:#3a3a40; border-radius:12px; border:none;">닫기</button>
+            </div>
+        </div>
+
+        <div id="news-modal" class="modal-overlay">
+            <div class="modal-content" style="max-width: 380px; padding: 20px;">
+                <div class="modal-header">
+                    <h2 id="news-modal-title" style="font-size: 18px; margin-bottom: 15px; color:#f6e05e; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: left;">뉴스 제목</h2>
+                </div>
+                <div id="news-modal-video" style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #000; min-height: 180px;"></div>
+                <p id="news-modal-desc" style="font-size: 13px; color: #cbd5e0; line-height: 1.6; text-align: left; margin-bottom: 20px; padding: 0 5px;"></p>
+                <button id="btn-close-news" class="btn btn-danger btn-lg" style="background:#3a3a40; border:none;">영상 닫기</button>
             </div>
         </div>
 
@@ -218,7 +223,7 @@
             <div class="v-line"></div>
             <button class="nav-item" data-target="screen-weather-tab"><span class="nav-icon">☀️</span><span class="nav-label">날씨</span></button>
             <div class="v-line"></div>
-            <button class="nav-item" data-target="screen-stopwatch-tab"><span class="nav-icon">⏱️</span><span class="nav-label">스톱워치</span></button>
+            <button class="nav-item" data-target="screen-stopwatch-tab"><span class="nav-icon">⏱️</span><span class="nav-label">뉴스/기능</span></button>
         </nav>
 
     </div>
