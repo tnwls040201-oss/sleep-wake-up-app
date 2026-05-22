@@ -18,7 +18,7 @@ let stopwatchElapsedTime = 0;
 let isStopwatchRunning = false;
 let stopwatchLapCount = 0;
 
-// 💡 15개의 다채로운 미션 풀 추가 완료!
+// 15개 미션
 const missionPool = [
     { type: "camera", title: "냉장고 문 열고 인증샷 찍기", desc: "주방 냉장고 안의 우유나 계란이 보이게 셔터를 누르세요!", target: "🥛 냉장고 내부" },
     { type: "camera", title: "창밖 풍경 찍기", desc: "커튼을 걷고 상쾌한 아침 하늘을 찍어보세요.", target: "⛅ 아침 하늘" },
@@ -42,6 +42,13 @@ const tarotCards = [
     { name: "XXI. THE WORLD (세계)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/RWS_Tarot_21_World.jpg/300px-RWS_Tarot_21_World.jpg", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." },
     { name: "I. THE MAGICIAN (마법사)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/RWS_Tarot_01_Magician.jpg/300px-RWS_Tarot_01_Magician.jpg", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
     { name: "X. WHEEL OF Fortune (운명의 수레바퀴)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." }
+];
+
+// 💡 유튜브 뉴스 가상 데이터 로직
+const mockNewsData = [
+    { id: "M7lc1UVf-VE", title: "[속보] 2026년 최신 AI 기술 트렌드 총정리", src: "IT/과학", desc: "생성형 AI의 발전과 앞으로의 미래 전망에 대해 유튜브로 자세히 알아봅니다." },
+    { id: "jNQXAC9IVRw", title: "오늘의 글로벌 경제 지표 및 증시 현황", src: "경제/주식", desc: "간밤의 뉴욕 증시 흐름과 오늘 국내 시장에 미칠 영향을 분석합니다." },
+    { id: "dQw4w9WgXcQ", title: "전국 대부분 비... 낮에도 서늘한 날씨 주의", src: "기상청", desc: "오늘 전국적으로 흐리고 비가 내리며 기온이 크게 떨어질 전망입니다. 외출 시 겉옷과 우산을 꼭 챙기세요." }
 ];
 
 function initApp() {
@@ -93,10 +100,30 @@ function initApp() {
         });
     }
 
+    // 💡 수면 주파수 애니메이션 바인딩
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
-    const btnViewReport = document.getElementById('btn-view-report');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
+
+    if(btnToggleSleep) {
+        btnToggleSleep.addEventListener('click', () => {
+            isRecordingSleep = !isRecordingSleep;
+            if(isRecordingSleep) {
+                btnToggleSleep.textContent = "측정 중단하기 (기록 저장)";
+                btnToggleSleep.style.background = "#e53e3e"; btnToggleSleep.style.color = "#ffffff";
+                
+                if(sleepWaveBars) sleepWaveBars.classList.add('playing'); // 파형 시작!
+                if(sleepWaveStatus) { sleepWaveStatus.textContent = "🎙️ 수면 분석 중..."; sleepWaveStatus.style.color = "#fc8181"; }
+            } else {
+                btnToggleSleep.textContent = "수면 측정하기";
+                btnToggleSleep.style.background = "#ffffff"; btnToggleSleep.style.color = "#000000";
+                
+                if(sleepWaveBars) sleepWaveBars.classList.remove('playing'); // 파형 정지
+                if(sleepWaveStatus) { sleepWaveStatus.textContent = "측정 대기 중"; sleepWaveStatus.style.color = "#a0aec0"; }
+                alert("💾 수면 주파수 분석이 안전하게 종료되어 저장되었습니다.");
+            }
+        });
+    }
 
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
@@ -130,6 +157,38 @@ function initApp() {
     const btnStopwatchStart = document.getElementById('btn-stopwatch-start');
     const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
     const lapList = document.getElementById('lap-list');
+
+    // 💡 유튜브 뉴스 생성기 연동
+    const newsListEl = document.getElementById('news-list');
+    if(newsListEl) {
+        mockNewsData.forEach(news => {
+            const el = document.createElement('div');
+            el.className = 'news-item';
+            el.innerHTML = `
+                <img src="https://img.youtube.com/vi/${news.id}/mqdefault.jpg" class="news-thumb">
+                <div class="news-text">
+                    <div class="news-title">${news.title}</div>
+                    <div class="news-src">${news.src}</div>
+                </div>
+            `;
+            el.addEventListener('click', () => {
+                document.getElementById('news-modal-title').textContent = news.title;
+                // 유튜브 아이프레임 비디오 자동재생 삽입
+                document.getElementById('news-modal-video').innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${news.id}?autoplay=1" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>`;
+                document.getElementById('news-modal-desc').textContent = news.desc;
+                document.getElementById('news-modal').classList.add('active');
+            });
+            newsListEl.appendChild(el);
+        });
+    }
+
+    const btnCloseNews = document.getElementById('btn-close-news');
+    if (btnCloseNews) {
+        btnCloseNews.addEventListener('click', () => {
+            document.getElementById('news-modal').classList.remove('active');
+            document.getElementById('news-modal-video').innerHTML = ""; // 영상 종료
+        });
+    }
 
     if (btnThemeOpen) { btnThemeOpen.addEventListener('click', () => { if(themeModal) themeModal.classList.add('active'); }); }
     if (btnThemeClose) { btnThemeClose.addEventListener('click', () => { if(themeModal) themeModal.classList.remove('active'); }); }
@@ -276,29 +335,6 @@ function initApp() {
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-    // 수면 측정
-    if(btnToggleSleep) {
-        btnToggleSleep.addEventListener('click', () => {
-            isRecordingSleep = !isRecordingSleep;
-            if(isRecordingSleep) {
-                btnToggleSleep.textContent = "측정 중단하기 (기록 저장)";
-                btnToggleSleep.style.background = "#e53e3e"; btnToggleSleep.style.color = "#ffffff";
-                
-                if(sleepWaveBars) sleepWaveBars.classList.add('playing');
-                if(sleepWaveStatus) { sleepWaveStatus.textContent = "측정 중.."; sleepWaveStatus.style.color = "#fc8181"; }
-                alert("🎙️ 실시간 수면 소음 및 주파수 측정을 시작합니다.");
-            } else {
-                btnToggleSleep.textContent = "수면 측정하기";
-                btnToggleSleep.style.background = "#ffffff"; btnToggleSleep.style.color = "#000000";
-                
-                if(sleepWaveBars) sleepWaveBars.classList.remove('playing');
-                if(sleepWaveStatus) { sleepWaveStatus.textContent = "대기 중"; sleepWaveStatus.style.color = "#a0aec0"; }
-                alert("💾 수면 주파수 측정이 안전하게 종료되어 업로드되었습니다.");
-            }
-        });
-    }
-    if(btnViewReport) { btnViewReport.addEventListener('click', () => { alert("📊 [수면 리포트 요약]\n\n총 수면 시간: 6시간 42분\n깊은 수면: 23% (정상)\n잠버릇 분석: 특이 소음 없음."); }); }
-
     // 백색소음
     if(btnToggleNoise) {
         btnToggleNoise.addEventListener('click', () => {
@@ -415,7 +451,6 @@ function initApp() {
         if(dynamicMissionBox) { dynamicMissionBox.innerHTML = ""; buildInteractiveMission(currentMission); }
     }
 
-    // 💡 15개의 다채로운 미션을 화면에 그려주는 핵심 모듈
     function buildInteractiveMission(mission) {
         const box = document.createElement('div'); box.className = "interactive-box";
         switch (mission.type) {
@@ -426,7 +461,6 @@ function initApp() {
                     const view = document.querySelector('.camera-view'); if(view) view.style.background = "#059669"; setTimeout(completeMission, 600);
                 });
                 break;
-                
             case "typing":
                 box.innerHTML = `<p class="target-sentence">똑같이 치세요: <br>"${mission.target}"</p><input type="text" id="typing-input-field" class="typing-input" autocomplete="off"><button id="btn-action-trigger" class="btn btn-primary btn-lg">입력 확인</button>`;
                 dynamicMissionBox.appendChild(box);
@@ -435,7 +469,6 @@ function initApp() {
                     if (field.value.trim() === mission.target) completeMission(); else { alert("오타 발생! 다시 치세요."); field.value = ""; field.focus(); }
                 });
                 break;
-                
             case "math":
                 box.innerHTML = `<p class="target-sentence">암산 문제: <br>"${mission.question}"</p><input type="number" id="math-input-field" class="typing-input" autocomplete="off"><button id="btn-action-trigger" class="btn btn-primary btn-lg">정답 제출</button>`;
                 dynamicMissionBox.appendChild(box);
@@ -445,7 +478,6 @@ function initApp() {
                     else { alert("오답입니다! 잠이 덜 깨셨나요?"); field.value = ""; field.focus(); }
                 });
                 break;
-                
             case "hold":
                 box.innerHTML = `<div class="camera-view" style="height:90px;"><span class="camera-overlay-text">🧘 모션 센서 연동 중</span></div><button id="btn-action-hold" class="btn btn-warning btn-lg">${mission.label}</button>`;
                 dynamicMissionBox.appendChild(box);
@@ -456,13 +488,11 @@ function initApp() {
                 const endHold = () => { clearInterval(holdTimer); currentHoldCount = 0; holdBtn.textContent = mission.label; };
                 holdBtn.addEventListener('mousedown', startHold); holdBtn.addEventListener('mouseup', endHold); holdBtn.addEventListener('touchstart', startHold); holdBtn.addEventListener('touchend', endHold);
                 break;
-                
             case "timer":
                 box.innerHTML = `<p>⚠️ 팔을 위로 올리고 정지하세요!</p><div class="progress-container"><div id="stretch-progress-bar" class="progress-bar"></div></div>`;
                 dynamicMissionBox.appendChild(box);
                 setTimeout(() => { const b = document.getElementById('stretch-progress-bar'); if(b) b.style.width = "100%"; }, 50); setTimeout(completeMission, mission.duration * 1000);
                 break;
-                
             case "puzzle":
                 const bc = mission.baseChar || "O";
                 const tc = mission.targetChar || "Q";
@@ -472,7 +502,6 @@ function initApp() {
                 if(gp) { for (let i = gp.children.length; i >= 0; i--) gp.appendChild(gp.children[Math.random() * i | 0]); }
                 document.querySelectorAll('.btn-puzzle').forEach(btn => { btn.addEventListener('click', (e) => { if (e.target.id === 'correct-puzzle-piece') completeMission(); else alert('틀렸습니다! 다시 찾으세요.'); }); });
                 break;
-                
             case "rps":
                 box.innerHTML = `<p>AI를 상대로 <strong>${mission.target}연승</strong> 하세요!</p><div class="rps-hands"><div id="hand-player">❔</div><div>VS</div><div id="hand-ai">🤖</div></div><div class="rps-buttons"><button class="btn-rps" data-choice="✊">✊</button><button class="btn-rps" data-choice="✌️">✌️</button><button class="btn-rps" data-choice="🖐️">🖐️</button></div>`;
                 dynamicMissionBox.appendChild(box); let wins = 0;
@@ -484,7 +513,6 @@ function initApp() {
                     });
                 });
                 break;
-                
             case "click-loop":
                 const btnLbl = mission.btnLabel || "연타!!";
                 box.innerHTML = `<p>버튼을 난타하여 게이지를 완충하세요!</p><div class="progress-container"><div id="brush-progress-bar" class="progress-bar"></div></div><button id="btn-brush-click" class="btn btn-primary btn-lg">${btnLbl}</button>`;
@@ -493,7 +521,6 @@ function initApp() {
                     clicks++; const p = (clicks / mission.target) * 100; document.getElementById('brush-progress-bar').style.width = `${p}%`; if(clicks >= mission.target) completeMission();
                 });
                 break;
-                
             case "voice":
                 box.innerHTML = `<h3 style="color:#f6e05e; margin: 15px 0;">"${mission.target}"</h3><button id="btn-voice-rec" class="btn btn-danger btn-lg">🎤 크게 외치기</button>`;
                 dynamicMissionBox.appendChild(box); document.getElementById('btn-voice-rec').addEventListener('click', () => { setTimeout(completeMission, 1200); });
