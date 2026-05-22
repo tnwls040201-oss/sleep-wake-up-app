@@ -17,7 +17,6 @@
 .theme-blue { --bg-primary: #0a192f; --card-bg: #172a45; --color-primary: #3b82f6; --border-color: rgba(59, 130, 246, 0.15); }
 .theme-green { --bg-primary: #062419; --card-bg: #0f3d2a; --color-primary: #10b981; --border-color: rgba(16, 185, 129, 0.15); }
 .theme-purple { --bg-primary: #1e1b4b; --card-bg: #312e81; --color-primary: #8b5cf6; --border-color: rgba(139, 92, 246, 0.15); }
-
 .theme-yellow { --bg-primary: #2b2200; --card-bg: #453600; --color-primary: #ecc94b; --border-color: rgba(236, 201, 75, 0.15); }
 .theme-pink { --bg-primary: #361020; --card-bg: #5f1b36; --color-primary: #ed64a6; --border-color: rgba(237, 100, 166, 0.15); }
 .theme-mint { --bg-primary: #082925; --card-bg: #0f4039; --color-primary: #4fd1c5; --border-color: rgba(79, 209, 197, 0.15); }
@@ -38,7 +37,7 @@ body { background-color: #09090b; color: var(--text-main); display: flex; justif
 @keyframes auroraBackground { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* 컨테이너 */
+/* 컨테이너 및 탭 */
 .app-container { width: 100%; max-width: 420px; height: 780px; background: var(--bg-primary); border-radius: 32px; box-shadow: var(--shadow); overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
 .main-tab-screen, .screen { display: none; padding: 25px 20px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
 .main-tab-screen.active, .screen.active { display: flex !important; }
@@ -47,6 +46,21 @@ body { background-color: #09090b; color: var(--text-main); display: flex; justif
 header { text-align: left; margin-bottom: 20px; padding-left: 5px; }
 header h1 { font-size: 26px; font-weight: 800; }
 .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* 설정 탭 */
+.settings-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 20px; margin-bottom: 15px; }
+.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
+.settings-row:last-child { border-bottom: none; }
+.settings-row:hover { opacity: 0.8; }
+.row-left { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.row-right { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.chevron { color: #555; font-size: 12px; }
+.point-text { color: var(--color-primary); font-weight: bold; }
+.status-text { color: var(--text-muted); font-size: 13px; }
+.profile-row { padding: 15px 0 20px 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.profile-info { display: flex; align-items: center; gap: 15px; }
+.profile-avatar { width: 50px; height: 50px; border-radius: 50%; background: #3a3a40; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; }
+.profile-name { font-size: 18px; font-weight: bold; }
 
 /* 공통 카드 및 로비 */
 .card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
@@ -74,7 +88,7 @@ input[type="time"] { flex: 1; padding: 10px; border-radius: 12px; border: none; 
 input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cursor: pointer; }
 #alarm-status-text { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
 
-/* 💡 수면 주파수 서식 및 모션 */
+/* 수면 서식 */
 .sleep-tracker-card { text-align: center; padding: 30px 20px; background: var(--card-bg); }
 .sleep-tracker-card h2 { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
 .sleep-tracker-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
@@ -99,11 +113,10 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .btn-noise-play { width: 45px; height: 45px; border-radius: 50%; border: none; background: var(--color-primary); color: white; cursor: pointer; font-size: 16px; display: flex; justify-content: center; align-items: center; transition: transform 0.1s; }
 .btn-noise-play:active { transform: scale(0.95); }
 
-/* 💡 날씨 레이아웃 (3열, 서울 3칸) */
+/* 날씨 레이아웃 */
 .weather-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; width: 100% !important; margin-bottom: 20px !important; }
 .weather-grid .weather-card { background: var(--card-bg) !important; border-radius: 18px !important; padding: 16px 8px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-/* 서울 럭셔리 + 가로 3칸 */
 .weather-grid .seoul-card { grid-column: span 3 !important; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important; box-shadow: 0 10px 25px rgba(246, 224, 94, 0.2) !important; border: 2px solid rgba(246, 224, 94, 0.3) !important; flex-direction: row !important; justify-content: space-between !important; padding: 18px 30px !important; align-items: center !important; }
 .seoul-title-box { text-align: left; }
 .seoul-title-box .region { font-size: 22px !important; font-weight: 800 !important; color: #ffffff !important; margin-bottom: 2px; }
@@ -111,7 +124,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .seoul-weather-box { display: flex; align-items: center; gap: 20px; }
 .seoul-weather-box .temp { font-size: 28px !important; font-weight: bold !important; color: #ffffff !important; }
 
-/* 💡 날씨 모션 애니메이션 클래스 */
+/* 날씨 모션 애니메이션 클래스 */
 .weather-anim { position: relative; width: 45px; height: 45px; display: flex; justify-content: center; border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; background: rgba(0,0,0,0.2); }
 .anim-cloud { position: absolute; z-index: 2; font-size: 24px; top: 2px; }
 .anim-rain { position: absolute; z-index: 1; font-size: 14px; animation: rainAnim 0.8s linear infinite; }
@@ -134,7 +147,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .morning-menu-grid.alternative-layout .menu-item .icon { font-size: 28px !important; margin-bottom: 6px !important; }
 .morning-menu-grid.alternative-layout .menu-item span { font-size: 11px !important; font-weight: 600 !important; color: #cbd5e0 !important; }
 
-/* 💡 뉴스 섹션 서식 */
+/* 뉴스 섹션 서식 */
 .news-list { display: flex; flex-direction: column; gap: 10px; }
 .news-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; gap: 12px; cursor: pointer; transition: 0.2s; align-items: center; border: 1px solid transparent; }
 .news-item:hover { background: rgba(255,255,255,0.1); border-color: #4f46e5; }
@@ -151,7 +164,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .btn-stopwatch-main.running { background: #e53e3e; }
 .btn-stopwatch-sub { flex: 1; padding: 16px; font-size: 15px; border-radius: 14px; color: #cbd5e0; background: #27272a; }
 
-/* 미션 및 모달 엔진 등 (유지) */
+/* 미션 및 모달 엔진 등 */
 .alarm-flash-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(229,62,62,0.12); pointer-events: none; animation: flash 1s infinite alternate; }
 @keyframes flash { from { opacity: 0; } to { opacity: 1; } }
 .mission-header { text-align: center; margin-bottom: 20px; width: 100%; }
@@ -184,9 +197,8 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-.bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #18181c; border-top: 1px solid #27272a; display: flex; justify-content: space-around; align-items: center; z-index: 10; }
-.bottom-nav-bar.style-quad .nav-item { width: 22%; }
-.nav-item { background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; }
+.bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #18181c; border-top: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; z-index: 10; padding: 0 5px; }
+.bottom-nav-bar.style-quad .nav-item { flex: 1; width: auto; background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; }
 .nav-item.active { color: #ffffff; }
 .nav-icon { font-size: 18px; margin-bottom: 4px; }
 .nav-label { font-size: 10px; font-weight: 600; }
@@ -206,6 +218,18 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .diary-container { text-align: center; }
 .event-banner { background: linear-gradient(135deg, #fefcbf 0%, #f6e05e 100%); color: #744210; padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 12px; font-weight: 600; line-height: 1.5; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .event-banner strong { font-size: 14px; color: #b7791f; display: inline-block; margin-bottom: 5px; }
+
+/* 상점 모달 스타일 추가 */
+.shop-items-container { max-height: 350px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
+.shop-items-container::-webkit-scrollbar { width: 6px; }
+.shop-items-container::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+.shop-item { display: flex; align-items: center; background: #27272a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; }
+.shop-item:hover { background: #3a3a40; border-color: #666; }
+.shop-item-icon { font-size: 30px; margin-right: 15px; background: rgba(255,255,255,0.1); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 12px; }
+.shop-item-info { flex: 1; text-align: left; }
+.shop-item-title { font-size: 14px; font-weight: bold; color: white; margin-bottom: 4px; line-height: 1.3;}
+.shop-item-price { font-size: 12px; color: #f6e05e; font-weight: 600; }
+.shop-item-stock { font-size: 11px; color: #fc8181; font-weight: bold; padding: 4px 8px; background: rgba(229,62,62,0.1); border-radius: 8px; white-space: nowrap;}
 
 .theme-scroll-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
 .theme-scroll-container::-webkit-scrollbar { width: 6px; }
