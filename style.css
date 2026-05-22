@@ -25,6 +25,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 body { background-color: #09090b; color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
 
+/* 스플래시 */
 #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff5e62, #ff9966, #ff5e62, #ff9966); background-size: 400% 400%; animation: auroraBackground 10s ease infinite; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
 #splash-screen.fade-out { opacity: 0; visibility: hidden; }
 .splash-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
@@ -37,6 +38,7 @@ body { background-color: #09090b; color: var(--text-main); display: flex; justif
 @keyframes auroraBackground { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
+/* 컨테이너 */
 .app-container { width: 100%; max-width: 420px; height: 780px; background: var(--bg-primary); border-radius: 32px; box-shadow: var(--shadow); overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
 .main-tab-screen, .screen { display: none; padding: 25px 20px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
 .main-tab-screen.active, .screen.active { display: flex !important; }
@@ -46,6 +48,7 @@ header { text-align: left; margin-bottom: 20px; padding-left: 5px; }
 header h1 { font-size: 26px; font-weight: 800; }
 .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
+/* 공통 카드 및 로비 */
 .card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
 .card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
 
@@ -53,7 +56,6 @@ header h1 { font-size: 26px; font-weight: 800; }
 #screen-lobby .card { padding: 15px; margin-bottom: 12px; }
 #screen-lobby h3 { font-size: 16px; margin-bottom: 8px; }
 #screen-lobby .test-box p { margin-bottom: 8px; font-size: 12px; }
-
 #my-schedule-input { width: 100%; height: 60px; background: #2e2e33; color: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; font-size: 13px; resize: none; outline: none; }
 #my-schedule-input::placeholder { color: #888; }
 
@@ -72,40 +74,58 @@ input[type="time"] { flex: 1; padding: 10px; border-radius: 12px; border: none; 
 input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cursor: pointer; }
 #alarm-status-text { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
 
-/* 수면 서식 */
+/* 💡 수면 주파수 서식 및 모션 */
 .sleep-tracker-card { text-align: center; padding: 30px 20px; background: var(--card-bg); }
 .sleep-tracker-card h2 { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
 .sleep-tracker-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
 .waveform-box { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .wave-time { font-size: 12px; color: var(--text-muted); }
-.wave-bars { display: flex; align-items: center; gap: 4px; height: 30px; }
-.bar { width: 4px; height: 15px; background: #4f46e5; border-radius: 2px; }
-.bar.tall { height: 25px; }
-.wave-bars.playing .bar { animation: waveAnim 0.6s infinite alternate; }
-@keyframes waveAnim { from { height: 5px; } to { height: 30px; } }
-.sleep-report-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; }
+.wave-bars { display: flex; align-items: center; gap: 4px; height: 35px; }
+.bar { width: 5px; height: 12px; background: #4f46e5; border-radius: 2px; transition: height 0.2s; }
+.bar.tall { height: 20px; }
+.wave-bars.playing .bar { animation: waveAnim 0.4s ease-in-out infinite alternate; }
+.wave-bars.playing .bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bars.playing .bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bars.playing .bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bars.playing .bar:nth-child(5) { animation-delay: 0.1s; }
+.wave-bars.playing .bar:nth-child(6) { animation-delay: 0.4s; }
+.wave-bars.playing .bar:nth-child(7) { animation-delay: 0.2s; }
+@keyframes waveAnim { from { height: 8px; } to { height: 35px; } }
 
+.sleep-report-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; }
 .noise-card { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: 15px !important; }
 .noise-info h4 { font-size: 14px; margin-bottom: 4px; color: var(--text-main); }
 .noise-info p { font-size: 12px; color: var(--text-muted); margin: 0; }
 .btn-noise-play { width: 45px; height: 45px; border-radius: 50%; border: none; background: var(--color-primary); color: white; cursor: pointer; font-size: 16px; display: flex; justify-content: center; align-items: center; transition: transform 0.1s; }
 .btn-noise-play:active { transform: scale(0.95); }
 
-/* 날씨 서식 */
+/* 💡 날씨 레이아웃 (3열, 서울 3칸) */
 .weather-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; width: 100% !important; margin-bottom: 20px !important; }
 .weather-grid .weather-card { background: var(--card-bg) !important; border-radius: 18px !important; padding: 16px 8px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-.weather-grid .seoul-card { grid-column: span 2 !important; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important; box-shadow: 0 10px 25px rgba(246, 224, 94, 0.2) !important; border: 2px solid rgba(246, 224, 94, 0.3) !important; flex-direction: row !important; justify-content: space-between !important; padding: 15px 25px !important; align-items: center !important; }
+/* 서울 럭셔리 + 가로 3칸 */
+.weather-grid .seoul-card { grid-column: span 3 !important; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important; box-shadow: 0 10px 25px rgba(246, 224, 94, 0.2) !important; border: 2px solid rgba(246, 224, 94, 0.3) !important; flex-direction: row !important; justify-content: space-between !important; padding: 18px 30px !important; align-items: center !important; }
 .seoul-title-box { text-align: left; }
-.seoul-title-box .region { font-size: 20px !important; font-weight: 800 !important; color: #ffffff !important; margin-bottom: 2px; }
-.luxury-label { display: inline-block; font-size: 9px; font-weight: bold; color: #f6e05e; opacity: 0.8; letter-spacing: 0.5px; }
-.seoul-weather-box { display: flex; align-items: center; gap: 15px; }
-.seoul-weather-box .sky-icon { font-size: 32px !important; border: 2px solid rgba(255,255,255,0.15) !important; border-radius: 50% !important; padding: 8px !important; background: rgba(0,0,0,0.1); margin: 0 !important;}
-.seoul-weather-box .temp { font-size: 26px !important; font-weight: bold !important; color: #ffffff !important; }
+.seoul-title-box .region { font-size: 22px !important; font-weight: 800 !important; color: #ffffff !important; margin-bottom: 2px; }
+.luxury-label { display: inline-block; font-size: 10px; font-weight: bold; color: #f6e05e; opacity: 0.9; letter-spacing: 0.5px; margin-top: 4px;}
+.seoul-weather-box { display: flex; align-items: center; gap: 20px; }
+.seoul-weather-box .temp { font-size: 28px !important; font-weight: bold !important; color: #ffffff !important; }
 
-.weather-grid .weather-card:not(.seoul-card) .region { font-size: 13px !important; font-weight: bold !important; color: var(--text-main) !important; margin-bottom: 4px; }
-.weather-grid .weather-card:not(.seoul-card) .sky-icon { font-size: 24px !important; margin: 4px 0 !important; }
-.weather-grid .weather-card:not(.seoul-card) .temp { font-size: 14px !important; font-weight: 700 !important; color: var(--text-main) !important; }
+/* 💡 날씨 모션 애니메이션 클래스 */
+.weather-anim { position: relative; width: 45px; height: 45px; display: flex; justify-content: center; border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; background: rgba(0,0,0,0.2); }
+.anim-cloud { position: absolute; z-index: 2; font-size: 24px; top: 2px; }
+.anim-rain { position: absolute; z-index: 1; font-size: 14px; animation: rainAnim 0.8s linear infinite; }
+@keyframes rainAnim { 0% { top: 12px; opacity: 1; transform: scale(1); } 100% { top: 32px; opacity: 0; transform: scale(0.5); } }
+
+.anim-float { animation: floatAnim 3s ease-in-out infinite; display: inline-block; }
+.anim-float-delay { animation: floatAnim 3s ease-in-out infinite 1.5s; display: inline-block; }
+.anim-spin { animation: spinAnim 10s linear infinite; display: inline-block; }
+@keyframes floatAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes spinAnim { 100% { transform: rotate(360deg); } }
+
+.weather-grid .weather-card:not(.seoul-card) .region { font-size: 13px !important; font-weight: bold !important; color: var(--text-main) !important; margin-bottom: 6px; }
+.weather-grid .weather-card:not(.seoul-card) .sky-icon { font-size: 28px !important; margin: 6px 0 !important; }
+.weather-grid .weather-card:not(.seoul-card) .temp { font-size: 15px !important; font-weight: 700 !important; color: var(--text-main) !important; }
 
 /* 메뉴 아이콘 */
 .morning-menu-grid.alternative-layout { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; margin-top: 15px !important; }
@@ -114,18 +134,24 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .morning-menu-grid.alternative-layout .menu-item .icon { font-size: 28px !important; margin-bottom: 6px !important; }
 .morning-menu-grid.alternative-layout .menu-item span { font-size: 11px !important; font-weight: 600 !important; color: #cbd5e0 !important; }
 
+/* 💡 뉴스 섹션 서식 */
+.news-list { display: flex; flex-direction: column; gap: 10px; }
+.news-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; gap: 12px; cursor: pointer; transition: 0.2s; align-items: center; border: 1px solid transparent; }
+.news-item:hover { background: rgba(255,255,255,0.1); border-color: #4f46e5; }
+.news-thumb { width: 90px; height: 50px; border-radius: 8px; object-fit: cover; background: #000; }
+.news-text { flex: 1; }
+.news-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.news-src { font-size: 11px; color: #a0aec0; }
+
 /* 스톱워치 서식 */
-.stopwatch-display-box { background: rgba(0,0,0,0.2); border-radius: 24px; padding: 50px 20px; text-align: center; margin-bottom: 30px; }
+.stopwatch-display-box { background: rgba(0,0,0,0.2); border-radius: 24px; padding: 30px 20px; text-align: center; margin-bottom: 20px; }
 #stopwatch-time { font-size: 52px; font-weight: 800; font-family: monospace; }
-.stopwatch-btn-group { display: flex; gap: 15px; margin-bottom: 25px; }
+.stopwatch-btn-group { display: flex; gap: 15px; margin-bottom: 20px; }
 .btn-stopwatch-main { flex: 2; padding: 16px; font-size: 16px; border-radius: 14px; color: white; background: #4f46e5; }
 .btn-stopwatch-main.running { background: #e53e3e; }
 .btn-stopwatch-sub { flex: 1; padding: 16px; font-size: 15px; border-radius: 14px; color: #cbd5e0; background: #27272a; }
-.lap-records-container { flex: 1; background: var(--card-bg); border-radius: 16px; padding: 10px 15px; overflow-y: auto; max-height: 250px; }
-#lap-list { list-style: none; }
-#lap-list li { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; }
 
-/* 미션 화면 */
+/* 미션 및 모달 엔진 등 (유지) */
 .alarm-flash-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(229,62,62,0.12); pointer-events: none; animation: flash 1s infinite alternate; }
 @keyframes flash { from { opacity: 0; } to { opacity: 1; } }
 .mission-header { text-align: center; margin-bottom: 20px; width: 100%; }
@@ -133,7 +159,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .badge-step1 { background-color: var(--color-warning); }
 .badge-step2 { background-color: var(--color-primary); }
 .badge-step3 { background-color: #805ad5; }
-
 .mission-content-area { width: 100% !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; background: rgba(255,255,255,0.04); border-radius: var(--radius); padding: 20px; min-height: 280px; margin-bottom: 20px; }
 .mission-footer { text-align: center; width: 100%; }
 .warning-text { font-size: 12px; color: var(--color-danger); font-weight: bold; }
@@ -149,19 +174,16 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .btn-puzzle { background: #3a3a40; color: white; border: none; font-size: 20px; padding: 12px 0; border-radius: 8px; cursor: pointer; }
 .progress-container { width: 100%; background: #3a3a40; height: 10px; border-radius: 5px; overflow: hidden; margin: 12px 0; }
 .progress-bar { width: 0%; height: 100%; background: var(--color-success); transition: width 1s linear; }
-
 .survival-box { text-align: center; padding-top: 40px; }
 .survival-icon { font-size: 60px; margin-bottom: 15px; }
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 모달 엔진 */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* 하단 네비게이션 */
 .bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #18181c; border-top: 1px solid #27272a; display: flex; justify-content: space-around; align-items: center; z-index: 10; }
 .bottom-nav-bar.style-quad .nav-item { width: 22%; }
 .nav-item { background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; }
@@ -170,7 +192,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .nav-label { font-size: 10px; font-weight: 600; }
 .bottom-nav-bar.style-quad .v-line { width: 1px; height: 26px; background-color: var(--border-color); flex-shrink: 0; margin: 0; opacity: 0.4; transition: background-color 0.3s ease; }
 
-/* 타로 이미지 전용 스타일 */
 #fortune-confirm-view { text-align: center; width: 100%; }
 .tarot-container { background: rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
 .tarot-card-img { width: 120px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 15px; display: none; }
@@ -178,21 +199,17 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 #tarot-card-desc { font-size: 13px; line-height: 1.6; color: #cbd5e0; }
 #fortune-date { font-size: 18px; font-weight: bold; color: white; }
 
-/* 일기장 및 이벤트 배너 스타일 */
 .mood-selector { display: flex; justify-content: space-between; gap: 5px; margin-top: 20px; margin-bottom: 15px; }
 .btn-mood { flex: 1; padding: 15px 5px; border-radius: 12px; font-size: 26px; border: 2px solid transparent; background: #27272a; cursor: pointer; transition: 0.2s; }
 .btn-mood.selected { background-color: rgba(79, 70, 229, 0.1); border-color: var(--color-primary); }
 .diary-textarea { width: 100%; height: 120px; border-radius: 12px; border: 1px solid var(--border-color); background: #2e2e33; color: white; padding: 12px; font-size: 14px; margin-bottom: 15px; resize: none;}
 .diary-container { text-align: center; }
-
 .event-banner { background: linear-gradient(135deg, #fefcbf 0%, #f6e05e 100%); color: #744210; padding: 15px; border-radius: 12px; margin-top: 15px; font-size: 12px; font-weight: 600; line-height: 1.5; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .event-banner strong { font-size: 14px; color: #b7791f; display: inline-block; margin-bottom: 5px; }
 
-/* 테마 선택 모달 그리드 서식 */
 .theme-scroll-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
 .theme-scroll-container::-webkit-scrollbar { width: 6px; }
 .theme-scroll-container::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
-
 .theme-picker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .btn-theme-select { background: #2a2a2d; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; transition: background 0.2s, border-color 0.2s; }
 .btn-theme-select:hover { background: #3a3a40; border-color: #666; }
