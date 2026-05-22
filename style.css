@@ -138,7 +138,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .noise-item span { font-size: 11px; font-weight: 600; color: white;}
 @keyframes spinBorder { 100% { transform: rotate(360deg); } }
 
-/* 💡 미세먼지 바 서식 (여백 조절) */
+/* 미세먼지 바 서식 */
 .dust-bar-wrapper { grid-column: span 3 !important; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 15px; margin-top: 5px; margin-bottom: 5px; }
 .dust-title { font-size: 13px; color: #cbd5e0; font-weight: 600; }
 .dust-badge { font-size: 13px; font-weight: 800; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 12px; }
@@ -181,11 +181,20 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .morning-menu-grid.alternative-layout .menu-item .icon { font-size: 24px !important; margin-bottom: 6px !important; }
 .morning-menu-grid.alternative-layout .menu-item span { font-size: 11px !important; font-weight: 600 !important; color: #cbd5e0 !important; }
 
-/* 💡 롤링 배너 컨테이너 (위치 하단으로 이동, 꽉차게 조정) */
-.weather-banner-container { width: 100%; height: 90px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.2); background: #3a3a40; }
-.weather-banner-track { display: flex; width: 200%; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-.w-banner-slide { width: 50%; height: 100%; }
-.w-banner-img { width: 100%; height: 100%; object-fit: cover; }
+/* 💡 꾸민 롤링 배너 컨테이너 */
+.weather-banner-container { width: 100%; height: 85px; border-radius: 12px; overflow: hidden; position: relative; margin-top: 15px; }
+.weather-banner-track { display: flex; width: 200%; height: 100%; transition: transform 0.5s ease-in-out; }
+.w-banner-slide { width: 50%; height: 100%; display: flex; align-items: center; padding: 0 20px; position: relative; }
+
+/* 배너 1 (파란색) */
+.banner-blue { background: #3182f6; color: white; justify-content: space-between; }
+.b-text-wrap { z-index: 2; }
+.b-title { font-size: 15px; font-weight: 800; line-height: 1.3; margin-bottom: 5px; }
+.b-sub { font-size: 11px; font-weight: 600; opacity: 0.9; }
+.b-icon { font-size: 40px; z-index: 1; }
+
+/* 배너 2 (하늘색) */
+.banner-lightblue { background: #7dd3fc; justify-content: center; }
 
 /* 뉴스 섹션 서식 */
 .news-list { display: flex; flex-direction: column; gap: 10px; }
@@ -235,6 +244,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
+/* 💡 모달 오버레이 수리 완료! */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
