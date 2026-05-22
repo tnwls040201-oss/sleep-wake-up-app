@@ -9,7 +9,7 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 💡 백색소음용 실제 오디오 객체 (구글 공식 고음질 사운드 서버)
+// 💡 백색소음용 실제 오디오 객체
 let sleepAudio = new Audio();
 sleepAudio.loop = true;
 let isPlayingNoise = false;
@@ -132,7 +132,7 @@ function initApp() {
         });
     });
 
-    // 💡 날씨 배너 슬라이드 자동화
+    // 💡 날씨 배너 자동 슬라이드
     const bannerTrack = document.getElementById('weather-banner-track');
     let bannerIndex = 0;
     if (bannerTrack) {
@@ -157,7 +157,7 @@ function initApp() {
         dustBadge.className = `dust-badge ${randomLevel.class}`;
     }
 
-    // 수면 주파수 애니메이션 바인딩
+    // 수면 주파수 바인딩
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
@@ -247,14 +247,14 @@ function initApp() {
         });
     }
 
-    // 💡 백색소음 멀티 선택 및 애니메이션/사운드 연동
+    // 백색소음 사운드 연동
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
     const noiseVisualizer = document.getElementById('noise-visualizer');
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // 💡 구글 액션 무료 제공 고화질 오디오 링크
+    // 구글 액션 무료 제공 고화질 오디오 링크
     const soundUrls = {
         "campfire": "https://actions.google.com/sounds/v1/foley/fire_crackling.ogg",
         "forest": "https://actions.google.com/sounds/v1/nature/crickets_and_insects.ogg",
@@ -341,6 +341,7 @@ function initApp() {
     const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
     const lapList = document.getElementById('lap-list');
 
+    // 스톱워치 랩타임 저장 연동
     let savedLaps = JSON.parse(localStorage.getItem('wakeme_laps') || '[]');
     function renderLaps() {
         if(!lapList) return;
@@ -510,7 +511,6 @@ function initApp() {
         const feedback = prompt("앱에 대한 소중한 의견을 남겨주세요:");
         if(feedback) alert("의견이 성공적으로 전송되었습니다. 검토 후 더 나은 서비스로 보답하겠습니다!");
     };
-
 
     if (btnThemeOpen) { btnThemeOpen.addEventListener('click', () => { if(themeModal) themeModal.classList.add('active'); }); }
     if (btnThemeClose) { btnThemeClose.addEventListener('click', () => { if(themeModal) themeModal.classList.remove('active'); }); }
