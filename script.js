@@ -1,7 +1,7 @@
 // ==========================================
 // 1. 글로벌 핵심 제어 변수 선언
 // ==========================================
-let alarmTime = null;
+let alarms = JSON.parse(localStorage.getItem('wakeme_alarms') || '[]');
 let currentMission = null;
 let activeAudioContext = null;
 let alarmOscillator = null;
@@ -9,9 +9,10 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 💡 백색소음용 실제 오디오 객체
+// 💡 백색소음용 오디오 (볼륨을 최대로 설정하여 잘 들리게 수정)
 let sleepAudio = new Audio();
 sleepAudio.loop = true;
+sleepAudio.volume = 1.0; 
 let isPlayingNoise = false;
 
 let stopwatchInterval = null;
@@ -87,9 +88,11 @@ function initApp() {
     const screenSurvival = document.getElementById('screen-survival');
     const clockEl = document.getElementById('clock');
     const dateStringEl = document.getElementById('date-string');
-    const alarmTimeInput = document.getElementById('alarm-time');
-    const btnToggleAlarm = document.getElementById('btn-toggle-alarm');
-    const alarmStatusText = document.getElementById('alarm-status-text');
+    
+    // 알람 설정 엘리먼트
+    const alarmTimeInput = document.getElementById('alarm-time-input');
+    const btnAddAlarm = document.getElementById('btn-add-alarm');
+    const alarmListContainer = document.getElementById('alarm-list-container');
     const btnTestAlarm = document.getElementById('btn-test-alarm');
 
     const missionBadge = document.getElementById('mission-badge');
@@ -119,10 +122,19 @@ function initApp() {
         });
     }
 
+    // IP 위치 날씨
+    const currentRegionEl = document.getElementById('current-region-name');
+    if(currentRegionEl) {
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if(data.city) { currentRegionEl.textContent = data.city; }
+            }).catch(e => console.log('IP fetch fail'));
+    }
+
     const settingShop = document.getElementById('setting-shop');
     const shopModal = document.getElementById('shop-modal');
     const btnCloseShop = document.getElementById('btn-close-shop');
-
     if(settingShop) settingShop.addEventListener('click', () => { if(shopModal) shopModal.classList.add('active'); });
     if(btnCloseShop) btnCloseShop.addEventListener('click', () => { if(shopModal) shopModal.classList.remove('active'); });
 
@@ -132,7 +144,7 @@ function initApp() {
         });
     });
 
-    // 💡 날씨 배너 자동 슬라이드
+    // 날씨 배너 슬라이드 자동화
     const bannerTrack = document.getElementById('weather-banner-track');
     let bannerIndex = 0;
     if (bannerTrack) {
@@ -143,7 +155,6 @@ function initApp() {
     }
     
     // 미세먼지 데이터 세팅
-    const dustStatus = document.querySelector('.dust-status');
     const dustBadge = document.getElementById('dust-badge');
     if(dustBadge) {
         const levels = [
@@ -157,12 +168,10 @@ function initApp() {
         dustBadge.className = `dust-badge ${randomLevel.class}`;
     }
 
-    // 수면 주파수 바인딩
+    // 수면 기록 및 UI
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
-
-    // 수면 기록 저장 및 불러오기
     const btnViewReport = document.getElementById('btn-view-report');
     const sleepHistoryModal = document.getElementById('sleep-history-modal');
     const sleepHistoryList = document.getElementById('sleep-history-list');
@@ -247,20 +256,20 @@ function initApp() {
         });
     }
 
-    // 백색소음 사운드 연동
+    // 💡 백색소음 멀티 선택 및 애니메이션/사운드 연동 (오류 완벽 수정)
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
     const noiseVisualizer = document.getElementById('noise-visualizer');
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // 구글 액션 무료 제공 고화질 오디오 링크
+    // 💡 절대 안 끊기는 선명한 위키미디어 자연의 소리 링크로 교체!
     const soundUrls = {
-        "campfire": "https://actions.google.com/sounds/v1/foley/fire_crackling.ogg",
-        "forest": "https://actions.google.com/sounds/v1/nature/crickets_and_insects.ogg",
-        "waves": "https://actions.google.com/sounds/v1/water/waves_crashing_on_rock_beach.ogg",
-        "rain": "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
-        "thunder": "https://actions.google.com/sounds/v1/weather/thunderstorm.ogg"
+        "campfire": "https://upload.wikimedia.org/wikipedia/commons/3/30/Fire_Sound_Effect.ogg",
+        "forest": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Crickets_at_night.ogg",
+        "waves": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Ocean_surf.ogg",
+        "rain": "https://upload.wikimedia.org/wikipedia/commons/1/10/Rain_audio.ogg",
+        "thunder": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Thunderstorm.ogg"
     };
 
     let currentNoiseType = "none";
@@ -341,7 +350,6 @@ function initApp() {
     const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
     const lapList = document.getElementById('lap-list');
 
-    // 스톱워치 랩타임 저장 연동
     let savedLaps = JSON.parse(localStorage.getItem('wakeme_laps') || '[]');
     function renderLaps() {
         if(!lapList) return;
@@ -437,6 +445,29 @@ function initApp() {
         if(settingsInfoModal) settingsInfoModal.classList.add('active');
     };
 
+    // 💡 배너 클릭 이벤트 연동 수정 (올바른 팁 내용 모달로 띄움)
+    const bannerTip = document.getElementById('banner-click-tip');
+    const bannerPremium = document.getElementById('banner-click-premium');
+    
+    if(bannerTip) {
+        bannerTip.addEventListener('click', () => {
+            openSettingsModal("💡 알람 이용 팁", `
+                <b style="color:#f6e05e;">1. 미디어 볼륨 확인</b><br>
+                스마트폰의 '미디어 볼륨'이 켜져 있는지 확인하세요. 무음 모드라도 미디어 볼륨이 낮으면 소리가 나지 않습니다.<br><br>
+                <b style="color:#f6e05e;">2. 배터리 사용량 최적화 예외</b><br>
+                앱이 백그라운드에서 강제 종료되지 않도록 [설정 > 애플리케이션 > 웨이크미 > 배터리]에서 '제한 없음'으로 설정해주세요.<br><br>
+                <b style="color:#f6e05e;">3. 다른 앱 위에 표시 허용</b><br>
+                알람이 제시간에 화면을 깨울 수 있도록 설정에서 권한을 반드시 허용해주세요.
+            `);
+        });
+    }
+    
+    if(bannerPremium) {
+        bannerPremium.addEventListener('click', () => {
+            alert("🛠️ 해당 프리미엄 상품은 현재 준비중입니다. 조금만 기다려주세요!");
+        });
+    }
+
     const sLogin = document.getElementById('setting-login');
     const sPoints = document.getElementById('setting-points');
     const sTheme = document.getElementById('setting-theme');
@@ -512,6 +543,7 @@ function initApp() {
         if(feedback) alert("의견이 성공적으로 전송되었습니다. 검토 후 더 나은 서비스로 보답하겠습니다!");
     };
 
+
     if (btnThemeOpen) { btnThemeOpen.addEventListener('click', () => { if(themeModal) themeModal.classList.add('active'); }); }
     if (btnThemeClose) { btnThemeClose.addEventListener('click', () => { if(themeModal) themeModal.classList.remove('active'); }); }
 
@@ -524,30 +556,63 @@ function initApp() {
         });
     });
 
-    function getFormattedAlarmText(timeValue) {
-        if (!timeValue) return "";
-        const parts = timeValue.split(':');
-        let hour = parseInt(parts[0], 10); const minute = parts[1];
-        const ampm = hour >= 12 ? '오후' : '오전';
-        if (hour > 12) hour -= 12; if (hour === 0) hour = 12;
-        return `🔔 [${ampm} ${String(hour).padStart(2, '0')}:${minute}]에 미션 알람이 작동합니다.`;
-    }
+    // 다중 알람 처리 로직
+    function renderAlarms() {
+        if(!alarmListContainer) return;
+        alarmListContainer.innerHTML = '';
+        if(alarms.length === 0) {
+            alarmListContainer.innerHTML = '<p style="font-size:12px; color:#a0aec0; text-align:center;">설정된 알람이 없습니다.</p>';
+            return;
+        }
+        alarms.forEach((alarm, idx) => {
+            const el = document.createElement('div');
+            el.className = `alarm-item ${alarm.isActive ? '' : 'inactive'}`;
+            el.innerHTML = `
+                <span style="font-weight:bold; font-size:16px;">${alarm.time} ${alarm.isActive ? '🔔' : '🔕'}</span>
+                <div>
+                    <button class="btn-toggle-single" data-idx="${idx}" style="color:${alarm.isActive?'#68d391':'#a0aec0'}; margin-right:10px;">${alarm.isActive?'ON':'OFF'}</button>
+                    <button class="btn-delete-alarm" data-idx="${idx}">삭제</button>
+                </div>
+            `;
+            alarmListContainer.appendChild(el);
+        });
 
-    if (alarmTimeInput && alarmStatusText) {
-        alarmTimeInput.addEventListener('input', () => {
-            if (alarmTime !== null) { alarmTime = alarmTimeInput.value; alarmStatusText.textContent = getFormattedAlarmText(alarmTime); }
+        document.querySelectorAll('.btn-toggle-single').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = e.target.getAttribute('data-idx');
+                alarms[idx].isActive = !alarms[idx].isActive;
+                localStorage.setItem('wakeme_alarms', JSON.stringify(alarms));
+                renderAlarms();
+            });
+        });
+
+        document.querySelectorAll('.btn-delete-alarm').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = e.target.getAttribute('data-idx');
+                alarms.splice(idx, 1);
+                localStorage.setItem('wakeme_alarms', JSON.stringify(alarms));
+                renderAlarms();
+            });
         });
     }
 
-    if(btnToggleAlarm) {
-        btnToggleAlarm.addEventListener('click', () => {
-            if (alarmTime === null) {
-                alarmTime = alarmTimeInput.value; btnToggleAlarm.textContent = "알람 끄기"; btnToggleAlarm.className = "btn btn-danger";
-                alarmStatusText.textContent = getFormattedAlarmText(alarmTime);
-            } else {
-                alarmTime = null; btnToggleAlarm.textContent = "알람 켜기"; btnToggleAlarm.className = "btn btn-primary";
-                alarmStatusText.textContent = "설정된 알람이 없습니다.";
+    if (alarmListContainer) {
+        renderAlarms();
+    }
+
+    if(btnAddAlarm) {
+        btnAddAlarm.addEventListener('click', () => {
+            const val = alarmTimeInput.value;
+            if(!val) return;
+            const exists = alarms.find(a => a.time === val);
+            if(exists) {
+                alert("이미 동일한 시간에 설정된 알람이 있습니다.");
+                return;
             }
+            alarms.push({ time: val, isActive: true });
+            alarms.sort((a, b) => a.time.localeCompare(b.time));
+            localStorage.setItem('wakeme_alarms', JSON.stringify(alarms));
+            renderAlarms();
         });
     }
 
@@ -628,7 +693,6 @@ function initApp() {
     }
     if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
 
-
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
         const now = new Date();
@@ -640,13 +704,17 @@ function initApp() {
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         dateStringEl.textContent = `${year}년 ${month}월 ${date}일 (${dayNames[now.getDay()]}요일)`;
 
-        if (alarmTime === `${hours}:${minutes}`) {
-            alarmTime = null;
-            if(btnToggleAlarm) { btnToggleAlarm.textContent = "알람 켜기"; btnToggleAlarm.className = "btn btn-primary"; }
-            if(alarmStatusText) alarmStatusText.textContent = "알람이 울리는 중입니다!";
-            
-            isTestMode = false; 
-            triggerAlarm();
+        if (seconds === '00') {
+            alarms.forEach(alarm => {
+                if (alarm.isActive && alarm.time === `${hours}:${minutes}`) {
+                    alarm.isActive = false; 
+                    localStorage.setItem('wakeme_alarms', JSON.stringify(alarms));
+                    renderAlarms();
+                    
+                    isTestMode = false; 
+                    triggerAlarm();
+                }
+            });
         }
     }
     setInterval(updateClock, 1000); updateClock();
