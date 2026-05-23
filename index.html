@@ -24,32 +24,43 @@
                 <p class="subtitle">완벽한 아침을 위한 강력한 각성 루틴</p>
             </header>
             <main>
-                <div class="current-time-box">
+                <div class="current-time-box premium-glow">
                     <div id="clock">00:00:00</div>
                     <p id="date-string">오늘의 날짜</p>
                 </div>
                 
-                <div class="card alarm-setter">
-                    <h3>알람 추가</h3>
-                    <p style="font-size:12px; color:#f6e05e; margin-bottom:8px; font-weight:bold;">👇 아래 박스를 눌러 시간을 선택하세요</p>
-                    <div class="input-group">
-                        <input type="time" id="alarm-time-input" value="07:00">
-                        <button id="btn-add-alarm" class="btn btn-primary">추가</button>
+                <div class="card premium-card alarm-setter">
+                    <div class="card-header-flex">
+                        <h3>🔔 알람 추가</h3>
+                        <span class="pulse-dot"></span>
                     </div>
+                    <p class="helper-text">아래 박스를 눌러 기상 시간을 선택하세요</p>
+                    
+                    <div class="input-group premium-input">
+                        <span class="time-icon">🕘</span>
+                        <input type="time" id="alarm-time-input" value="07:00">
+                        <button id="btn-add-alarm" class="btn btn-primary premium-btn">추가</button>
+                    </div>
+                    
                     <div id="alarm-list-container" class="alarm-list-container">
-                        <p style="font-size:12px; color:#a0aec0; text-align:center;">설정된 알람이 없습니다.</p>
+                        <div class="empty-state">설정된 알람이 없습니다.</div>
                     </div>
                 </div>
 
-                <div class="card test-box">
-                    <h3>앱 미리보기</h3>
-                    <p>기다리지 않고 바로 15가지 미션을 체험합니다.</p>
-                    <button id="btn-test-alarm" class="btn btn-danger">즉시 미션 시작 (테스트)</button>
+                <div class="card premium-card test-box">
+                    <div class="card-header-flex">
+                        <h3>🚀 앱 미리보기</h3>
+                    </div>
+                    <p class="helper-text">기다리지 않고 15가지 미션을 바로 체험합니다.</p>
+                    <button id="btn-test-alarm" class="btn btn-danger premium-btn-danger">즉시 미션 시작 (테스트)</button>
                 </div>
-                <div class="card schedule-box">
-                    <h3>📅 나의 오늘 일정</h3>
-                    <textarea id="my-schedule-input" placeholder="오늘의 핵심 일정을 기록해보세요..." spellcheck="false"></textarea>
-                    <button id="btn-save-schedule" class="btn btn-success" style="width:100%; margin-top:8px; padding:10px;">일정 저장하기</button>
+
+                <div class="card premium-card schedule-box">
+                    <div class="card-header-flex">
+                        <h3>📅 나의 오늘 일정</h3>
+                    </div>
+                    <textarea id="my-schedule-input" class="premium-textarea" placeholder="오늘의 핵심 일정을 기록해보세요..." spellcheck="false"></textarea>
+                    <button id="btn-save-schedule" class="btn btn-success premium-btn-outline">일정 저장하기</button>
                 </div>
             </main>
         </div>
@@ -57,7 +68,7 @@
         <div id="screen-sleep-tab" class="main-tab-screen">
             <header><h1>🌙 수면 측정</h1></header>
             <main>
-                <div class="card sleep-tracker-card">
+                <div class="card sleep-tracker-card premium-card">
                     <h2>나도 모르는<br>내 잠버릇은 뭘까?</h2>
                     <p class="sleep-tracker-desc">내 뒤척임, 코골이 소리를 확인하세요</p>
                     <div class="waveform-box">
@@ -68,16 +79,16 @@
                             <span class="bar"></span>
                         </div>
                     </div>
-                    <button id="btn-toggle-sleep" class="btn btn-success btn-lg">수면 측정하기</button>
+                    <button id="btn-toggle-sleep" class="btn btn-success btn-lg premium-btn-outline">수면 측정하기</button>
                 </div>
                 
-                <div id="btn-view-report" class="card sleep-report-row" style="cursor: pointer;">
+                <div id="btn-view-report" class="card sleep-report-row premium-card" style="cursor: pointer;">
                     <span>내 수면 리포트 보관함</span><span class="arrow-icon">❯</span>
                 </div>
                 
-                <div class="card noise-panel">
+                <div class="card noise-panel premium-card">
                     <div class="noise-header">
-                        <h3>😴 수면 유도 수면음</h3>
+                        <h3>🌙 수면 유도 수면음</h3>
                         <p>깊은 잠에 빠져들도록 도와주는 백색소음입니다.</p>
                     </div>
                     
@@ -122,7 +133,7 @@
             </header>
             <main>
                 <div class="weather-grid">
-                    <div class="weather-card seoul-card">
+                    <div class="weather-card seoul-card premium-card">
                         <div class="seoul-title-box">
                             <span class="region" id="current-region-name">서울</span>
                             <span class="luxury-label">CURRENT LOCATION</span>
@@ -136,42 +147,42 @@
                         </div>
                     </div>
                     
-                    <div class="dust-bar-wrapper">
+                    <div class="dust-bar-wrapper premium-card">
                         <span class="dust-title">☁️ 오늘 평균 미세먼지 농도</span>
                         <span class="dust-badge" id="dust-badge">불러오는 중...</span>
                     </div>
 
-                    <div class="weather-card"><span class="region">경기도</span><span class="sky-icon anim-float">☁️</span><span class="temp">14°C</span></div>
-                    <div class="weather-card"><span class="region">충청도</span><span class="sky-icon anim-float-delay">🌤️</span><span class="temp">16°C</span></div>
-                    <div class="weather-card"><span class="region">전라도</span><span class="sky-icon anim-spin">☀️</span><span class="temp">18°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">경기도</span><span class="sky-icon anim-float">☁️</span><span class="temp">14°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">충청도</span><span class="sky-icon anim-float-delay">🌤️</span><span class="temp">16°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">전라도</span><span class="sky-icon anim-spin">☀️</span><span class="temp">18°C</span></div>
                     
-                    <div class="weather-card"><span class="region">경상도</span><span class="sky-icon anim-float">☁️</span><span class="temp">17°C</span></div>
-                    <div class="weather-card"><span class="region">강원도</span><span class="sky-icon anim-float-delay">❄️</span><span class="temp">12°C</span></div>
-                    <div class="weather-card"><span class="region">제주도</span><span class="sky-icon anim-float">🌤️</span><span class="temp">20°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">경상도</span><span class="sky-icon anim-float">☁️</span><span class="temp">17°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">강원도</span><span class="sky-icon anim-float-delay">❄️</span><span class="temp">12°C</span></div>
+                    <div class="weather-card premium-card"><span class="region">제주도</span><span class="sky-icon anim-float">🌤️</span><span class="temp">20°C</span></div>
                 </div>
 
                 <div class="morning-menu-grid alternative-layout">
-                    <div id="btn-mood-diary" class="menu-item"><span class="icon">😃</span><span>아침 일기</span></div>
-                    <div id="btn-fortune" class="menu-item"><span class="icon">🔮</span><span>오늘의 운세</span></div>
-                    <div id="btn-au-home" class="menu-item"><span class="icon">🏫</span><span>홈페이지</span></div>
+                    <div id="btn-mood-diary" class="menu-item premium-card"><span class="icon">😃</span><span>아침 일기</span></div>
+                    <div id="btn-fortune" class="menu-item premium-card"><span class="icon">🔮</span><span>오늘의 운세</span></div>
+                    <div id="btn-au-home" class="menu-item premium-card"><span class="icon">🏫</span><span>홈페이지</span></div>
                 </div>
 
                 <div class="weather-banner-container">
                     <div class="weather-banner-track" id="weather-banner-track">
-                        <div class="w-banner-slide banner-tip" id="banner-click-tip" style="cursor:pointer;">
-                            <div class="b-text-wrap">
-                                <div class="b-title">설정한 캐릭터로 알람이<br>울리지 않으세요?</div>
-                                <div class="b-sub">이용 팁 확인하기 ❯</div>
+                        <div class="w-banner-slide banner-tip-new" id="banner-click-tip" style="cursor:pointer;">
+                            <div class="b-text-wrap-new">
+                                <div class="b-title-new"><span class="text-yellow">설정한 알람</span>이<br>울리지 않으세요?</div>
+                                <div class="b-sub-btn">이용 팁 확인하기 ❯</div>
                             </div>
-                            <div class="b-icon">🐱</div>
+                            <div class="b-icon-cat">🙀</div>
                         </div>
                         
                         <div class="w-banner-slide banner-premium" id="banner-click-premium" style="cursor:pointer;">
-                            <div class="b-text-wrap">
-                                <div class="b-title">회원가입 없이 누리는<br><span class="b-highlight">프리미엄 혜택</span> 👑</div>
-                                <div class="b-sub">알람 캐릭터 무료 받기 ❯</div>
+                            <div class="b-text-wrap-new">
+                                <div class="b-title-new">WakeMe <span class="text-gold">Premium</span> 👑</div>
+                                <div class="b-sub-text">더 강력한 미션과 포인트 혜택</div>
                             </div>
-                            <div class="b-icon-crown">🦁</div>
+                            <div class="b-icon-crown">👑</div>
                         </div>
                     </div>
                 </div>
@@ -181,18 +192,18 @@
         <div id="screen-stopwatch-tab" class="main-tab-screen">
             <header><h1>⏱️ 스톱워치 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
             <main>
-                <div class="stopwatch-display-box">
+                <div class="stopwatch-display-box premium-glow-dark">
                     <div id="stopwatch-time">00:00.00</div>
-                    <button id="btn-stopwatch-reset" class="btn btn-sm" style="margin-top:10px; background:#4a5568; color:white; padding:5px 10px;">초기화</button>
+                    <button id="btn-stopwatch-reset" class="btn btn-sm premium-btn-outline" style="margin-top:10px; padding:6px 14px;">초기화</button>
                 </div>
                 <div class="stopwatch-btn-group">
-                    <button id="btn-stopwatch-lap" class="btn btn-stopwatch-sub" disabled>랩타임</button>
-                    <button id="btn-stopwatch-start" class="btn btn-stopwatch-main">시작</button>
+                    <button id="btn-stopwatch-lap" class="btn btn-stopwatch-sub premium-btn-outline" disabled>랩타임</button>
+                    <button id="btn-stopwatch-start" class="btn btn-stopwatch-main premium-btn">시작</button>
                 </div>
                 
-                <div class="lap-records-container"><ul id="lap-list"></ul></div>
+                <div class="lap-records-container premium-card"><ul id="lap-list"></ul></div>
                 
-                <div class="card news-section" style="margin-top: 20px;">
+                <div class="card news-section premium-card" style="margin-top: 20px;">
                     <h3 style="margin-bottom: 12px;">📺 실시간 모닝 뉴스</h3>
                     <div id="news-list" class="news-list"></div>
                 </div>
@@ -202,7 +213,7 @@
         <div id="screen-settings-tab" class="main-tab-screen">
             <header><h1>⚙️ 설정</h1></header>
             <main>
-                <div class="settings-card">
+                <div class="settings-card premium-card">
                     <div class="settings-row profile-row" id="setting-login">
                         <div class="profile-info">
                             <div class="profile-avatar">👤</div>
@@ -220,7 +231,7 @@
                     </div>
                 </div>
 
-                <div class="settings-card">
+                <div class="settings-card premium-card">
                     <div class="settings-row" id="setting-theme">
                         <div class="row-left">테마 설정</div>
                         <span class="chevron">❯</span>
@@ -235,7 +246,7 @@
                     </div>
                 </div>
 
-                <div class="settings-card">
+                <div class="settings-card premium-card">
                     <div class="settings-row" id="setting-notice">
                         <div class="row-left">공지사항</div>
                         <span class="chevron">❯</span>
@@ -261,33 +272,33 @@
         </div>
 
         <div id="sleep-result-modal" class="modal-overlay">
-            <div class="modal-content" style="padding: 30px 20px;">
+            <div class="modal-content premium-modal" style="padding: 30px 20px;">
                 <h2 style="font-size: 24px; margin-bottom: 10px;">😴 오늘의 수면 리포트</h2>
                 <div style="font-size: 40px; margin-bottom: 15px;">📊</div>
                 <div id="sleep-result-content" style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
                 </div>
-                <button id="btn-close-sleep-result" class="btn btn-primary btn-lg">확인 및 저장하기</button>
+                <button id="btn-close-sleep-result" class="btn btn-primary btn-lg premium-btn">확인 및 저장하기</button>
             </div>
         </div>
 
         <div id="sleep-history-modal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content premium-modal">
                 <div class="modal-header"><h2 style="font-size:20px; margin-bottom: 15px;">🌙 내 수면 리포트 보관함</h2></div>
                 <div id="sleep-history-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;"></div>
-                <button id="btn-close-sleep-history" class="btn btn-danger btn-lg" style="background:#3a3a40; border:none;">닫기</button>
+                <button id="btn-close-sleep-history" class="btn btn-danger btn-lg premium-btn-outline">닫기</button>
             </div>
         </div>
 
         <div id="screen-mission" class="screen"><div class="alarm-flash-overlay"></div><div class="mission-header"><span id="mission-badge" class="badge">1단계</span><h2 id="mission-title">미션 제목</h2><p id="mission-desc">미션 설명문</p></div><div class="mission-content-area"><div id="dynamic-mission-box"></div></div><div class="mission-footer"><p class="warning-text">⚠️ 미션을 클리어하기 전까지는 알람이 꺼지지 않습니다!</p></div></div>
-        <div id="screen-survival" class="screen"><div class="survival-box"><div class="survival-icon">👀</div><h2>아직 안 누우셨죠?</h2><p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다.</p><div class="timer-circle"><span id="survival-countdown">30</span>초</div><button id="btn-survival-confirm" class="btn btn-success btn-lg">생존 신고 완료</button></div></div>
+        <div id="screen-survival" class="screen"><div class="survival-box"><div class="survival-icon">👀</div><h2>아직 안 누우셨죠?</h2><p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다.</p><div class="timer-circle"><span id="survival-countdown">30</span>초</div><button id="btn-survival-confirm" class="btn btn-success btn-lg premium-btn">생존 신고 완료</button></div></div>
         
         <div id="fortune-modal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content premium-modal">
                 <div id="fortune-confirm-view">
                     <div class="modal-header"><h2>🔮 오늘의 타로 운세</h2><p class="modal-subtitle">오늘의 타로 기회는 하루에 단 한 번뿐입니다. 열람하시겠습니까?</p></div>
                     <div class="stopwatch-btn-group" style="margin-top:25px;">
-                        <button id="btn-fortune-cancel" class="btn btn-stopwatch-sub">아니오</button>
-                        <button id="btn-fortune-confirm-yes" class="btn btn-primary" style="flex:2;">예</button>
+                        <button id="btn-fortune-cancel" class="btn btn-stopwatch-sub premium-btn-outline">아니오</button>
+                        <button id="btn-fortune-confirm-yes" class="btn btn-primary premium-btn" style="flex:2;">예</button>
                     </div>
                 </div>
                 <div id="fortune-result-view" style="display:none;">
@@ -298,13 +309,13 @@
                         <h3 id="tarot-card-name">로딩 중</h3>
                         <p id="tarot-card-desc">설명</p>
                     </div>
-                    <button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top:15px;">하루 시작하기</button>
+                    <button id="btn-close-fortune" class="btn btn-primary btn-lg premium-btn" style="margin-top:15px;">하루 시작하기</button>
                 </div>
             </div>
         </div>
 
         <div id="diary-modal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content premium-modal">
                 <div class="modal-header">
                     <h2>😃 아침 기분 일기</h2>
                     <p id="diary-date" class="modal-subtitle">기상 직후 마음 기록하기</p>
@@ -316,19 +327,19 @@
                         <button class="btn-mood" data-mood="상쾌">✨</button>
                         <button class="btn-mood" data-mood="그저뵘">😑</button>
                     </div>
-                    <textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea>
-                    <button id="btn-save-diary" class="btn btn-primary btn-lg" style="width:100%;">일기 저장하기</button>
+                    <textarea id="diary-input" class="diary-textarea premium-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea>
+                    <button id="btn-save-diary" class="btn btn-primary btn-lg premium-btn" style="width:100%;">일기 저장하기</button>
                 </div>
                 <div class="event-banner">
                     <strong>🎁 갓생러 아침 일기 이벤트!</strong><br>
                     가장 인상적인 일기를 캡처하여 <br><span style="color:#2b6cb0;">event@wakeme.com</span> 으로 보내주시면<br>추첨을 통해 ☕<b>스타벅스 기프티콘</b>을 쏩니다!
                 </div>
-                <button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top:10px; background:#3a3a40;">닫기</button>
+                <button id="btn-close-diary" class="btn btn-danger btn-lg premium-btn-outline" style="margin-top:10px;">닫기</button>
             </div>
         </div>
         
         <div id="theme-modal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content premium-modal">
                 <div class="modal-header">
                     <h2 style="font-size:22px; margin-bottom:8px;">🎨 앱 테마 변경</h2>
                     <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">원하는 맞춤형 배경 컬러를 선택하세요</p>
@@ -345,12 +356,12 @@
                         <button class="btn-theme-select" data-theme="mint"><div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span></button>
                     </div>
                 </div>
-                <button id="btn-theme-close" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%; background:#3a3a40; border-radius:12px; border:none;">닫기</button>
+                <button id="btn-theme-close" class="btn btn-danger btn-lg premium-btn-outline" style="margin-top:20px; width:100%;">닫기</button>
             </div>
         </div>
 
         <div id="shop-modal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content premium-modal">
                 <div class="modal-header">
                     <h2 style="font-size:22px; margin-bottom:8px;">🛒 포인트 상점</h2>
                     <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">매일 아침 일어나 모은 포인트로 교환하세요</p>
@@ -382,28 +393,28 @@
                         <div class="shop-item-stock">재고: 0개</div>
                     </div>
                 </div>
-                <button id="btn-close-shop" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%; background:#3a3a40; border-radius:12px; border:none;">닫기</button>
+                <button id="btn-close-shop" class="btn btn-danger btn-lg premium-btn-outline" style="margin-top:20px; width:100%;">닫기</button>
             </div>
         </div>
 
         <div id="news-modal" class="modal-overlay">
-            <div class="modal-content" style="max-width: 380px; padding: 20px;">
+            <div class="modal-content premium-modal" style="max-width: 380px; padding: 20px;">
                 <div class="modal-header">
                     <h2 id="news-modal-title" style="font-size: 18px; margin-bottom: 15px; color:#f6e05e; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: left;">뉴스 제목</h2>
                 </div>
                 <div id="news-modal-video" style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #000; min-height: 180px;"></div>
                 <p id="news-modal-desc" style="font-size: 13px; color: #cbd5e0; line-height: 1.6; text-align: left; margin-bottom: 20px; padding: 0 5px;"></p>
-                <button id="btn-close-news" class="btn btn-danger btn-lg" style="background:#3a3a40; border:none;">영상 닫기</button>
+                <button id="btn-close-news" class="btn btn-danger btn-lg premium-btn-outline">영상 닫기</button>
             </div>
         </div>
 
         <div id="settings-info-modal" class="modal-overlay">
-            <div class="modal-content" style="text-align: left;">
+            <div class="modal-content premium-modal" style="text-align: left;">
                 <div class="modal-header">
                     <h2 id="settings-info-title" style="font-size:20px; margin-bottom: 15px;">제목</h2>
                 </div>
                 <div id="settings-info-content" style="font-size:14px; color:#cbd5e0; line-height:1.6; max-height: 350px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">내용</div>
-                <button id="btn-close-settings-info" class="btn btn-primary btn-lg" style="width: 100%;">확인</button>
+                <button id="btn-close-settings-info" class="btn btn-primary btn-lg premium-btn" style="width: 100%;">확인</button>
             </div>
         </div>
 
