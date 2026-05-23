@@ -48,6 +48,56 @@ header { text-align: left; margin-bottom: 15px; padding-left: 5px; }
 header h1 { font-size: 26px; font-weight: 800; }
 .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
+/* 공용 프리미엄 UI 디자인 */
+.premium-card { background: #1f1f23; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 24px; padding: 20px; transition: transform 0.2s, box-shadow 0.2s; }
+.card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.card-header-flex h3 { font-size: 16px; font-weight: 800; margin: 0; color: #fff; }
+.helper-text { font-size: 12px; color: #f6e05e; margin-bottom: 12px; font-weight: 600; opacity: 0.9; }
+
+.premium-btn { background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4); font-weight: bold; }
+.premium-btn-danger { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4); font-weight: bold; }
+.premium-btn-outline { background: #2a2a2d; color: #cbd5e0; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; transition: 0.2s; }
+.premium-btn-outline:hover { background: #3a3a40; border-color: rgba(255,255,255,0.2); }
+
+.premium-input { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.05); }
+.premium-textarea { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); color: white; font-size: 14px; width: 100%; height: 80px; outline: none; resize: none; margin-bottom: 10px; }
+.premium-textarea::placeholder { color: #718096; }
+
+/* 💡 로비 알람 시간 박스 디자인 업그레이드 */
+.current-time-box.premium-glow { position: relative; padding: 30px 20px; background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%); border-radius: 24px; text-align: center; margin-bottom: 15px; overflow: hidden; box-shadow: 0 8px 20px rgba(76, 29, 149, 0.3); border: 1px solid rgba(255,255,255,0.05); }
+.current-time-box.premium-glow::after { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); opacity: 0.5; animation: rotateGlow 10s linear infinite; pointer-events: none; }
+@keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+#clock { font-size: 42px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1; position: relative; }
+#date-string { font-size: 13px; opacity: 0.8; font-weight: 600; z-index: 1; position: relative; margin-top: 5px; }
+
+/* 💡 다중 알람 리스트 고급화 */
+.input-group { display: flex; gap: 10px; align-items: center; }
+.time-icon { font-size: 20px; opacity: 0.8; }
+input[type="time"] { flex: 1; padding: 5px; border: none; background: transparent; color: white; font-size: 24px; font-weight: 800; text-align: center; cursor: pointer; outline: none; }
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sepia(100%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); cursor: pointer; width: 28px; height: 28px; opacity: 0.8; }
+#btn-add-alarm { padding: 12px 20px; border-radius: 12px; font-size: 14px; }
+.alarm-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
+.alarm-list-container::-webkit-scrollbar { width: 4px; }
+.alarm-list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+/* iOS 스타일 스위치 버튼 느낌 */
+.alarm-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+.alarm-item:hover { background: rgba(255,255,255,0.06); }
+.alarm-item.inactive { opacity: 0.4; }
+.alarm-item.inactive span { text-decoration: line-through; }
+.btn-toggle-single { font-size: 11px; font-weight: 800; cursor: pointer; background: #3a3a40; color: white; padding: 8px 16px; border-radius: 20px; transition: 0.2s; border:none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+.btn-delete-alarm { font-size: 11px; font-weight: bold; cursor: pointer; background: transparent; color: #fc8181; padding: 8px 12px; border-radius: 12px; transition: 0.2s; border: 1px solid rgba(252,129,129,0.3); }
+.btn-delete-alarm:hover { background: rgba(252,129,129,0.1); }
+
+.pulse-dot { width: 8px; height: 8px; background-color: #f6e05e; border-radius: 50%; box-shadow: 0 0 0 rgba(246, 224, 94, 0.4); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(246, 224, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0); } }
+
+
+.btn { padding: 12px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
+.btn:active { transform: scale(0.96); }
+.btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
+
+
 /* 설정 탭 */
 .settings-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 20px; margin-bottom: 15px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
@@ -66,37 +116,6 @@ header h1 { font-size: 26px; font-weight: 800; }
 /* 공통 카드 및 로비 */
 .card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
 .card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
-
-#screen-lobby .current-time-box { padding: 15px; margin-bottom: 12px; }
-#screen-lobby .card { padding: 15px; margin-bottom: 12px; }
-#screen-lobby h3 { font-size: 16px; margin-bottom: 8px; }
-#screen-lobby .test-box p { margin-bottom: 8px; font-size: 12px; }
-#my-schedule-input { width: 100%; height: 60px; background: #2e2e33; color: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; font-size: 13px; resize: none; outline: none; }
-#my-schedule-input::placeholder { color: #888; }
-
-.btn { padding: 12px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
-.btn:active { transform: scale(0.96); }
-.btn-primary { background-color: var(--color-primary); color: white; }
-.btn-danger { background-color: var(--color-danger); color: white; }
-.btn-success { background-color: #ffffff; color: #000000; }
-.btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
-
-/* 다중 알람 리스트 UI */
-.current-time-box { text-align: center; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; border-radius: var(--radius); }
-#clock { font-size: 36px; font-weight: 800; }
-#date-string { font-size: 12px; opacity: 0.85; }
-
-.input-group { display: flex; gap: 10px; align-items: center; background: #2e2e33; padding: 5px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); }
-input[type="time"] { flex: 1; padding: 12px; border: none; background: transparent; color: white; font-size: 22px; font-weight: 900; text-align: center; cursor: pointer; outline: none; }
-input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sepia(100%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); cursor: pointer; width: 24px; height: 24px; }
-#btn-add-alarm { padding: 12px 25px; border-radius: 10px; font-size: 15px; }
-.alarm-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
-.alarm-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-.alarm-item.inactive { opacity: 0.5; }
-.btn-toggle-single { font-size: 12px; font-weight: bold; cursor: pointer; background: #3a3a40; color: white; padding: 6px 12px; border-radius: 8px; transition: 0.2s; border:none; }
-.btn-delete-alarm { font-size: 12px; font-weight: bold; cursor: pointer; background: rgba(229, 62, 62, 0.1); color: #fc8181; padding: 6px 12px; border-radius: 8px; transition: 0.2s; border:none;}
-.btn-delete-alarm:hover { background: #e53e3e; color: white; }
-
 
 /* 수면 서식 */
 .sleep-tracker-card { text-align: center; padding: 30px 20px; background: var(--card-bg); }
@@ -190,26 +209,25 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .morning-menu-grid.alternative-layout .menu-item .icon { font-size: 24px !important; margin-bottom: 6px !important; }
 .morning-menu-grid.alternative-layout .menu-item span { font-size: 11px !important; font-weight: 600 !important; color: #cbd5e0 !important; }
 
-/* 💡 꾸민 롤링 배너 컨테이너 */
-.weather-banner-container { width: 100%; height: 85px; border-radius: 12px; overflow: hidden; position: relative; margin-top: 15px; }
+/* 💡 롤링 배너 컨테이너 (디자인 퀄리티 향상) */
+.weather-banner-container { width: 100%; height: 85px; border-radius: 12px; overflow: hidden; position: relative; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
 .weather-banner-track { display: flex; width: 200%; height: 100%; transition: transform 0.5s ease-in-out; }
-.w-banner-slide { width: 50%; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; text-decoration: none; }
+.w-banner-slide { width: 50%; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: relative; overflow: hidden; }
 
-.b-text-wrap { display: flex; flex-direction: column; text-align: left; }
-.b-title { font-size: 15px; font-weight: 800; line-height: 1.3; margin-bottom: 5px; }
-.b-sub { font-size: 11px; font-weight: 600; opacity: 0.9; }
-.b-icon { font-size: 40px; }
+/* 💡 배너 1 (파란색, 사진과 100% 동일한 느낌으로 개선) */
+.banner-tip-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+.banner-tip-new::before { content: "▲ ▼ ▲"; position: absolute; font-size: 80px; color: rgba(255,255,255,0.05); top: -20px; left: -10px; letter-spacing: -10px; z-index: 0; }
+.b-text-wrap-new { z-index: 2; display: flex; flex-direction: column; align-items: flex-start; }
+.b-title-new { font-size: 15px; font-weight: 900; line-height: 1.3; margin-bottom: 6px; text-align: left; }
+.text-yellow { color: #fde047; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+.b-sub-btn { font-size: 11px; font-weight: bold; color: white; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+.b-icon-cat { font-size: 45px; z-index: 2; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2)); transform: scaleX(-1); }
 
-/* 배너 1 (파란색 팁) */
-.banner-tip { background: linear-gradient(135deg, #3182f6 0%, #60a5fa 100%); color: white; }
-
-/* 배너 2 (프리미엄 혜택) */
-.banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-.banner-premium .b-title { color: #f6e05e; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.banner-premium .b-sub { color: #cbd5e0; opacity: 1; }
-.banner-premium .b-highlight { color: white; font-weight: 800; }
-.b-icon-wrap { display: flex; align-items: center; position: relative; gap: 5px; }
-.b-icon-crown { font-size: 36px; filter: drop-shadow(0 0 8px rgba(246,224,94,0.6)); }
+/* 배너 2 (프리미엄 럭셔리 블랙&골드) */
+.banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); }
+.text-gold { color: #f6e05e; }
+.b-sub-text { font-size: 11px; color: #a0aec0; }
+.b-icon-crown { font-size: 40px; z-index: 2; filter: drop-shadow(0 0 10px rgba(246,224,94,0.4)); }
 
 /* 뉴스 섹션 서식 */
 .news-list { display: flex; flex-direction: column; gap: 10px; }
@@ -259,10 +277,11 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 모달 오버레이 수정 완료 (오타 및 레이아웃 붕괴 완벽 해결) */
+/* 💡 화면 붕괴 원인이었던 모달 오버레이 완벽 복구 */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.premium-modal { background: #1f1f23; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* 하단 네비게이션 */
@@ -302,7 +321,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .shop-item-price { font-size: 12px; color: #f6e05e; font-weight: 600; }
 .shop-item-stock { font-size: 11px; color: #fc8181; font-weight: bold; padding: 4px 8px; background: rgba(229,62,62,0.1); border-radius: 8px; white-space: nowrap;}
 
-/* 테마 스크롤 컨테이너 */
 .theme-scroll-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
 .theme-scroll-container::-webkit-scrollbar { width: 6px; }
 .theme-scroll-container::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
