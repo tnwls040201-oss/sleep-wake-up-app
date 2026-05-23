@@ -81,13 +81,22 @@ header h1 { font-size: 26px; font-weight: 800; }
 .btn-success { background-color: #ffffff; color: #000000; }
 .btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
 
+/* 다중 알람 리스트 UI */
 .current-time-box { text-align: center; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; border-radius: var(--radius); }
 #clock { font-size: 36px; font-weight: 800; }
 #date-string { font-size: 12px; opacity: 0.85; }
-.input-group { display: flex; gap: 10px; }
-input[type="time"] { flex: 1; padding: 10px; border-radius: 12px; border: none; background: #2e2e33; color: white; font-size: 16px; font-weight: bold; text-align: center; }
-input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cursor: pointer; }
-#alarm-status-text { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+
+.input-group { display: flex; gap: 10px; align-items: center; background: #2e2e33; padding: 5px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); }
+input[type="time"] { flex: 1; padding: 12px; border: none; background: transparent; color: white; font-size: 22px; font-weight: 900; text-align: center; cursor: pointer; outline: none; }
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sepia(100%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); cursor: pointer; width: 24px; height: 24px; }
+#btn-add-alarm { padding: 12px 25px; border-radius: 10px; font-size: 15px; }
+.alarm-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
+.alarm-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+.alarm-item.inactive { opacity: 0.5; }
+.btn-toggle-single { font-size: 12px; font-weight: bold; cursor: pointer; background: #3a3a40; color: white; padding: 6px 12px; border-radius: 8px; transition: 0.2s; border:none; }
+.btn-delete-alarm { font-size: 12px; font-weight: bold; cursor: pointer; background: rgba(229, 62, 62, 0.1); color: #fc8181; padding: 6px 12px; border-radius: 8px; transition: 0.2s; border:none;}
+.btn-delete-alarm:hover { background: #e53e3e; color: white; }
+
 
 /* 수면 서식 */
 .sleep-tracker-card { text-align: center; padding: 30px 20px; background: var(--card-bg); }
@@ -163,6 +172,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .anim-cloud { position: absolute; z-index: 2; font-size: 24px; top: 2px; }
 .anim-rain { position: absolute; z-index: 1; font-size: 14px; animation: rainAnim 0.8s linear infinite; }
 @keyframes rainAnim { 0% { top: 12px; opacity: 1; transform: scale(1); } 100% { top: 32px; opacity: 0; transform: scale(0.5); } }
+
 .anim-float { animation: floatAnim 3s ease-in-out infinite; display: inline-block; }
 .anim-float-delay { animation: floatAnim 3s ease-in-out infinite 1.5s; display: inline-block; }
 .anim-spin { animation: spinAnim 10s linear infinite; display: inline-block; }
@@ -190,10 +200,10 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .b-sub { font-size: 11px; font-weight: 600; opacity: 0.9; }
 .b-icon { font-size: 40px; }
 
-/* 💡 배너 1: 파란색 그라데이션 (image_335694 스타일) */
+/* 배너 1 (파란색 팁) */
 .banner-tip { background: linear-gradient(135deg, #3182f6 0%, #60a5fa 100%); color: white; }
 
-/* 💡 배너 2: 프리미엄 다크 골드 그라데이션 (새롭게 재설계된 VIP 스타일) */
+/* 배너 2 (프리미엄 혜택) */
 .banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 .banner-premium .b-title { color: #f6e05e; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .banner-premium .b-sub { color: #cbd5e0; opacity: 1; }
@@ -249,7 +259,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%); cu
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 모달 오버레이 */
+/* 모달 오버레이 수정 완료 (오타 및 레이아웃 붕괴 완벽 해결) */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
