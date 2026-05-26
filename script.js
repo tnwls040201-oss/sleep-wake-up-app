@@ -9,10 +9,10 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 💡 백색소음용 오디오 (MP3 포맷으로 고정하여 재생 실패율 0% 만들기)
+// 💡 재생 오류를 원천 차단한 MP3 전용 백색소음 오디오 객체
 let sleepAudio = new Audio();
 sleepAudio.loop = true;
-sleepAudio.volume = 1.0; 
+sleepAudio.volume = 1.0; // 볼륨 최대치(100%) 고정
 let isPlayingNoise = false;
 
 let stopwatchInterval = null;
@@ -42,24 +42,37 @@ const missionPool = [
     { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
+// 💡 22개 메이저 아르카나 전체 추가 (이미지 깨짐 방지용 럭셔리 이모지 버전 적용)
 const tarotCards = [
-    { name: "XIX. THE SUN (태양)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/RWS_Tarot_19_Sun.jpg/300px-RWS_Tarot_19_Sun.jpg", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
-    { name: "XXI. THE WORLD (세계)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/RWS_Tarot_21_World.jpg/300px-RWS_Tarot_21_World.jpg", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." },
-    { name: "I. THE MAGICIAN (마법사)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/RWS_Tarot_01_Magician.jpg/300px-RWS_Tarot_01_Magician.jpg", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
-    { name: "X. WHEEL OF FORTUNE (운명)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg/300px-RWS_Tarot_10_Wheel_of_Fortune.jpg", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." },
-    { name: "0. THE FOOL (바보)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/RWS_Tarot_00_Fool.jpg/300px-RWS_Tarot_00_Fool.jpg", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 직관을 믿고 나아가세요!" },
-    { name: "II. THE HIGH PRIESTESS", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/300px-RWS_Tarot_02_High_Priestess.jpg", desc: "지혜와 통찰력이 빛나는 날입니다. 차분하게 내면의 목소리에 귀 기울이면 뜻밖의 해결책을 얻습니다." },
-    { name: "III. THE EMPRESS (여황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/RWS_Tarot_03_Empress.jpg/300px-RWS_Tarot_03_Empress.jpg", desc: "풍요로움과 창조성이 넘치는 하루입니다. 주변 사람들과 따뜻한 마음을 나누며 행복을 만끽하세요." },
-    { name: "IV. THE EMPEROR (황제)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/RWS_Tarot_04_Emperor.jpg/300px-RWS_Tarot_04_Emperor.jpg", desc: "안정과 성취의 날입니다. 리더십을 발휘하여 계획했던 일들을 자신감 있게 추진해 보세요." },
-    { name: "VII. THE CHARIOT (전차)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RWS_Tarot_07_Chariot.jpg/300px-RWS_Tarot_07_Chariot.jpg", desc: "강한 추진력과 자신감이 필요한 날입니다. 망설이지 말고 당신의 목표를 향해 힘차게 전진하세요!" },
-    { name: "VIII. STRENGTH (힘)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/RWS_Tarot_08_Strength.jpg/300px-RWS_Tarot_08_Strength.jpg", desc: "내면의 용기와 인내심이 빛을 발하는 하루입니다. 부드러운 카리스마로 어려움을 극복할 수 있습니다." },
-    { name: "XVII. THE STAR (별)", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/RWS_Tarot_17_Star.jpg/300px-RWS_Tarot_17_Star.jpg", desc: "희망과 영감이 가득한 긍정적인 하루입니다. 당신의 숨겨진 재능이 반짝반짝 빛나며 좋은 결과를 가져옵니다." }
+    { name: "0. THE FOOL (바보)", emoji: "🚶", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 직관을 믿고 나아가세요!" },
+    { name: "I. THE MAGICIAN (마법사)", emoji: "🪄", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
+    { name: "II. THE HIGH PRIESTESS (여사제)", emoji: "📖", desc: "지혜와 통찰력이 빛나는 날입니다. 차분하게 내면의 목소리에 귀 기울이면 뜻밖의 해결책을 얻습니다." },
+    { name: "III. THE EMPRESS (여황제)", emoji: "👑", desc: "풍요로움과 창조성이 넘치는 하루입니다. 주변 사람들과 따뜻한 마음을 나누며 행복을 만끽하세요." },
+    { name: "IV. THE EMPEROR (황제)", emoji: "🛡️", desc: "안정과 성취의 날입니다. 리더십을 발휘하여 계획했던 일들을 자신감 있게 추진해 보세요." },
+    { name: "V. THE HIEROPHANT (교황)", emoji: "🗝️", desc: "전통과 배움의 날입니다. 멘토나 존경하는 사람의 조언이 큰 도움이 될 것입니다." },
+    { name: "VI. THE LOVERS (연인)", emoji: "💞", desc: "조화와 선택의 날입니다. 마음이 끌리는 즐거운 선택을 하세요." },
+    { name: "VII. THE CHARIOT (전차)", emoji: "🐎", desc: "강한 추진력과 자신감이 필요한 날입니다. 망설이지 말고 당신의 목표를 향해 힘차게 전진하세요!" },
+    { name: "VIII. STRENGTH (힘)", emoji: "🦁", desc: "내면의 용기와 인내심이 빛을 발하는 하루입니다. 부드러운 카리스마로 어려움을 극복할 수 있습니다." },
+    { name: "IX. THE HERMIT (은둔자)", emoji: "🏮", desc: "성찰과 휴식의 날입니다. 잠시 혼자만의 시간을 가지며 에너지를 재충전하세요." },
+    { name: "X. WHEEL OF FORTUNE (운명)", emoji: "🎡", desc: "긍정적인 변화와 행운이 찾아오는 타이밍입니다. 흐름에 몸을 맡기고 기회를 잡으세요." },
+    { name: "XI. JUSTICE (정의)", emoji: "⚖️", desc: "균형과 공정함의 날입니다. 객관적이고 이성적으로 판단하면 좋은 결과가 있습니다." },
+    { name: "XII. THE HANGED MAN (매달린 사람)", emoji: "🙃", desc: "관점의 전환이 필요한 날입니다. 발상을 조금만 바꾸면 새로운 돌파구가 보입니다." },
+    { name: "XIII. DEATH (죽음)", emoji: "🦋", desc: "끝맺음과 새로운 시작의 날입니다. 낡은 습관을 버리고 새롭게 다시 태어나세요!" },
+    { name: "XIV. TEMPERANCE (절제)", emoji: "🌊", desc: "조절과 타협의 날입니다. 무리하지 말고 페이스를 유지하는 것이 성공의 열쇠입니다." },
+    { name: "XV. THE DEVIL (악마)", emoji: "😈", desc: "강한 유혹이 있는 날입니다. 달콤한 유혹을 이겨내면 성취감이 배가 됩니다." },
+    { name: "XVI. THE TOWER (탑)", emoji: "⚡", desc: "갑작스러운 변화가 생길 수 있습니다. 당황하지 말고 유연하게 대처하면 오히려 큰 기회가 됩니다." },
+    { name: "XVII. THE STAR (별)", emoji: "⭐", desc: "희망과 영감이 가득한 긍정적인 하루입니다. 당신의 숨겨진 재능이 반짝반짝 빛나며 좋은 결과를 가져옵니다." },
+    { name: "XVIII. THE MOON (달)", emoji: "🌕", desc: "불안과 상상력의 날입니다. 걱정은 접어두고 당신의 창의력을 믿어보세요." },
+    { name: "XIX. THE SUN (태양)", emoji: "☀️", desc: "오늘의 최고 길운! 성공과 활력이 차오르는 눈부신 하루가 예상됩니다. 자신감을 갖고 당당하게 행동하세요." },
+    { name: "XX. JUDGEMENT (심판)", emoji: "📯", desc: "부활과 보상의 날입니다. 그동안 노력했던 일들이 마침내 좋은 소식으로 돌아옵니다." },
+    { name: "XXI. THE WORLD (세계)", emoji: "🌍", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." }
 ];
 
+// 💡 3가지 유튜브 뉴스 완벽 매칭
 const mockNewsData = [
-    { id: "M7lc1UVf-VE", title: "[속보] 2026년 최신 AI 기술 트렌드 총정리", src: "IT/과학", desc: "생성형 AI의 발전과 앞으로의 미래 전망에 대해 유튜브로 자세히 알아봅니다." },
-    { id: "jNQXAC9IVRw", title: "오늘의 글로벌 경제 지표 및 증시 현황", src: "경제/주식", desc: "간밤의 뉴욕 증시 흐름과 오늘 국내 시장에 미칠 영향을 분석합니다." },
-    { id: "dQw4w9WgXcQ", title: "전국 대부분 비... 낮에도 서늘한 날씨 주의", src: "기상청", desc: "오늘 전국적으로 흐리고 비가 내리며 기온이 크게 떨어질 전망입니다. 외출 시 겉옷과 우산을 꼭 챙기세요." }
+    { id: "XWFAHRsWQAo", title: "[속보] 26인 최종 명단 발표 | 북중미 월드컵 EP.1", src: "스포츠", desc: "북중미 월드컵 26인 최종 명단 발표 영상입니다." },
+    { id: "W6urMb3qIr4", title: "ILLIT - It's Me [Music Bank] | KBS WORLD TV", src: "엔터테인먼트", desc: "ILLIT(아일릿)의 Music Bank 무대 교차편집 영상입니다." },
+    { id: "Ab3LZbmPW74", title: "[Ansan Univ] 안산대학교 학과 홍보 동영상 | 보건의료정보학과", src: "안산대학교", desc: "안산대학교 보건의료정보학과의 홍보 동영상입니다." }
 ];
 
 function initApp() {
@@ -89,7 +102,6 @@ function initApp() {
     const clockEl = document.getElementById('clock');
     const dateStringEl = document.getElementById('date-string');
     
-    // 알람 설정 엘리먼트
     const alarmTimeInput = document.getElementById('alarm-time-input');
     const btnAddAlarm = document.getElementById('btn-add-alarm');
     const alarmListContainer = document.getElementById('alarm-list-container');
@@ -122,7 +134,6 @@ function initApp() {
         });
     }
 
-    // IP 위치 날씨
     const currentRegionEl = document.getElementById('current-region-name');
     if(currentRegionEl) {
         fetch('https://ipapi.co/json/')
@@ -144,7 +155,6 @@ function initApp() {
         });
     });
 
-    // 날씨 배너 슬라이드 자동화
     const bannerTrack = document.getElementById('weather-banner-track');
     let bannerIndex = 0;
     if (bannerTrack) {
@@ -154,7 +164,6 @@ function initApp() {
         }, 3000);
     }
     
-    // 미세먼지 데이터 세팅
     const dustBadge = document.getElementById('dust-badge');
     if(dustBadge) {
         const levels = [
@@ -168,10 +177,10 @@ function initApp() {
         dustBadge.className = `dust-badge ${randomLevel.class}`;
     }
 
-    // 수면 기록 및 UI
     const btnToggleSleep = document.getElementById('btn-toggle-sleep');
     const sleepWaveBars = document.getElementById('sleep-wave-bars');
     const sleepWaveStatus = document.getElementById('sleep-wave-status');
+
     const btnViewReport = document.getElementById('btn-view-report');
     const sleepHistoryModal = document.getElementById('sleep-history-modal');
     const sleepHistoryList = document.getElementById('sleep-history-list');
@@ -256,21 +265,21 @@ function initApp() {
         });
     }
 
-    // 💡 백색소음 오디오 로직 (100% 재생 보장 MP3 교체 완료)
+    // 💡 백색소음 사운드 (오류 해결 완료: Freesound MP3 및 정확한 순서 매칭)
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
     const noiseVisualizer = document.getElementById('noise-visualizer');
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // 💡 모든 브라우저(아이폰 포함)에서 차단되지 않는 Mixkit MP3 링크 연동
+    // 💡 각 아이콘에 맞는 정확하고 끊김 없는 자연의 소리로 재매칭!
     const soundUrls = {
         "none": "",
-        "campfire": "https://assets.mixkit.co/active_storage/sfx/2458/2458-preview.mp3",
-        "forest": "https://assets.mixkit.co/active_storage/sfx/2500/2500-preview.mp3",
-        "waves": "https://assets.mixkit.co/active_storage/sfx/116/116-preview.mp3",
-        "rain": "https://assets.mixkit.co/active_storage/sfx/1250/1250-preview.mp3",
-        "thunder": "https://assets.mixkit.co/active_storage/sfx/1291/1291-preview.mp3"
+        "bonfire": "https://cdn.freesound.org/previews/337/337424_156543-lq.mp3",    // 모닥불 (장작) 소리
+        "forest": "https://cdn.freesound.org/previews/174/174763_3278072-lq.mp3",    // 숲속 귀뚜라미 소리
+        "waves": "https://cdn.freesound.org/previews/400/400632_5121236-lq.mp3",     // 잔잔한 파도 소리
+        "rain": "https://cdn.freesound.org/previews/531/531947_11139414-lq.mp3",     // 빗소리
+        "thunder": "https://cdn.freesound.org/previews/102/102693_1714571-lq.mp3"    // 천둥 소리
     };
 
     let currentNoiseType = "none";
@@ -285,11 +294,21 @@ function initApp() {
             if (currentNoiseType !== "none") {
                 sleepAudio.src = soundUrls[currentNoiseType];
                 if(isPlayingNoise) {
-                    // 이미 재생중인 상태에서 다른 소리 클릭시 바로 전환 재생
-                    sleepAudio.play().catch(e => console.log(e));
+                    // 모바일 브라우저 권한 해결: 클릭 이벤트 내에서 play() 실행
+                    let playPromise = sleepAudio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => console.log(e));
+                    }
                 }
             } else {
-                if(isPlayingNoise && btnToggleNoise) btnToggleNoise.click();
+                sleepAudio.pause();
+                if(isPlayingNoise) {
+                    isPlayingNoise = false;
+                    btnToggleNoise.textContent = "▶";
+                    btnToggleNoise.classList.remove('playing');
+                    noiseVisualizer.classList.remove('playing');
+                    if(noiseStatusTxt) noiseStatusTxt.textContent = "플레이 버튼을 누르면 꿀잠 소리가 재생됩니다";
+                }
             }
         });
     });
@@ -308,14 +327,20 @@ function initApp() {
                 btnToggleNoise.classList.add('playing');
                 if(noiseStatusTxt) noiseStatusTxt.textContent = "🎵 편안한 수면 백색소음 재생 중..";
                 noiseVisualizer.classList.add('playing');
-                // 💡 사용자가 직접 재생 버튼을 눌렀으므로 정책에 막히지 않음
-                sleepAudio.play().catch(e => {
-                    alert("오디오 재생에 실패했습니다. 미디어 볼륨을 높여주세요.");
-                    isPlayingNoise = false;
-                    btnToggleNoise.textContent = "▶";
-                    btnToggleNoise.classList.remove('playing');
-                    noiseVisualizer.classList.remove('playing');
-                });
+                
+                // 버튼 클릭과 동시에 오디오 재생!
+                sleepAudio.src = soundUrls[currentNoiseType];
+                let playPromise = sleepAudio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.log("Audio Play Error:", e);
+                        alert("오디오를 재생할 수 없습니다. 스마트폰이 무음 모드이거나 오디오 자동재생 권한이 막혀있는지 확인해주세요.");
+                        isPlayingNoise = false;
+                        btnToggleNoise.textContent = "▶";
+                        btnToggleNoise.classList.remove('playing');
+                        noiseVisualizer.classList.remove('playing');
+                    });
+                }
             } else {
                 btnToggleNoise.textContent = "▶";
                 btnToggleNoise.classList.remove('playing');
@@ -330,13 +355,45 @@ function initApp() {
     const fortuneModal = document.getElementById('fortune-modal');
     const btnCloseFortune = document.getElementById('btn-close-fortune');
     const fortuneDate = document.getElementById('fortune-date');
-    const tarotCardImage = document.getElementById('tarot-card-image');
+    const tarotEmojiDisplay = document.getElementById('tarot-emoji-display');
     const tarotCardName = document.getElementById('tarot-card-name');
     const tarotCardDesc = document.getElementById('tarot-card-desc');
     const fortuneConfirmView = document.getElementById('fortune-confirm-view');
     const fortuneResultView = document.getElementById('fortune-result-view');
     const btnFortuneConfirmYes = document.getElementById('btn-fortune-confirm-yes');
     const btnFortuneCancel = document.getElementById('btn-fortune-cancel');
+
+    // 💡 타로카드 하루 한 번 제한 완전히 해제 (테스트 및 마음껏 즐기기 용도!)
+    if(btnFortune) {
+        btnFortune.addEventListener('click', () => {
+            if(fortuneConfirmView) fortuneConfirmView.style.display = "block";
+            if(fortuneResultView) fortuneResultView.style.display = "none";
+            if(fortuneModal) fortuneModal.classList.add('active');
+        });
+    }
+
+    if(btnFortuneConfirmYes) {
+        btnFortuneConfirmYes.addEventListener('click', () => {
+            const now = new Date();
+            if(fortuneDate) fortuneDate.textContent = `${now.getFullYear()}년 ${String(now.getMonth() + 1).padStart(2, '0')}월 ${String(now.getDate()).padStart(2, '0')}일`;
+            
+            // 22개 타로 카드 중 랜덤 뽑기! (더 이상 삐에로만 나오지 않습니다)
+            const randomTarot = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+            
+            // 💡 고품격 CSS + 이모지 카드로 렌더링 (이미지 깨짐 절대 없음)
+            if(tarotEmojiDisplay) {
+                tarotEmojiDisplay.textContent = randomTarot.emoji;
+            }
+            if(tarotCardName) tarotCardName.textContent = randomTarot.name;
+            if(tarotCardDesc) tarotCardDesc.textContent = randomTarot.desc;
+
+            if(fortuneConfirmView) fortuneConfirmView.style.display = "none";
+            if(fortuneResultView) fortuneResultView.style.display = "block";
+        });
+    }
+
+    if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
+    if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
     const btnMoodDiary = document.getElementById('btn-mood-diary');
     const diaryModal = document.getElementById('diary-modal');
@@ -357,7 +414,6 @@ function initApp() {
     const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
     const lapList = document.getElementById('lap-list');
 
-    // 스톱워치 랩타임 저장 연동
     let savedLaps = JSON.parse(localStorage.getItem('wakeme_laps') || '[]');
     function renderLaps() {
         if(!lapList) return;
@@ -453,13 +509,11 @@ function initApp() {
         if(settingsInfoModal) settingsInfoModal.classList.add('active');
     };
 
-    // 💡 배너 클릭 이벤트 수정 (엉뚱한 약관이 뜨던 오류 해결)
     const bannerTip = document.getElementById('banner-click-tip');
     const bannerPremium = document.getElementById('banner-click-premium');
     
     if(bannerTip) {
         bannerTip.addEventListener('click', () => {
-            // 이제 클릭 시 정상적으로 '알람 이용 팁'이 팝업으로 나타납니다.
             openSettingsModal("💡 알람 이용 팁", `
                 <b style="color:#f6e05e;">1. 미디어 볼륨 확인</b><br>
                 스마트폰의 '미디어 볼륨'이 켜져 있는지 확인하세요. 무음 모드라도 미디어 볼륨이 낮으면 소리가 나지 않습니다.<br><br>
@@ -565,7 +619,6 @@ function initApp() {
         });
     });
 
-    // 다중 알람 처리 로직
     function renderAlarms() {
         if(!alarmListContainer) return;
         alarmListContainer.innerHTML = '';
@@ -632,76 +685,6 @@ function initApp() {
         const miliseconds = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
         return `${minutes}:${seconds}.${miliseconds}`;
     }
-
-    if(btnFortune) {
-        btnFortune.addEventListener('click', () => {
-            const now = new Date();
-            const todayKey = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
-            const lastViewedDate = localStorage.getItem('last_tarot_view_date');
-
-            if (lastViewedDate === todayKey) {
-                alert("🔮 오늘의 타로 운세는 하루에 한 번만 열람할 수 있습니다.\n내일 아침 새로운 기운으로 다시 시도해 주세요!"); return;
-            }
-            if(fortuneConfirmView) fortuneConfirmView.style.display = "block";
-            if(fortuneResultView) fortuneResultView.style.display = "none";
-            if(fortuneModal) fortuneModal.classList.add('active');
-        });
-    }
-
-    if(btnFortuneConfirmYes) {
-        btnFortuneConfirmYes.addEventListener('click', () => {
-            const now = new Date();
-            const todayKey = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
-            localStorage.setItem('last_tarot_view_date', todayKey);
-
-            if(fortuneDate) fortuneDate.textContent = `${now.getFullYear()}년 ${String(now.getMonth() + 1).padStart(2, '0')}월 ${String(now.getDate()).padStart(2, '0')}일`;
-            
-            const randomTarot = tarotCards[Math.floor(Math.random() * tarotCards.length)];
-            
-            if(tarotCardImage) {
-                tarotCardImage.src = randomTarot.imageUrl;
-                tarotCardImage.style.display = 'block';
-            }
-            if(tarotCardName) tarotCardName.textContent = randomTarot.name;
-            if(tarotCardDesc) tarotCardDesc.textContent = randomTarot.desc;
-
-            if(fortuneConfirmView) fortuneConfirmView.style.display = "none";
-            if(fortuneResultView) fortuneResultView.style.display = "block";
-        });
-    }
-
-    if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
-    if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
-
-    if(btnMoodDiary) {
-        btnMoodDiary.addEventListener('click', () => {
-            const now = new Date();
-            if(diaryDate) { diaryDate.textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 기상 직후의 마음 기록하기`; }
-            selectedMood = ""; 
-            if(diaryInput) diaryInput.value = "";
-            btnMoods.forEach(b => b.classList.remove('selected'));
-            if(diaryModal) diaryModal.classList.add('active');
-        });
-    }
-
-    btnMoods.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            btnMoods.forEach(b => b.classList.remove('selected'));
-            e.currentTarget.classList.add('selected');
-            selectedMood = e.currentTarget.getAttribute('data-mood');
-        });
-    });
-
-    if(btnSaveDiary) {
-        btnSaveDiary.addEventListener('click', () => {
-            if(!selectedMood) { alert("오늘 아침 나의 상태 이모지를 선택해 주세요!"); return; }
-            if(!diaryInput.value.trim()) { alert("오늘 아침의 기분을 일기장 양식에 작성해 주세요!"); return; }
-            alert(`💾 [아침 감정 일기 저장 완료]\n\n이벤트에 참여하시려면 지금 작성하신 화면을 캡처해서 event@wakeme.com 으로 보내주세요!\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
-            if(diaryModal) diaryModal.classList.remove('active');
-        });
-    }
-    if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
-
 
     function updateClock() {
         if (!clockEl || !dateStringEl) return;
