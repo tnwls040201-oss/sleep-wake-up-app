@@ -22,7 +22,7 @@
 .theme-mint { --bg-primary: #082925; --card-bg: #0f4039; --color-primary: #4fd1c5; --border-color: rgba(79, 209, 197, 0.15); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-body { background-color: #09090b; color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
+body { background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
 
 /* 스플래시 */
 #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff5e62, #ff9966, #ff5e62, #ff9966); background-size: 400% 400%; animation: auroraBackground 10s ease infinite; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
@@ -38,7 +38,7 @@ body { background-color: #09090b; color: var(--text-main); display: flex; justif
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* 컨테이너 및 탭 */
-.app-container { width: 100%; max-width: 420px; height: 780px; background: var(--bg-primary); border-radius: 32px; box-shadow: var(--shadow); overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
+.app-container { width: 100%; max-width: 420px; height: 780px; background: transparent; border-radius: 32px; box-shadow: var(--shadow); overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
 .main-tab-screen, .screen { display: none; padding: 20px 15px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
 .main-tab-screen.active, .screen.active { display: flex !important; }
 #screen-mission, #screen-survival { height: 100%; z-index: 50; position: absolute; top: 0; left: 0; background: var(--bg-primary); }
@@ -48,29 +48,31 @@ header { text-align: left; margin-bottom: 15px; padding-left: 5px; }
 header h1 { font-size: 26px; font-weight: 800; }
 .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-/* 공용 프리미엄 UI 디자인 */
-.premium-card { background: #1f1f23; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 24px; padding: 20px; transition: transform 0.2s, box-shadow 0.2s; }
+/* 💡 프리미엄 UI (오직 알람 로비와 스톱워치 기능탭에서만 쓰임) */
+.premium-card { background: rgba(31, 31, 35, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border-radius: 24px; padding: 20px; margin-bottom: 15px; transition: transform 0.2s, box-shadow 0.2s; }
+.premium-card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
+
 .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .card-header-flex h3 { font-size: 16px; font-weight: 800; margin: 0; color: #fff; }
 .helper-text { font-size: 12px; color: #f6e05e; margin-bottom: 12px; font-weight: 600; opacity: 0.9; }
 
-.premium-btn { background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4); font-weight: bold; }
-.premium-btn-danger { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4); font-weight: bold; }
-.premium-btn-outline { background: #2a2a2d; color: #cbd5e0; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; transition: 0.2s; }
+.premium-btn { background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4); font-weight: bold; border-radius: 12px; cursor: pointer; padding: 12px 20px; transition: transform 0.1s;}
+.premium-btn:active { transform: scale(0.96); }
+.premium-btn-danger { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4); font-weight: bold; border-radius: 12px; cursor: pointer; padding: 12px 20px; transition: transform 0.1s;}
+.premium-btn-danger:active { transform: scale(0.96); }
+.premium-btn-outline { background: #2a2a2d; color: #cbd5e0; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; transition: 0.2s; border-radius: 12px; cursor: pointer; padding: 12px 20px;}
 .premium-btn-outline:hover { background: #3a3a40; border-color: rgba(255,255,255,0.2); }
 
 .premium-input { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.05); }
 .premium-textarea { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); color: white; font-size: 14px; width: 100%; height: 80px; outline: none; resize: none; margin-bottom: 10px; }
 .premium-textarea::placeholder { color: #718096; }
 
-/* 💡 로비 알람 시간 박스 디자인 업그레이드 */
 .current-time-box.premium-glow { position: relative; padding: 30px 20px; background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%); border-radius: 24px; text-align: center; margin-bottom: 15px; overflow: hidden; box-shadow: 0 8px 20px rgba(76, 29, 149, 0.3); border: 1px solid rgba(255,255,255,0.05); }
 .current-time-box.premium-glow::after { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); opacity: 0.5; animation: rotateGlow 10s linear infinite; pointer-events: none; }
 @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
 #clock { font-size: 42px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1; position: relative; }
 #date-string { font-size: 13px; opacity: 0.8; font-weight: 600; z-index: 1; position: relative; margin-top: 5px; }
 
-/* 💡 다중 알람 리스트 고급화 */
 .input-group { display: flex; gap: 10px; align-items: center; }
 .time-icon { font-size: 20px; opacity: 0.8; }
 input[type="time"] { flex: 1; padding: 5px; border: none; background: transparent; color: white; font-size: 24px; font-weight: 800; text-align: center; cursor: pointer; outline: none; }
@@ -80,7 +82,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .alarm-list-container::-webkit-scrollbar { width: 4px; }
 .alarm-list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
 
-/* iOS 스타일 스위치 버튼 느낌 */
 .alarm-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
 .alarm-item:hover { background: rgba(255,255,255,0.06); }
 .alarm-item.inactive { opacity: 0.4; }
@@ -88,15 +89,20 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .btn-toggle-single { font-size: 11px; font-weight: 800; cursor: pointer; background: #3a3a40; color: white; padding: 8px 16px; border-radius: 20px; transition: 0.2s; border:none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 .btn-delete-alarm { font-size: 11px; font-weight: bold; cursor: pointer; background: transparent; color: #fc8181; padding: 8px 12px; border-radius: 12px; transition: 0.2s; border: 1px solid rgba(252,129,129,0.3); }
 .btn-delete-alarm:hover { background: rgba(252,129,129,0.1); }
+.empty-state { font-size: 12px; color: #a0aec0; text-align: center; padding: 10px; }
 
 .pulse-dot { width: 8px; height: 8px; background-color: #f6e05e; border-radius: 50%; box-shadow: 0 0 0 rgba(246, 224, 94, 0.4); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(246, 224, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0); } }
 
-
+/* 💡 일반 카드 공통 서식 (수면, 날씨, 설정 탭을 원상복구 시켜줌) */
+.card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
+.card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
 .btn { padding: 12px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
 .btn:active { transform: scale(0.96); }
+.btn-primary { background-color: var(--color-primary); color: white; }
+.btn-danger { background-color: var(--color-danger); color: white; }
+.btn-success { background-color: #ffffff; color: #000000; }
 .btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
-
 
 /* 설정 탭 */
 .settings-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 20px; margin-bottom: 15px; }
@@ -113,12 +119,8 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .profile-avatar { width: 50px; height: 50px; border-radius: 50%; background: #3a3a40; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; }
 .profile-name { font-size: 18px; font-weight: bold; }
 
-/* 공통 카드 및 로비 */
-.card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
-.card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
-
 /* 수면 서식 */
-.sleep-tracker-card { text-align: center; padding: 30px 20px; background: var(--card-bg); }
+.sleep-tracker-card { text-align: center; }
 .sleep-tracker-card h2 { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
 .sleep-tracker-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 25px; }
 .waveform-box { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -135,11 +137,11 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .wave-bars.playing .bar:nth-child(7) { animation-delay: 0.2s; }
 @keyframes waveAnim { from { height: 8px; } to { height: 35px; } }
 
-.sleep-report-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; margin-bottom: 15px; background: var(--card-bg); border-radius: 14px; }
+.sleep-report-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; margin-bottom: 15px;}
 .sleep-record-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1); }
 
 /* 백색소음 패널 서식 */
-.noise-panel { padding: 20px; background: var(--card-bg); border-radius: 20px; text-align: center; }
+.noise-panel { text-align: center; }
 .noise-header { margin-bottom: 25px; }
 .noise-header h3 { font-size: 18px; font-weight: 800; color: white; margin-bottom: 5px;}
 .noise-header p { font-size: 12px; color: #a0aec0; }
@@ -167,7 +169,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 @keyframes spinBorder { 100% { transform: rotate(360deg); } }
 
 /* 미세먼지 바 */
-.dust-bar-wrapper { grid-column: span 3 !important; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 15px; margin-top: 5px; margin-bottom: 5px; }
+.dust-bar-wrapper { grid-column: span 3 !important; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; margin-top: 5px; margin-bottom: 5px; background: var(--card-bg); border-radius: var(--radius);}
 .dust-title { font-size: 13px; color: #cbd5e0; font-weight: 600; }
 .dust-badge { font-size: 13px; font-weight: 800; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 12px; }
 .dust-badge.good { color: #63b3ed; }
@@ -176,7 +178,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 
 /* 날씨 레이아웃 */
 .weather-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; width: 100% !important; margin-bottom: 15px !important; }
-.weather-grid .weather-card { background: var(--card-bg) !important; border-radius: 18px !important; padding: 16px 8px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.weather-grid .weather-card { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; background: var(--card-bg); border-radius: var(--radius); padding: 16px 8px;}
 
 /* 서울 럭셔리 + 가로 3칸 */
 .weather-grid .seoul-card { grid-column: span 3 !important; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important; box-shadow: 0 10px 25px rgba(246, 224, 94, 0.2) !important; border: 2px solid rgba(246, 224, 94, 0.3) !important; flex-direction: row !important; justify-content: space-between !important; padding: 18px 30px !important; align-items: center !important; }
@@ -191,7 +193,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .anim-cloud { position: absolute; z-index: 2; font-size: 24px; top: 2px; }
 .anim-rain { position: absolute; z-index: 1; font-size: 14px; animation: rainAnim 0.8s linear infinite; }
 @keyframes rainAnim { 0% { top: 12px; opacity: 1; transform: scale(1); } 100% { top: 32px; opacity: 0; transform: scale(0.5); } }
-
 .anim-float { animation: floatAnim 3s ease-in-out infinite; display: inline-block; }
 .anim-float-delay { animation: floatAnim 3s ease-in-out infinite 1.5s; display: inline-block; }
 .anim-spin { animation: spinAnim 10s linear infinite; display: inline-block; }
@@ -204,32 +205,43 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 
 /* 메뉴 아이콘 */
 .morning-menu-grid.alternative-layout { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; margin-top: 10px !important; margin-bottom: 15px; }
-.morning-menu-grid.alternative-layout .menu-item { background: var(--card-bg) !important; border-radius: 16px !important; padding: 18px 5px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+.morning-menu-grid.alternative-layout .menu-item { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 18px 5px !important; cursor: pointer; transition: background 0.2s, transform 0.1s; background: var(--card-bg); border-radius: var(--radius);}
 .morning-menu-grid.alternative-layout .menu-item:hover { background: rgba(255,255,255,0.05) !important; transform: translateY(-2px); }
 .morning-menu-grid.alternative-layout .menu-item .icon { font-size: 24px !important; margin-bottom: 6px !important; }
 .morning-menu-grid.alternative-layout .menu-item span { font-size: 11px !important; font-weight: 600 !important; color: #cbd5e0 !important; }
 
-/* 💡 롤링 배너 컨테이너 (디자인 퀄리티 향상) */
+/* 꾸민 롤링 배너 컨테이너 */
 .weather-banner-container { width: 100%; height: 85px; border-radius: 12px; overflow: hidden; position: relative; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
 .weather-banner-track { display: flex; width: 200%; height: 100%; transition: transform 0.5s ease-in-out; }
 .w-banner-slide { width: 50%; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: relative; overflow: hidden; }
 
-/* 💡 배너 1 (파란색, 사진과 100% 동일한 느낌으로 개선) */
-.banner-tip-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
-.banner-tip-new::before { content: "▲ ▼ ▲"; position: absolute; font-size: 80px; color: rgba(255,255,255,0.05); top: -20px; left: -10px; letter-spacing: -10px; z-index: 0; }
 .b-text-wrap-new { z-index: 2; display: flex; flex-direction: column; align-items: flex-start; }
 .b-title-new { font-size: 15px; font-weight: 900; line-height: 1.3; margin-bottom: 6px; text-align: left; }
 .text-yellow { color: #fde047; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 .b-sub-btn { font-size: 11px; font-weight: bold; color: white; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+.b-sub-text { font-size: 11px; color: #a0aec0; }
+
+.banner-tip-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+.banner-tip-new::before { content: "▲ ▼ ▲"; position: absolute; font-size: 80px; color: rgba(255,255,255,0.05); top: -20px; left: -10px; letter-spacing: -10px; z-index: 0; }
 .b-icon-cat { font-size: 45px; z-index: 2; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2)); transform: scaleX(-1); }
 
-/* 배너 2 (프리미엄 럭셔리 블랙&골드) */
 .banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); }
 .text-gold { color: #f6e05e; }
-.b-sub-text { font-size: 11px; color: #a0aec0; }
 .b-icon-crown { font-size: 40px; z-index: 2; filter: drop-shadow(0 0 10px rgba(246,224,94,0.4)); }
 
-/* 뉴스 섹션 서식 */
+/* 💡 기능(스톱워치) 탭 프리미엄 UI 유지 */
+.stopwatch-premium-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; padding: 30px 20px; background: rgba(31, 31, 35, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.stopwatch-circle-bg { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #2d3748 0%, #1a202c 100%); border: 4px solid #4f46e5; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5), inset 0 0 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; margin-bottom: 25px; position: relative; }
+.premium-stopwatch-text { font-size: 38px; font-weight: 900; font-family: monospace; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); letter-spacing: 1px; }
+.stopwatch-controls { display: flex; gap: 15px; width: 100%; justify-content: center; }
+.btn-sw { width: 75px; height: 75px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; border: none; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+.btn-sw:active { transform: scale(0.95); }
+.btn-sw:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-sw-main { background: #4f46e5; color: white; border: 2px solid #818cf8; }
+.btn-sw-main.running { background: #e53e3e; border-color: #fc8181; }
+.btn-sw-sub { background: #4a5568; color: #e2e8f0; border: 2px solid #718096; }
+.btn-sw-reset { background: #2d3748; color: #a0aec0; border: 2px solid #4a5568; }
+
 .news-list { display: flex; flex-direction: column; gap: 10px; }
 .news-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; gap: 12px; cursor: pointer; transition: 0.2s; align-items: center; border: 1px solid transparent; }
 .news-item:hover { background: rgba(255,255,255,0.1); border-color: #4f46e5; }
@@ -238,14 +250,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .news-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
 .news-src { font-size: 11px; color: #a0aec0; }
 
-/* 스톱워치 서식 */
-.stopwatch-display-box { background: rgba(0,0,0,0.2); border-radius: 24px; padding: 30px 20px; text-align: center; margin-bottom: 20px; }
-#stopwatch-time { font-size: 52px; font-weight: 800; font-family: monospace; }
-.stopwatch-btn-group { display: flex; gap: 15px; margin-bottom: 20px; }
-.btn-stopwatch-main { flex: 2; padding: 16px; font-size: 16px; border-radius: 14px; color: white; background: #4f46e5; }
-.btn-stopwatch-main.running { background: #e53e3e; }
-.btn-stopwatch-sub { flex: 1; padding: 16px; font-size: 15px; border-radius: 14px; color: #cbd5e0; background: #27272a; }
-.lap-records-container { flex: 1; background: var(--card-bg); border-radius: 16px; padding: 10px 15px; overflow-y: auto; max-height: 250px; }
+.lap-records-container { overflow-y: auto; max-height: 200px; background: var(--card-bg); border-radius: var(--radius); padding: 10px 15px;}
 #lap-list { list-style: none; }
 #lap-list li { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; }
 
@@ -277,25 +282,24 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 💡 화면 붕괴 원인이었던 모달 오버레이 완벽 복구 */
+/* 모달창 디자인 원상복구 (프리미엄 제거) */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.premium-modal { background: #1f1f23; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* 하단 네비게이션 */
-.bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #18181c; border-top: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; z-index: 10; padding: 0 5px; }
-.bottom-nav-bar.style-quad .nav-item { flex: 1; width: auto; background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; }
-.nav-item.active { color: #ffffff; }
+/* 하단 네비게이션 프리미엄화 유지 */
+.bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(24, 24, 28, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; z-index: 10; padding: 0 5px; }
+.bottom-nav-bar.style-quad .nav-item { flex: 1; width: auto; background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; transition: 0.2s;}
+.nav-item.active { color: #ffffff; transform: translateY(-2px); }
 .nav-icon { font-size: 18px; margin-bottom: 4px; }
 .nav-label { font-size: 10px; font-weight: 600; }
 .bottom-nav-bar.style-quad .v-line { width: 1px; height: 26px; background-color: var(--border-color); flex-shrink: 0; margin: 0; opacity: 0.4; transition: background-color 0.3s ease; }
 
-/* 타로 모달 */
+/* 💡 타로 모달 전용 프리미엄 디자인 (이모지 카드) */
 #fortune-confirm-view { text-align: center; width: 100%; }
-.tarot-container { background: rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
-.tarot-card-img { width: 120px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 15px; display: none; }
+.tarot-container { background: rgba(255,255,255,0.03); border-radius: 16px; padding: 20px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+.tarot-emoji-card { font-size: 80px; width: 140px; height: 180px; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; animation: floatAnim 3s infinite ease-in-out; }
 #tarot-card-name { font-size: 18px; font-weight: 800; color: #f6e05e; margin-bottom: 8px; }
 #tarot-card-desc { font-size: 13px; line-height: 1.6; color: #cbd5e0; }
 #fortune-date { font-size: 18px; font-weight: bold; color: white; }
