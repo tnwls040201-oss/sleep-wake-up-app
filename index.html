@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <iframe id="yt-audio-player" style="display:none;" width="10" height="10" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+    <div style="position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0;">
+        <div id="yt-player-campfire"></div>
+        <div id="yt-player-forest"></div>
+    </div>
 
     <div id="splash-screen">
         <div class="splash-content">
@@ -18,422 +21,424 @@
         </div>
     </div>
 
-    <div class="app-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
         
-        <div id="screen-lobby" class="main-tab-screen active">
-            <header>
-                <h1>⏰ 웨이크미</h1>
-                <p class="subtitle">완벽한 아침을 위한 강력한 각성 루틴</p>
-            </header>
-            <main>
-                <div class="current-time-box premium-glow">
-                    <div id="clock">00:00:00</div>
-                    <p id="date-string">오늘의 날짜</p>
-                </div>
-                
-                <div class="card premium-card alarm-setter">
-                    <div class="card-header-flex">
-                        <h3>🔔 알람 추가</h3>
-                        <span class="pulse-dot"></span>
-                    </div>
-                    <p class="helper-text">👇 아래 박스를 눌러 기상 시간을 선택하세요</p>
-                    
-                    <div class="input-group premium-input">
-                        <span class="time-icon">🕘</span>
-                        <input type="time" id="alarm-time-input" value="07:00">
-                        <button id="btn-add-alarm" class="btn btn-primary premium-btn">추가</button>
+        <div class="app-container">
+            
+            <div id="screen-lobby" class="main-tab-screen active">
+                <header>
+                    <h1>⏰ 웨이크미</h1>
+                    <p class="subtitle">완벽한 아침을 위한 강력한 각성 루틴</p>
+                </header>
+                <main>
+                    <div class="current-time-box premium-glow">
+                        <div id="clock">00:00:00</div>
+                        <p id="date-string">오늘의 날짜</p>
                     </div>
                     
-                    <div id="alarm-list-container" class="alarm-list-container">
-                        <div class="empty-state">설정된 알람이 없습니다.</div>
-                    </div>
-                </div>
-
-                <div class="card premium-card test-box">
-                    <div class="card-header-flex">
-                        <h3>🚀 앱 미리보기</h3>
-                    </div>
-                    <p class="helper-text" style="color:#cbd5e0;">기다리지 않고 15가지 미션을 바로 체험합니다.</p>
-                    <button id="btn-test-alarm" class="btn btn-danger premium-btn-danger">즉시 미션 시작 (테스트)</button>
-                </div>
-
-                <div class="card premium-card schedule-box">
-                    <div class="card-header-flex">
-                        <h3>📅 나의 오늘 일정</h3>
-                    </div>
-                    <textarea id="my-schedule-input" class="premium-textarea" placeholder="오늘의 핵심 일정을 기록해보세요..." spellcheck="false"></textarea>
-                    <button id="btn-save-schedule" class="btn btn-success premium-btn-outline">일정 저장하기</button>
-                </div>
-            </main>
-        </div>
-
-        <div id="screen-sleep-tab" class="main-tab-screen">
-            <header><h1>🌙 수면 측정</h1></header>
-            <main>
-                <div class="card sleep-tracker-card">
-                    <h2>나도 모르는<br>내 잠버릇은 뭘까?</h2>
-                    <p class="sleep-tracker-desc">내 뒤척임, 코골이 소리를 확인하세요</p>
-                    <div class="waveform-box">
-                        <span class="wave-time" id="sleep-wave-status">측정 대기 중</span>
-                        <div id="sleep-wave-bars" class="wave-bars">
-                            <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
-                            <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
-                            <span class="bar"></span>
+                    <div class="card premium-card alarm-setter">
+                        <div class="card-header-flex">
+                            <h3>🔔 알람 추가</h3>
+                            <span class="pulse-dot"></span>
                         </div>
-                    </div>
-                    <button id="btn-toggle-sleep" class="btn btn-success btn-lg">수면 측정하기</button>
-                </div>
-                
-                <div id="btn-view-report" class="card sleep-report-row" style="cursor: pointer;">
-                    <span>내 수면 리포트 보관함</span><span class="arrow-icon">❯</span>
-                </div>
-                
-                <div class="card noise-panel">
-                    <div class="noise-header">
-                        <h3>🌙 수면 유도 수면음</h3>
-                        <p>깊은 잠에 빠져들도록 도와주는 백색소음입니다.</p>
-                    </div>
-                    
-                    <div class="noise-visualizer" id="noise-visualizer">
-                        <div class="n-bars">
-                            <span></span><span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                        <p id="noise-current-text">없음</p>
-                    </div>
-                    
-                    <button id="btn-toggle-noise" class="btn-noise-play">▶</button>
-
-                    <div class="noise-grid">
-                        <div class="noise-item active" data-sound="none">
-                            <div class="n-icon"><span class="border-dash"></span>⃠</div><span>없음</span>
-                        </div>
-                        <div class="noise-item" data-sound="bonfire">
-                            <div class="n-icon"><span class="border-dash"></span>🔥</div><span>모닥불</span>
-                        </div>
-                        <div class="noise-item" data-sound="forest">
-                            <div class="n-icon"><span class="border-dash"></span>🍃</div><span>숲 속 귀뚜라미</span>
-                        </div>
-                        <div class="noise-item" data-sound="waves">
-                            <div class="n-icon"><span class="border-dash"></span>🌊</div><span>잔잔한 파도</span>
-                        </div>
-                        <div class="noise-item" data-sound="rain">
-                            <div class="n-icon"><span class="border-dash"></span>🌧️</div><span>차가운 비</span>
-                        </div>
-                        <div class="noise-item" data-sound="thunder">
-                            <div class="n-icon"><span class="border-dash"></span>🌩️</div><span>비 오는 날 천둥</span>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <div id="screen-weather-tab" class="main-tab-screen">
-            <header>
-                <h1>☀️ 현재 날씨</h1>
-                <p class="subtitle">오늘의 전국 평균 날씨 현황</p>
-            </header>
-            <main>
-                <div class="weather-grid">
-                    <div class="weather-card seoul-card">
-                        <div class="seoul-title-box">
-                            <span class="region" id="current-region-name">서울</span>
-                            <span class="luxury-label">CURRENT LOCATION</span>
-                        </div>
-                        <div class="seoul-weather-box">
-                            <div class="weather-anim">
-                                <span class="anim-cloud">☁️</span>
-                                <span class="anim-rain">💧</span>
-                            </div>
-                            <span class="temp">15°C</span>
-                        </div>
-                    </div>
-                    
-                    <div class="dust-bar-wrapper">
-                        <span class="dust-title">☁️ 오늘 평균 미세먼지 농도</span>
-                        <span class="dust-badge" id="dust-badge">불러오는 중...</span>
-                    </div>
-
-                    <div class="weather-card"><span class="region">경기도</span><span class="sky-icon anim-float">☁️</span><span class="temp">14°C</span></div>
-                    <div class="weather-card"><span class="region">충청도</span><span class="sky-icon anim-float-delay">🌤️</span><span class="temp">16°C</span></div>
-                    <div class="weather-card"><span class="region">전라도</span><span class="sky-icon anim-spin">☀️</span><span class="temp">18°C</span></div>
-                    
-                    <div class="weather-card"><span class="region">경상도</span><span class="sky-icon anim-float">☁️</span><span class="temp">17°C</span></div>
-                    <div class="weather-card"><span class="region">강원도</span><span class="sky-icon anim-float-delay">❄️</span><span class="temp">12°C</span></div>
-                    <div class="weather-card"><span class="region">제주도</span><span class="sky-icon anim-float">🌤️</span><span class="temp">20°C</span></div>
-                </div>
-
-                <div class="morning-menu-grid alternative-layout">
-                    <div id="btn-mood-diary" class="menu-item"><span class="icon">😃</span><span>아침 일기</span></div>
-                    <div id="btn-fortune" class="menu-item"><span class="icon">🔮</span><span>오늘의 운세</span></div>
-                    <div id="btn-au-home" class="menu-item"><span class="icon">🏫</span><span>홈페이지</span></div>
-                </div>
-
-                <div class="weather-banner-container">
-                    <div class="weather-banner-track" id="weather-banner-track">
-                        <div class="w-banner-slide banner-tip-new" id="banner-click-tip" style="cursor:pointer;">
-                            <div class="b-text-wrap-new">
-                                <div class="b-title-new"><span class="text-yellow">설정한 알람</span>이<br>울리지 않으세요?</div>
-                                <div class="b-sub-btn">이용 팁 확인하기 ❯</div>
-                            </div>
-                            <div class="b-icon-cat">🙀</div>
+                        <p class="helper-text">아래 박스를 눌러 기상 시간을 선택하세요</p>
+                        
+                        <div class="input-group premium-input">
+                            <span class="time-icon">🕘</span>
+                            <input type="time" id="alarm-time-input" value="07:00">
+                            <button id="btn-add-alarm" class="btn btn-primary premium-btn">추가</button>
                         </div>
                         
-                        <div class="w-banner-slide banner-premium" id="banner-click-premium" style="cursor:pointer;">
-                            <div class="b-text-wrap-new">
-                                <div class="b-title-new">WakeMe <span class="text-gold">Premium</span> 👑</div>
-                                <div class="b-sub-text">더 강력한 미션과 포인트 혜택</div>
+                        <div id="alarm-list-container" class="alarm-list-container">
+                            <div class="empty-state">설정된 알람이 없습니다.</div>
+                        </div>
+                    </div>
+
+                    <div class="card premium-card test-box">
+                        <div class="card-header-flex">
+                            <h3>🚀 앱 미리보기</h3>
+                        </div>
+                        <p class="helper-text" style="color:#cbd5e0;">기다리지 않고 15가지 미션을 바로 체험합니다.</p>
+                        <button id="btn-test-alarm" class="btn btn-danger premium-btn-danger">즉시 미션 시작 (테스트)</button>
+                    </div>
+
+                    <div class="card premium-card schedule-box">
+                        <div class="card-header-flex">
+                            <h3>📅 나의 오늘 일정</h3>
+                        </div>
+                        <textarea id="my-schedule-input" class="premium-textarea" placeholder="오늘의 핵심 일정을 기록해보세요..." spellcheck="false"></textarea>
+                        <button id="btn-save-schedule" class="btn btn-success premium-btn-outline">일정 저장하기</button>
+                    </div>
+                </main>
+            </div>
+
+            <div id="screen-sleep-tab" class="main-tab-screen">
+                <header><h1>🌙 수면 측정</h1></header>
+                <main>
+                    <div class="card sleep-tracker-card">
+                        <h2>나도 모르는<br>내 잠버릇은 뭘까?</h2>
+                        <p class="sleep-tracker-desc">내 뒤척임, 코골이 소리를 확인하세요</p>
+                        <div class="waveform-box">
+                            <span class="wave-time" id="sleep-wave-status">측정 대기 중</span>
+                            <div id="sleep-wave-bars" class="wave-bars">
+                                <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
+                                <span class="bar"></span><span class="bar"></span><span class="bar tall"></span>
+                                <span class="bar"></span>
                             </div>
-                            <div class="b-icon-crown">👑</div>
+                        </div>
+                        <button id="btn-toggle-sleep" class="btn btn-success btn-lg">수면 측정하기</button>
+                    </div>
+                    
+                    <div id="btn-view-report" class="card sleep-report-row" style="cursor: pointer;">
+                        <span>내 수면 리포트 보관함</span><span class="arrow-icon">❯</span>
+                    </div>
+                    
+                    <div class="card noise-panel">
+                        <div class="noise-header">
+                            <h3>😴 수면 유도 수면음</h3>
+                            <p>깊은 잠에 빠져들도록 도와주는 백색소음입니다.</p>
+                        </div>
+                        
+                        <div class="noise-visualizer" id="noise-visualizer">
+                            <div class="n-bars">
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <p id="noise-current-text">없음</p>
+                        </div>
+                        
+                        <button id="btn-toggle-noise" class="btn-noise-play">▶</button>
+
+                        <div class="noise-grid">
+                            <div class="noise-item active" data-sound="none">
+                                <div class="n-icon"><span class="border-dash"></span>⃠</div><span>없음</span>
+                            </div>
+                            <div class="noise-item" data-sound="bonfire">
+                                <div class="n-icon"><span class="border-dash"></span>🔥</div><span>모닥불</span>
+                            </div>
+                            <div class="noise-item" data-sound="forest">
+                                <div class="n-icon"><span class="border-dash"></span>🍃</div><span>숲 속 귀뚜라미</span>
+                            </div>
+                            <div class="noise-item" data-sound="waves">
+                                <div class="n-icon"><span class="border-dash"></span>🌊</div><span>잔잔한 파도</span>
+                            </div>
+                            <div class="noise-item" data-sound="rain">
+                                <div class="n-icon"><span class="border-dash"></span>🌧️</div><span>차가운 비</span>
+                            </div>
+                            <div class="noise-item" data-sound="thunder">
+                                <div class="n-icon"><span class="border-dash"></span>🌩️</div><span>비 오는 날 천둥</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
-        </div>
+                </main>
+            </div>
 
-        <div id="screen-stopwatch-tab" class="main-tab-screen">
-            <header><h1>⏱️ 기능 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
-            <main>
-                <div class="stopwatch-premium-container">
-                    <div class="stopwatch-circle-bg">
-                        <div id="stopwatch-time" class="premium-stopwatch-text">00:00.00</div>
-                    </div>
-                    <div class="stopwatch-controls">
-                        <button id="btn-stopwatch-lap" class="btn-sw btn-sw-sub" disabled>랩타임</button>
-                        <button id="btn-stopwatch-start" class="btn-sw btn-sw-main">시작</button>
-                        <button id="btn-stopwatch-reset" class="btn-sw btn-sw-reset">초기화</button>
-                    </div>
-                </div>
-                
-                <div class="lap-records-container premium-card"><ul id="lap-list"></ul></div>
-                
-                <div class="card news-section premium-card" style="margin-top: 20px;">
-                    <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 800; color: #fff;">📺 실시간 모닝 뉴스</h3>
-                    <div id="news-list" class="news-list"></div>
-                </div>
-            </main>
-        </div>
-
-        <div id="screen-settings-tab" class="main-tab-screen">
-            <header><h1>⚙️ 설정</h1></header>
-            <main>
-                <div class="settings-card">
-                    <div class="settings-row profile-row" id="setting-login">
-                        <div class="profile-info">
-                            <div class="profile-avatar">👤</div>
-                            <span class="profile-name">로그인이 필요해요</span>
+            <div id="screen-weather-tab" class="main-tab-screen">
+                <header>
+                    <h1>☀️ 현재 날씨</h1>
+                    <p class="subtitle">오늘의 전국 평균 날씨 현황</p>
+                </header>
+                <main>
+                    <div class="weather-grid">
+                        <div class="weather-card seoul-card">
+                            <div class="seoul-title-box">
+                                <span class="region" id="current-region-name">서울</span>
+                                <span class="luxury-label">CURRENT LOCATION</span>
+                            </div>
+                            <div class="seoul-weather-box">
+                                <div class="weather-anim">
+                                    <span class="anim-cloud">☁️</span>
+                                    <span class="anim-rain">💧</span>
+                                </div>
+                                <span class="temp">15°C</span>
+                            </div>
                         </div>
-                        <span class="chevron">❯</span>
-                    </div>
-                    <div class="settings-row" id="setting-points">
-                        <div class="row-left"><span class="icon">🅿️</span> 내 포인트</div>
-                        <div class="row-right"><span class="point-text" id="my-point-display">0 P</span></div>
-                    </div>
-                    <div class="settings-row" id="setting-shop">
-                        <div class="row-left"><span class="icon">🛒</span> 포인트 상점</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                </div>
+                        
+                        <div class="dust-bar-wrapper">
+                            <span class="dust-title">☁️ 오늘 평균 미세먼지 농도</span>
+                            <span class="dust-badge" id="dust-badge">불러오는 중...</span>
+                        </div>
 
-                <div class="settings-card">
-                    <div class="settings-row" id="setting-theme">
-                        <div class="row-left">테마 설정</div>
-                        <span class="chevron">❯</span>
+                        <div class="weather-card"><span class="region">경기도</span><span class="sky-icon anim-float">☁️</span><span class="temp">14°C</span></div>
+                        <div class="weather-card"><span class="region">충청도</span><span class="sky-icon anim-float-delay">🌤️</span><span class="temp">16°C</span></div>
+                        <div class="weather-card"><span class="region">전라도</span><span class="sky-icon anim-spin">☀️</span><span class="temp">18°C</span></div>
+                        
+                        <div class="weather-card"><span class="region">경상도</span><span class="sky-icon anim-float">☁️</span><span class="temp">17°C</span></div>
+                        <div class="weather-card"><span class="region">강원도</span><span class="sky-icon anim-float-delay">❄️</span><span class="temp">12°C</span></div>
+                        <div class="weather-card"><span class="region">제주도</span><span class="sky-icon anim-float">🌤️</span><span class="temp">20°C</span></div>
                     </div>
-                    <div class="settings-row" id="setting-sound">
-                        <div class="row-left">사운드 출력</div>
-                        <div class="row-right"><span class="status-text">현재 기기 사용</span></div>
-                    </div>
-                    <div class="settings-row" id="setting-noti">
-                        <div class="row-left">앱 알림 설정</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                </div>
 
-                <div class="settings-card">
-                    <div class="settings-row" id="setting-notice">
-                        <div class="row-left">공지사항</div>
-                        <span class="chevron">❯</span>
+                    <div class="morning-menu-grid alternative-layout">
+                        <div id="btn-mood-diary" class="menu-item"><span class="icon">😃</span><span>아침 일기</span></div>
+                        <div id="btn-fortune" class="menu-item"><span class="icon">🔮</span><span>오늘의 운세</span></div>
+                        <div id="btn-au-home" class="menu-item"><span class="icon">🏫</span><span>홈페이지</span></div>
                     </div>
-                    <div class="settings-row" id="setting-faq">
-                        <div class="row-left">자주묻는 질문</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                    <div class="settings-row" id="setting-terms">
-                        <div class="row-left">이용 약관</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                    <div class="settings-row" id="setting-privacy">
-                        <div class="row-left">개인정보 처리방침</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                    <div class="settings-row" id="setting-feedback">
-                        <div class="row-left">의견 보내기</div>
-                        <span class="chevron">❯</span>
-                    </div>
-                </div>
-            </main>
-        </div>
 
-        <div id="sleep-result-modal" class="modal-overlay">
-            <div class="modal-content" style="padding: 30px 20px;">
-                <h2 style="font-size: 24px; margin-bottom: 10px;">😴 오늘의 수면 리포트</h2>
-                <div style="font-size: 40px; margin-bottom: 15px;">📊</div>
-                <div id="sleep-result-content" style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                </div>
-                <button id="btn-close-sleep-result" class="btn btn-primary btn-lg">확인 및 저장하기</button>
+                    <div class="weather-banner-container">
+                        <div class="weather-banner-track" id="weather-banner-track">
+                            <div class="w-banner-slide banner-tip-new" id="banner-click-tip" style="cursor:pointer;">
+                                <div class="b-text-wrap-new">
+                                    <div class="b-title-new"><span class="text-yellow">설정한 알람</span>이<br>울리지 않으세요?</div>
+                                    <div class="b-sub-btn">이용 팁 확인하기 ❯</div>
+                                </div>
+                                <div class="b-icon-cat">🙀</div>
+                            </div>
+                            
+                            <div class="w-banner-slide banner-premium" id="banner-click-premium" style="cursor:pointer;">
+                                <div class="b-text-wrap-new">
+                                    <div class="b-title-new">WakeMe <span class="text-gold">Premium</span> 👑</div>
+                                    <div class="b-sub-text">더 강력한 미션과 포인트 혜택</div>
+                                </div>
+                                <div class="b-icon-crown">👑</div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
             </div>
-        </div>
 
-        <div id="sleep-history-modal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header"><h2 style="font-size:20px; margin-bottom: 15px;">🌙 내 수면 리포트 보관함</h2></div>
-                <div id="sleep-history-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;"></div>
-                <button id="btn-close-sleep-history" class="btn btn-danger btn-lg">닫기</button>
+            <div id="screen-stopwatch-tab" class="main-tab-screen">
+                <header><h1>⏱️ 기능 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
+                <main>
+                    <div class="stopwatch-premium-container">
+                        <div class="stopwatch-circle-bg">
+                            <div id="stopwatch-time" class="premium-stopwatch-text">00:00.00</div>
+                        </div>
+                        <div class="stopwatch-controls">
+                            <button id="btn-stopwatch-lap" class="btn-sw btn-sw-sub" disabled>랩타임</button>
+                            <button id="btn-stopwatch-start" class="btn-sw btn-sw-main">시작</button>
+                            <button id="btn-stopwatch-reset" class="btn-sw btn-sw-reset">초기화</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lap-records-container premium-card"><ul id="lap-list"></ul></div>
+                    
+                    <div class="card news-section premium-card" style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #fff;">📺 실시간 모닝 뉴스</h3>
+                        <div id="news-list" class="news-list"></div>
+                    </div>
+                </main>
             </div>
-        </div>
 
-        <div id="screen-mission" class="screen"><div class="alarm-flash-overlay"></div><div class="mission-header"><span id="mission-badge" class="badge">1단계</span><h2 id="mission-title">미션 제목</h2><p id="mission-desc">미션 설명문</p></div><div class="mission-content-area"><div id="dynamic-mission-box"></div></div><div class="mission-footer"><p class="warning-text">⚠️ 미션을 클리어하기 전까지는 알람이 꺼지지 않습니다!</p></div></div>
-        <div id="screen-survival" class="screen"><div class="survival-box"><div class="survival-icon">👀</div><h2>아직 안 누우셨죠?</h2><p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다.</p><div class="timer-circle"><span id="survival-countdown">30</span>초</div><button id="btn-survival-confirm" class="btn btn-success btn-lg">생존 신고 완료</button></div></div>
-        
-        <div id="fortune-modal" class="modal-overlay">
-            <div class="modal-content">
-                <div id="fortune-confirm-view">
-                    <div class="modal-header"><h2>🔮 오늘의 타로 운세</h2><p class="modal-subtitle">오늘의 타로 기회는 하루에 단 한 번뿐입니다. 열람하시겠습니까?</p></div>
-                    <div class="stopwatch-btn-group" style="margin-top:25px;">
-                        <button id="btn-fortune-cancel" class="btn btn-stopwatch-sub">아니오</button>
-                        <button id="btn-fortune-confirm-yes" class="btn btn-primary" style="flex:2;">예</button>
+            <div id="screen-settings-tab" class="main-tab-screen">
+                <header><h1>⚙️ 설정</h1></header>
+                <main>
+                    <div class="settings-card">
+                        <div class="settings-row profile-row" id="setting-login">
+                            <div class="profile-info">
+                                <div class="profile-avatar">👤</div>
+                                <span class="profile-name">로그인이 필요해요</span>
+                            </div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-points">
+                            <div class="row-left"><span class="icon">🅿️</span> 내 포인트</div>
+                            <div class="row-right"><span class="point-text" id="my-point-display">0 P</span></div>
+                        </div>
+                        <div class="settings-row" id="setting-shop">
+                            <div class="row-left"><span class="icon">🛒</span> 포인트 상점</div>
+                            <span class="chevron">❯</span>
+                        </div>
                     </div>
-                </div>
-                <div id="fortune-result-view" style="display:none;">
-                    <div class="modal-header"><h2 id="fortune-date">오늘의 운세</h2><p class="modal-subtitle">오늘의 아침 타로 운세</p></div>
-                    <div class="tarot-container" style="text-align: center;">
-                        <div id="tarot-emoji-display" class="tarot-emoji-card">🔮</div>
-                        <h3 id="tarot-card-name" style="margin-top: 15px;">로딩 중</h3>
-                        <p id="tarot-card-desc">설명</p>
+
+                    <div class="settings-card">
+                        <div class="settings-row" id="setting-theme">
+                            <div class="row-left">테마 설정</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-sound">
+                            <div class="row-left">사운드 출력</div>
+                            <div class="row-right"><span class="status-text">현재 기기 사용</span></div>
+                        </div>
+                        <div class="settings-row" id="setting-noti">
+                            <div class="row-left">앱 알림 설정</div>
+                            <span class="chevron">❯</span>
+                        </div>
                     </div>
-                    <button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top:15px;">하루 시작하기</button>
+
+                    <div class="settings-card">
+                        <div class="settings-row" id="setting-notice">
+                            <div class="row-left">공지사항</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-faq">
+                            <div class="row-left">자주묻는 질문</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-terms">
+                            <div class="row-left">이용 약관</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-privacy">
+                            <div class="row-left">개인정보 처리방침</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                        <div class="settings-row" id="setting-feedback">
+                            <div class="row-left">의견 보내기</div>
+                            <span class="chevron">❯</span>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <div id="sleep-result-modal" class="modal-overlay">
+                <div class="modal-content" style="padding: 30px 20px;">
+                    <h2 style="font-size: 24px; margin-bottom: 10px;">😴 오늘의 수면 리포트</h2>
+                    <div style="font-size: 40px; margin-bottom: 15px;">📊</div>
+                    <div id="sleep-result-content" style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    </div>
+                    <button id="btn-close-sleep-result" class="btn btn-primary btn-lg">확인 및 저장하기</button>
                 </div>
             </div>
-        </div>
 
-        <div id="diary-modal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>😃 아침 기분 일기</h2>
-                    <p id="diary-date" class="modal-subtitle">기상 직후 마음 기록하기</p>
+            <div id="sleep-history-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header"><h2 style="font-size:20px; margin-bottom: 15px;">🌙 내 수면 리포트 보관함</h2></div>
+                    <div id="sleep-history-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;"></div>
+                    <button id="btn-close-sleep-history" class="btn btn-danger btn-lg">닫기</button>
                 </div>
-                <div class="diary-container">
-                    <div class="mood-selector">
-                        <button class="btn-mood" data-mood="기쁨">😃</button>
-                        <button class="btn-mood" data-mood="피곤">🥱</button>
-                        <button class="btn-mood" data-mood="상쾌">✨</button>
-                        <button class="btn-mood" data-mood="그저뵘">😑</button>
-                    </div>
-                    <textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea>
-                    <button id="btn-save-diary" class="btn btn-primary btn-lg" style="width:100%;">일기 저장하기</button>
-                </div>
-                <div class="event-banner">
-                    <strong>🎁 갓생러 아침 일기 이벤트!</strong><br>
-                    가장 인상적인 일기를 캡처하여 <br><span style="color:#2b6cb0;">event@wakeme.com</span> 으로 보내주시면<br>추첨을 통해 ☕<b>스타벅스 기프티콘</b>을 쏩니다!
-                </div>
-                <button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top:10px;">닫기</button>
             </div>
-        </div>
-        
-        <div id="theme-modal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 style="font-size:22px; margin-bottom:8px;">🎨 앱 테마 변경</h2>
-                    <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">원하는 맞춤형 배경 컬러를 선택하세요</p>
-                </div>
-                <div class="theme-scroll-container">
-                    <div class="theme-picker-grid">
-                        <button class="btn-theme-select" data-theme="dark"><div class="color-preview" style="background:#121214;"></div><span>기본 블랙</span></button>
-                        <button class="btn-theme-select" data-theme="red"><div class="color-preview" style="background:#e53e3e;"></div><span>패션 레드</span></button>
-                        <button class="btn-theme-select" data-theme="blue"><div class="color-preview" style="background:#3b82f6;"></div><span>네온 블루</span></button>
-                        <button class="btn-theme-select" data-theme="green"><div class="color-preview" style="background:#10b981;"></div><span>포레스트 그린</span></button>
-                        <button class="btn-theme-select" data-theme="purple"><div class="color-preview" style="background:#8b5cf6;"></div><span>미스틱 퍼플</span></button>
-                        <button class="btn-theme-select" data-theme="yellow"><div class="color-preview" style="background:#ecc94b;"></div><span>선샤인 옐로우</span></button>
-                        <button class="btn-theme-select" data-theme="pink"><div class="color-preview" style="background:#ed64a6;"></div><span>체리 블라썸</span></button>
-                        <button class="btn-theme-select" data-theme="mint"><div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span></button>
+
+            <div id="screen-mission" class="screen"><div class="alarm-flash-overlay"></div><div class="mission-header"><span id="mission-badge" class="badge">1단계</span><h2 id="mission-title">미션 제목</h2><p id="mission-desc">미션 설명문</p></div><div class="mission-content-area"><div id="dynamic-mission-box"></div></div><div class="mission-footer"><p class="warning-text">⚠️ 미션을 클리어하기 전까지는 알람이 꺼지지 않습니다!</p></div></div>
+            <div id="screen-survival" class="screen"><div class="survival-box"><div class="survival-icon">👀</div><h2>아직 안 누우셨죠?</h2><p>다시 이불 속으로 직진하는 것을 방지하기 위한 최종 생존 확인입니다.</p><div class="timer-circle"><span id="survival-countdown">30</span>초</div><button id="btn-survival-confirm" class="btn btn-success btn-lg">생존 신고 완료</button></div></div>
+            
+            <div id="fortune-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div id="fortune-confirm-view">
+                        <div class="modal-header"><h2>🔮 오늘의 타로 운세</h2><p class="modal-subtitle">오늘의 타로 기회는 하루에 단 한 번뿐입니다. 열람하시겠습니까?</p></div>
+                        <div class="stopwatch-btn-group" style="margin-top:25px;">
+                            <button id="btn-fortune-cancel" class="btn btn-stopwatch-sub">아니오</button>
+                            <button id="btn-fortune-confirm-yes" class="btn btn-primary" style="flex:2;">예</button>
+                        </div>
+                    </div>
+                    <div id="fortune-result-view" style="display:none;">
+                        <div class="modal-header"><h2 id="fortune-date">오늘의 운세</h2><p class="modal-subtitle">오늘의 아침 타로 운세</p></div>
+                        <div class="tarot-container" style="text-align: center;">
+                            <div id="tarot-emoji-display" class="tarot-emoji-card">🔮</div>
+                            <h3 id="tarot-card-name" style="margin-top: 15px;">로딩 중</h3>
+                            <p id="tarot-card-desc">설명</p>
+                        </div>
+                        <button id="btn-close-fortune" class="btn btn-primary btn-lg" style="margin-top:15px;">하루 시작하기</button>
                     </div>
                 </div>
-                <button id="btn-theme-close" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%;">닫기</button>
             </div>
-        </div>
 
-        <div id="shop-modal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 style="font-size:22px; margin-bottom:8px;">🛒 포인트 상점</h2>
-                    <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">매일 아침 일어나 모은 포인트로 교환하세요</p>
+            <div id="diary-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>😃 아침 기분 일기</h2>
+                        <p id="diary-date" class="modal-subtitle">기상 직후 마음 기록하기</p>
+                    </div>
+                    <div class="diary-container">
+                        <div class="mood-selector">
+                            <button class="btn-mood" data-mood="기쁨">😃</button>
+                            <button class="btn-mood" data-mood="피곤">🥱</button>
+                            <button class="btn-mood" data-mood="상쾌">✨</button>
+                            <button class="btn-mood" data-mood="그저뵘">😑</button>
+                        </div>
+                        <textarea id="diary-input" class="diary-textarea" placeholder="오늘 아침 소감이나 다짐을 적어보세요..."></textarea>
+                        <button id="btn-save-diary" class="btn btn-primary btn-lg" style="width:100%;">일기 저장하기</button>
+                    </div>
+                    <div class="event-banner">
+                        <strong>🎁 갓생러 아침 일기 이벤트!</strong><br>
+                        가장 인상적인 일기를 캡처하여 <br><span style="color:#2b6cb0;">event@wakeme.com</span> 으로 보내주시면<br>추첨을 통해 ☕<b>스타벅스 기프티콘</b>을 쏩니다!
+                    </div>
+                    <button id="btn-close-diary" class="btn btn-danger btn-lg" style="margin-top:10px;">닫기</button>
                 </div>
-                <div class="shop-items-container">
-                    <div class="shop-item">
-                        <div class="shop-item-icon">🎫</div>
-                        <div class="shop-item-info"><div class="shop-item-title">문화상품권 5,000원권</div><div class="shop-item-price">5,000 P</div></div>
-                        <div class="shop-item-stock">재고: 0개</div>
-                    </div>
-                    <div class="shop-item">
-                        <div class="shop-item-icon">☕</div>
-                        <div class="shop-item-info"><div class="shop-item-title">스타벅스 아메리카노</div><div class="shop-item-price">4,500 P</div></div>
-                        <div class="shop-item-stock">재고: 0개</div>
-                    </div>
-                    <div class="shop-item">
-                        <div class="shop-item-icon">🍗</div>
-                        <div class="shop-item-info"><div class="shop-item-title">BHC 황금올리브 치킨</div><div class="shop-item-price">20,000 P</div></div>
-                        <div class="shop-item-stock">재고: 0개</div>
-                    </div>
-                    <div class="shop-item">
-                        <div class="shop-item-icon">🍔</div>
-                        <div class="shop-item-info"><div class="shop-item-title">맘스터치 싸이버거 세트</div><div class="shop-item-price">7,000 P</div></div>
-                        <div class="shop-item-stock">재고: 0개</div>
-                    </div>
-                    <div class="shop-item">
-                        <div class="shop-item-icon">🌍</div>
-                        <div class="shop-item-info"><div class="shop-item-title">유니세프 5,000원 후원</div><div class="shop-item-price">5,000 P</div></div>
-                        <div class="shop-item-stock">재고: 0개</div>
-                    </div>
-                </div>
-                <button id="btn-close-shop" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%;">닫기</button>
             </div>
-        </div>
-
-        <div id="news-modal" class="modal-overlay">
-            <div class="modal-content" style="max-width: 380px; padding: 20px;">
-                <div class="modal-header">
-                    <h2 id="news-modal-title" style="font-size: 18px; margin-bottom: 15px; color:#f6e05e; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: left;">뉴스 제목</h2>
+            
+            <div id="theme-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 style="font-size:22px; margin-bottom:8px;">🎨 앱 테마 변경</h2>
+                        <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">원하는 맞춤형 배경 컬러를 선택하세요</p>
+                    </div>
+                    <div class="theme-scroll-container">
+                        <div class="theme-picker-grid">
+                            <button class="btn-theme-select" data-theme="dark"><div class="color-preview" style="background:#121214;"></div><span>기본 블랙</span></button>
+                            <button class="btn-theme-select" data-theme="red"><div class="color-preview" style="background:#e53e3e;"></div><span>패션 레드</span></button>
+                            <button class="btn-theme-select" data-theme="blue"><div class="color-preview" style="background:#3b82f6;"></div><span>네온 블루</span></button>
+                            <button class="btn-theme-select" data-theme="green"><div class="color-preview" style="background:#10b981;"></div><span>포레스트 그린</span></button>
+                            <button class="btn-theme-select" data-theme="purple"><div class="color-preview" style="background:#8b5cf6;"></div><span>미스틱 퍼플</span></button>
+                            <button class="btn-theme-select" data-theme="yellow"><div class="color-preview" style="background:#ecc94b;"></div><span>선샤인 옐로우</span></button>
+                            <button class="btn-theme-select" data-theme="pink"><div class="color-preview" style="background:#ed64a6;"></div><span>체리 블라썸</span></button>
+                            <button class="btn-theme-select" data-theme="mint"><div class="color-preview" style="background:#4fd1c5;"></div><span>프레시 민트</span></button>
+                        </div>
+                    </div>
+                    <button id="btn-theme-close" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%;">닫기</button>
                 </div>
-                <div id="news-modal-video" style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #000; min-height: 180px;"></div>
-                <p id="news-modal-desc" style="font-size: 13px; color: #cbd5e0; line-height: 1.6; text-align: left; margin-bottom: 20px; padding: 0 5px;"></p>
-                <button id="btn-close-news" class="btn btn-danger btn-lg">영상 닫기</button>
             </div>
-        </div>
 
-        <div id="settings-info-modal" class="modal-overlay">
-            <div class="modal-content" style="text-align: left;">
-                <div class="modal-header">
-                    <h2 id="settings-info-title" style="font-size:20px; margin-bottom: 15px;">제목</h2>
+            <div id="shop-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 style="font-size:22px; margin-bottom:8px;">🛒 포인트 상점</h2>
+                        <p class="modal-subtitle" style="color:#a0aec0; font-size:13px; margin-bottom:15px;">매일 아침 일어나 모은 포인트로 교환하세요</p>
+                    </div>
+                    <div class="shop-items-container">
+                        <div class="shop-item">
+                            <div class="shop-item-icon">🎫</div>
+                            <div class="shop-item-info"><div class="shop-item-title">문화상품권 5,000원권</div><div class="shop-item-price">5,000 P</div></div>
+                            <div class="shop-item-stock">재고: 0개</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-icon">☕</div>
+                            <div class="shop-item-info"><div class="shop-item-title">스타벅스 아메리카노</div><div class="shop-item-price">4,500 P</div></div>
+                            <div class="shop-item-stock">재고: 0개</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-icon">🍗</div>
+                            <div class="shop-item-info"><div class="shop-item-title">BHC 황금올리브 치킨</div><div class="shop-item-price">20,000 P</div></div>
+                            <div class="shop-item-stock">재고: 0개</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-icon">🍔</div>
+                            <div class="shop-item-info"><div class="shop-item-title">맘스터치 싸이버거 세트</div><div class="shop-item-price">7,000 P</div></div>
+                            <div class="shop-item-stock">재고: 0개</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-icon">🌍</div>
+                            <div class="shop-item-info"><div class="shop-item-title">유니세프 5,000원 후원</div><div class="shop-item-price">5,000 P</div></div>
+                            <div class="shop-item-stock">재고: 0개</div>
+                        </div>
+                    </div>
+                    <button id="btn-close-shop" class="btn btn-danger btn-lg" style="margin-top:20px; width:100%;">닫기</button>
                 </div>
-                <div id="settings-info-content" style="font-size:14px; color:#cbd5e0; line-height:1.6; max-height: 350px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">내용</div>
-                <button id="btn-close-settings-info" class="btn btn-primary btn-lg" style="width: 100%;">확인</button>
             </div>
-        </div>
 
-        <nav class="bottom-nav-bar style-quad">
-            <button class="nav-item active" data-target="screen-lobby"><span class="nav-icon">⏰</span><span class="nav-label">알람</span></button>
-            <div class="v-line"></div>
-            <button class="nav-item" data-target="screen-sleep-tab"><span class="nav-icon">🌙</span><span class="nav-label">수면</span></button>
-            <div class="v-line"></div>
-            <button class="nav-item" data-target="screen-weather-tab"><span class="nav-icon">☀️</span><span class="nav-label">날씨</span></button>
-            <div class="v-line"></div>
-            <button class="nav-item" data-target="screen-stopwatch-tab"><span class="nav-icon">⏱️</span><span class="nav-label">기능</span></button>
-            <div class="v-line"></div>
-            <button class="nav-item" data-target="screen-settings-tab"><span class="nav-icon">⚙️</span><span class="nav-label">설정</span></button>
-        </nav>
+            <div id="news-modal" class="modal-overlay">
+                <div class="modal-content" style="max-width: 380px; padding: 20px;">
+                    <div class="modal-header">
+                        <h2 id="news-modal-title" style="font-size: 18px; margin-bottom: 15px; color:#f6e05e; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: left;">뉴스 제목</h2>
+                    </div>
+                    <div id="news-modal-video" style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #000; min-height: 180px;"></div>
+                    <p id="news-modal-desc" style="font-size: 13px; color: #cbd5e0; line-height: 1.6; text-align: left; margin-bottom: 20px; padding: 0 5px;"></p>
+                    <button id="btn-close-news" class="btn btn-danger btn-lg">영상 닫기</button>
+                </div>
+            </div>
 
-    </div>
-    <script src="script.js"></script>
+            <div id="settings-info-modal" class="modal-overlay">
+                <div class="modal-content" style="text-align: left;">
+                    <div class="modal-header">
+                        <h2 id="settings-info-title" style="font-size:20px; margin-bottom: 15px;">제목</h2>
+                    </div>
+                    <div id="settings-info-content" style="font-size:14px; color:#cbd5e0; line-height:1.6; max-height: 350px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">내용</div>
+                    <button id="btn-close-settings-info" class="btn btn-primary btn-lg" style="width: 100%;">확인</button>
+                </div>
+            </div>
+
+            <nav class="bottom-nav-bar style-quad">
+                <button class="nav-item active" data-target="screen-lobby"><span class="nav-icon">⏰</span><span class="nav-label">알람</span></button>
+                <div class="v-line"></div>
+                <button class="nav-item" data-target="screen-sleep-tab"><span class="nav-icon">🌙</span><span class="nav-label">수면</span></button>
+                <div class="v-line"></div>
+                <button class="nav-item" data-target="screen-weather-tab"><span class="nav-icon">☀️</span><span class="nav-label">날씨</span></button>
+                <div class="v-line"></div>
+                <button class="nav-item" data-target="screen-stopwatch-tab"><span class="nav-icon">⏱️</span><span class="nav-label">기능</span></button>
+                <div class="v-line"></div>
+                <button class="nav-item" data-target="screen-settings-tab"><span class="nav-icon">⚙️</span><span class="nav-label">설정</span></button>
+            </nav>
+            
+        </div> </div> <script src="script.js"></script>
 </body>
 </html>
