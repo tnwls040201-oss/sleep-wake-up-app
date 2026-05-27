@@ -9,11 +9,15 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 💡 재생 오류를 원천 차단한 MP3 전용 백색소음 오디오 객체
+// 💡 일반 백색소음(파도, 비, 천둥)을 위한 오디오 객체
 let sleepAudio = new Audio();
 sleepAudio.loop = true;
-sleepAudio.volume = 1.0; // 볼륨 최대치(100%) 고정
+sleepAudio.volume = 1.0; 
 let isPlayingNoise = false;
+
+// 💡 유튜브 API를 활용한 백색소음(모닥불, 귀뚜라미) 플레이어 객체
+let ytPlayers = {};
+let isYtReady = false;
 
 let stopwatchInterval = null;
 let stopwatchElapsedTime = 0; 
@@ -22,6 +26,25 @@ let stopwatchLapCount = 0;
 
 let isTestMode = false;
 let wakemePoints = parseInt(localStorage.getItem('wakeme_points') || '0');
+
+// 유튜브 Iframe API 동적 로드
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 유튜브 플레이어가 준비되면 숨겨진 iframe에 연결
+window.onYouTubeIframeAPIReady = function() {
+    isYtReady = true;
+    ytPlayers['bonfire'] = new YT.Player('yt-player-campfire', {
+        height: '10', width: '10', videoId: 'N_g3AiXF-q8',
+        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'N_g3AiXF-q8' }
+    });
+    ytPlayers['forest'] = new YT.Player('yt-player-forest', {
+        height: '10', width: '10', videoId: 'uNpanr3Jl3Q',
+        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'uNpanr3Jl3Q' }
+    });
+};
 
 // 15개 미션
 const missionPool = [
@@ -42,7 +65,7 @@ const missionPool = [
     { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
-// 💡 22개 메이저 아르카나 전체 추가 (이미지 깨짐 방지용 럭셔리 이모지 버전 적용)
+// 💡 22개 메이저 아르카나 전체 (깨지지 않는 고퀄리티 이모지 카드)
 const tarotCards = [
     { name: "0. THE FOOL (바보)", emoji: "🚶", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 직관을 믿고 나아가세요!" },
     { name: "I. THE MAGICIAN (마법사)", emoji: "🪄", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
@@ -265,24 +288,47 @@ function initApp() {
         });
     }
 
-    // 💡 백색소음 사운드 (오류 해결 완료: Freesound MP3 및 정확한 순서 매칭)
+    // 💡 유튜브 영상의 소리만 추출하여 완벽하게 연동 (모닥불 & 귀뚜라미)
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
     const noiseVisualizer = document.getElementById('noise-visualizer');
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // 💡 각 아이콘에 맞는 정확하고 끊김 없는 자연의 소리로 재매칭!
-    const soundUrls = {
-        "none": "",
-        "bonfire": "https://cdn.freesound.org/previews/337/337424_156543-lq.mp3",    // 모닥불 (장작) 소리
-        "forest": "https://cdn.freesound.org/previews/174/174763_3278072-lq.mp3",    // 숲속 귀뚜라미 소리
-        "waves": "https://cdn.freesound.org/previews/400/400632_5121236-lq.mp3",     // 잔잔한 파도 소리
-        "rain": "https://cdn.freesound.org/previews/531/531947_11139414-lq.mp3",     // 빗소리
-        "thunder": "https://cdn.freesound.org/previews/102/102693_1714571-lq.mp3"    // 천둥 소리
+    // MP3 서버 링크 (파도, 비, 천둥 유지)
+    const mp3Urls = {
+        "waves": "https://assets.mixkit.co/active_storage/sfx/116/116-preview.mp3",
+        "rain": "https://assets.mixkit.co/active_storage/sfx/1250/1250-preview.mp3",
+        "thunder": "https://assets.mixkit.co/active_storage/sfx/1291/1291-preview.mp3"
     };
 
     let currentNoiseType = "none";
+
+    function stopAllNoises() {
+        sleepAudio.pause();
+        if(isYtReady) {
+            if(ytPlayers['bonfire'] && typeof ytPlayers['bonfire'].pauseVideo === 'function') ytPlayers['bonfire'].pauseVideo();
+            if(ytPlayers['forest'] && typeof ytPlayers['forest'].pauseVideo === 'function') ytPlayers['forest'].pauseVideo();
+        }
+    }
+
+    function playCurrentNoise() {
+        stopAllNoises();
+        if (currentNoiseType === "bonfire") {
+            if(isYtReady && ytPlayers['bonfire']) ytPlayers['bonfire'].playVideo();
+        } else if (currentNoiseType === "forest") {
+            if(isYtReady && ytPlayers['forest']) ytPlayers['forest'].playVideo();
+        } else if (mp3Urls[currentNoiseType]) {
+            sleepAudio.src = mp3Urls[currentNoiseType];
+            sleepAudio.play().catch(e => {
+                alert("오디오 재생 권한이 차단되었습니다. 화면을 터치하거나 볼륨을 확인해주세요.");
+                isPlayingNoise = false;
+                btnToggleNoise.textContent = "▶";
+                btnToggleNoise.classList.remove('playing');
+                noiseVisualizer.classList.remove('playing');
+            });
+        }
+    }
 
     noiseItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -292,16 +338,11 @@ function initApp() {
             noiseCurrentText.textContent = item.querySelector('span').textContent;
             
             if (currentNoiseType !== "none") {
-                sleepAudio.src = soundUrls[currentNoiseType];
                 if(isPlayingNoise) {
-                    // 모바일 브라우저 권한 해결: 클릭 이벤트 내에서 play() 실행
-                    let playPromise = sleepAudio.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(e => console.log(e));
-                    }
+                    playCurrentNoise();
                 }
             } else {
-                sleepAudio.pause();
+                stopAllNoises();
                 if(isPlayingNoise) {
                     isPlayingNoise = false;
                     btnToggleNoise.textContent = "▶";
@@ -327,26 +368,13 @@ function initApp() {
                 btnToggleNoise.classList.add('playing');
                 if(noiseStatusTxt) noiseStatusTxt.textContent = "🎵 편안한 수면 백색소음 재생 중..";
                 noiseVisualizer.classList.add('playing');
-                
-                // 버튼 클릭과 동시에 오디오 재생!
-                sleepAudio.src = soundUrls[currentNoiseType];
-                let playPromise = sleepAudio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                        console.log("Audio Play Error:", e);
-                        alert("오디오를 재생할 수 없습니다. 스마트폰이 무음 모드이거나 오디오 자동재생 권한이 막혀있는지 확인해주세요.");
-                        isPlayingNoise = false;
-                        btnToggleNoise.textContent = "▶";
-                        btnToggleNoise.classList.remove('playing');
-                        noiseVisualizer.classList.remove('playing');
-                    });
-                }
+                playCurrentNoise();
             } else {
                 btnToggleNoise.textContent = "▶";
                 btnToggleNoise.classList.remove('playing');
                 if(noiseStatusTxt) noiseStatusTxt.textContent = "플레이 버튼을 누르면 꿀잠 소리가 재생됩니다";
                 noiseVisualizer.classList.remove('playing');
-                sleepAudio.pause();
+                stopAllNoises();
             }
         });
     }
@@ -363,7 +391,7 @@ function initApp() {
     const btnFortuneConfirmYes = document.getElementById('btn-fortune-confirm-yes');
     const btnFortuneCancel = document.getElementById('btn-fortune-cancel');
 
-    // 💡 타로카드 하루 한 번 제한 완전히 해제 (테스트 및 마음껏 즐기기 용도!)
+    // 💡 타로카드 하루 한 번 제한 완전히 해제 (무제한)
     if(btnFortune) {
         btnFortune.addEventListener('click', () => {
             if(fortuneConfirmView) fortuneConfirmView.style.display = "block";
@@ -377,10 +405,9 @@ function initApp() {
             const now = new Date();
             if(fortuneDate) fortuneDate.textContent = `${now.getFullYear()}년 ${String(now.getMonth() + 1).padStart(2, '0')}월 ${String(now.getDate()).padStart(2, '0')}일`;
             
-            // 22개 타로 카드 중 랜덤 뽑기! (더 이상 삐에로만 나오지 않습니다)
+            // 22개 타로 카드 중 랜덤 뽑기!
             const randomTarot = tarotCards[Math.floor(Math.random() * tarotCards.length)];
             
-            // 💡 고품격 CSS + 이모지 카드로 렌더링 (이미지 깨짐 절대 없음)
             if(tarotEmojiDisplay) {
                 tarotEmojiDisplay.textContent = randomTarot.emoji;
             }
@@ -395,6 +422,7 @@ function initApp() {
     if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
+    // 💡 아침 일기 클릭 안 되던 문제 원상복구(수정) 완료
     const btnMoodDiary = document.getElementById('btn-mood-diary');
     const diaryModal = document.getElementById('diary-modal');
     const btnCloseDiary = document.getElementById('btn-close-diary');
@@ -402,6 +430,36 @@ function initApp() {
     const diaryInput = document.getElementById('diary-input');
     const diaryDate = document.getElementById('diary-date');
     const btnMoods = document.querySelectorAll('.btn-mood');
+
+    if(btnMoodDiary) {
+        btnMoodDiary.addEventListener('click', () => {
+            const now = new Date();
+            if(diaryDate) { diaryDate.textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 기상 직후의 마음 기록하기`; }
+            selectedMood = ""; 
+            if(diaryInput) diaryInput.value = "";
+            btnMoods.forEach(b => b.classList.remove('selected'));
+            if(diaryModal) diaryModal.classList.add('active');
+        });
+    }
+
+    btnMoods.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            btnMoods.forEach(b => b.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+            selectedMood = e.currentTarget.getAttribute('data-mood');
+        });
+    });
+
+    if(btnSaveDiary) {
+        btnSaveDiary.addEventListener('click', () => {
+            if(!selectedMood) { alert("오늘 아침 나의 상태 이모지를 선택해 주세요!"); return; }
+            if(!diaryInput.value.trim()) { alert("오늘 아침의 기분을 일기장 양식에 작성해 주세요!"); return; }
+            alert(`💾 [아침 감정 일기 저장 완료]\n\n이벤트에 참여하시려면 지금 작성하신 화면을 캡처해서 event@wakeme.com 으로 보내주세요!\n\n감정 상태: ${selectedMood}\n내용: "${diaryInput.value}"`);
+            if(diaryModal) diaryModal.classList.remove('active');
+        });
+    }
+    if(btnCloseDiary) btnCloseDiary.addEventListener('click', () => { if(diaryModal) diaryModal.classList.remove('active'); });
+
 
     const btnThemeOpen = document.getElementById('btn-theme-open');
     const themeModal = document.getElementById('theme-modal');
