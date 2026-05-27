@@ -24,6 +24,35 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 body { background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
 
+/* 💡 스마트폰 케이스 (프레임) 스타일 추가 */
+.phone-frame {
+    position: relative;
+    width: 450px;
+    height: 820px;
+    background: #000000;
+    border-radius: 45px;
+    padding: 15px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+                inset 0 0 0 3px #333333, 
+                inset 0 0 0 6px #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.notch {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 30px;
+    background: #000000;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 1000;
+}
+
 /* 스플래시 */
 #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff5e62, #ff9966, #ff5e62, #ff9966); background-size: 400% 400%; animation: auroraBackground 10s ease infinite; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
 #splash-screen.fade-out { opacity: 0; visibility: hidden; }
@@ -38,7 +67,7 @@ body { background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%); c
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* 컨테이너 및 탭 */
-.app-container { width: 100%; max-width: 420px; height: 780px; background: transparent; border-radius: 32px; box-shadow: var(--shadow); overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
+.app-container { width: 100%; height: 100%; background: transparent; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
 .main-tab-screen, .screen { display: none; padding: 20px 15px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
 .main-tab-screen.active, .screen.active { display: flex !important; }
 #screen-mission, #screen-survival { height: 100%; z-index: 50; position: absolute; top: 0; left: 0; background: var(--bg-primary); }
@@ -73,6 +102,7 @@ header h1 { font-size: 26px; font-weight: 800; }
 #clock { font-size: 42px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1; position: relative; }
 #date-string { font-size: 13px; opacity: 0.8; font-weight: 600; z-index: 1; position: relative; margin-top: 5px; }
 
+/* 다중 알람 리스트 고급화 */
 .input-group { display: flex; gap: 10px; align-items: center; }
 .time-icon { font-size: 20px; opacity: 0.8; }
 input[type="time"] { flex: 1; padding: 5px; border: none; background: transparent; color: white; font-size: 24px; font-weight: 800; text-align: center; cursor: pointer; outline: none; }
@@ -94,9 +124,10 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .pulse-dot { width: 8px; height: 8px; background-color: #f6e05e; border-radius: 50%; box-shadow: 0 0 0 rgba(246, 224, 94, 0.4); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(246, 224, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0); } }
 
-/* 💡 일반 카드 공통 서식 (수면, 날씨, 설정 탭을 원상복구 시켜줌) */
-.card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; }
+/* 💡 일반 카드 공통 서식 (수면, 날씨, 설정 탭을 위한 원래의 심플한 디자인 원상복구) */
+.card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; border: none; box-shadow: none; }
 .card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
+
 .btn { padding: 12px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
 .btn:active { transform: scale(0.96); }
 .btn-primary { background-color: var(--color-primary); color: white; }
@@ -104,7 +135,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .btn-success { background-color: #ffffff; color: #000000; }
 .btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
 
-/* 설정 탭 */
+/* 설정 탭 전용 서식 */
 .settings-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 20px; margin-bottom: 15px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
 .settings-row:last-child { border-bottom: none; }
@@ -176,7 +207,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .dust-badge.normal { color: #68d391; }
 .dust-badge.bad { color: #fc8181; }
 
-/* 날씨 레이아웃 */
+/* 날씨 레이아웃 (심플 버전으로 원상복구) */
 .weather-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; width: 100% !important; margin-bottom: 15px !important; }
 .weather-grid .weather-card { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; background: var(--card-bg); border-radius: var(--radius); padding: 16px 8px;}
 
@@ -193,6 +224,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .anim-cloud { position: absolute; z-index: 2; font-size: 24px; top: 2px; }
 .anim-rain { position: absolute; z-index: 1; font-size: 14px; animation: rainAnim 0.8s linear infinite; }
 @keyframes rainAnim { 0% { top: 12px; opacity: 1; transform: scale(1); } 100% { top: 32px; opacity: 0; transform: scale(0.5); } }
+
 .anim-float { animation: floatAnim 3s ease-in-out infinite; display: inline-block; }
 .anim-float-delay { animation: floatAnim 3s ease-in-out infinite 1.5s; display: inline-block; }
 .anim-spin { animation: spinAnim 10s linear infinite; display: inline-block; }
@@ -203,7 +235,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .weather-grid .weather-card:not(.seoul-card):not(.dust-card) .sky-icon { font-size: 24px !important; margin: 4px 0 !important; }
 .weather-grid .weather-card:not(.seoul-card):not(.dust-card) .temp { font-size: 14px !important; font-weight: 700 !important; color: var(--text-main) !important; }
 
-/* 메뉴 아이콘 */
+/* 메뉴 아이콘 (심플 버전으로 원상복구) */
 .morning-menu-grid.alternative-layout { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; margin-top: 10px !important; margin-bottom: 15px; }
 .morning-menu-grid.alternative-layout .menu-item { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 18px 5px !important; cursor: pointer; transition: background 0.2s, transform 0.1s; background: var(--card-bg); border-radius: var(--radius);}
 .morning-menu-grid.alternative-layout .menu-item:hover { background: rgba(255,255,255,0.05) !important; transform: translateY(-2px); }
@@ -221,15 +253,17 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .b-sub-btn { font-size: 11px; font-weight: bold; color: white; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
 .b-sub-text { font-size: 11px; color: #a0aec0; }
 
+/* 배너 1 (파란색) */
 .banner-tip-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
 .banner-tip-new::before { content: "▲ ▼ ▲"; position: absolute; font-size: 80px; color: rgba(255,255,255,0.05); top: -20px; left: -10px; letter-spacing: -10px; z-index: 0; }
 .b-icon-cat { font-size: 45px; z-index: 2; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2)); transform: scaleX(-1); }
 
+/* 배너 2 (프리미엄 블랙&골드) */
 .banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); }
 .text-gold { color: #f6e05e; }
 .b-icon-crown { font-size: 40px; z-index: 2; filter: drop-shadow(0 0 10px rgba(246,224,94,0.4)); }
 
-/* 💡 기능(스톱워치) 탭 프리미엄 UI 유지 */
+/* 💡 기능(스톱워치) 탭 전용 프리미엄 퀄리티 UI */
 .stopwatch-premium-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; padding: 30px 20px; background: rgba(31, 31, 35, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .stopwatch-circle-bg { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #2d3748 0%, #1a202c 100%); border: 4px solid #4f46e5; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5), inset 0 0 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; margin-bottom: 25px; position: relative; }
 .premium-stopwatch-text { font-size: 38px; font-weight: 900; font-family: monospace; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); letter-spacing: 1px; }
@@ -242,6 +276,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .btn-sw-sub { background: #4a5568; color: #e2e8f0; border: 2px solid #718096; }
 .btn-sw-reset { background: #2d3748; color: #a0aec0; border: 2px solid #4a5568; }
 
+/* 뉴스 섹션 서식 */
 .news-list { display: flex; flex-direction: column; gap: 10px; }
 .news-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; gap: 12px; cursor: pointer; transition: 0.2s; align-items: center; border: 1px solid transparent; }
 .news-item:hover { background: rgba(255,255,255,0.1); border-color: #4f46e5; }
@@ -282,7 +317,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 모달창 디자인 원상복구 (프리미엄 제거) */
+/* 모달 오버레이 (모든 팝업창은 심플한 디자인으로 원상복구 완료) */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
