@@ -7,28 +7,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div style="position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0;">
-        <div id="yt-player-campfire"></div>
-        <div id="yt-player-forest"></div>
-    </div>
-
     <div id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo"></div>
-            <h1 class="splash-title">웨이크미</h1>
+            <h1 class="splash-title">웨이크미(체험판)</h1>
             <p class="splash-subtitle">절대 다시 누울 수 없는 아침</p>
             <div class="spinner"></div>
         </div>
     </div>
 
     <div class="phone-frame">
-        <div class="notch"></div>
+        <div class="notch">
+            <div class="camera-lens"></div>
+        </div>
         
         <div class="app-container">
             
             <div id="screen-lobby" class="main-tab-screen active">
                 <header>
-                    <h1>⏰ 웨이크미</h1>
+                    <h1>⏰ 웨이크미(체험판)</h1>
                     <p class="subtitle">완벽한 아침을 위한 강력한 각성 루틴</p>
                 </header>
                 <main>
@@ -42,12 +39,11 @@
                             <h3>🔔 알람 추가</h3>
                             <span class="pulse-dot"></span>
                         </div>
-                        <p class="helper-text">아래 박스를 눌러 기상 시간을 선택하세요</p>
+                        <p class="helper-text"> 시계 박스를 눌러 기상 시간을 선택하세요</p>
                         
-                        <div class="input-group premium-input">
-                            <span class="time-icon">🕘</span>
-                            <input type="time" id="alarm-time-input" value="07:00">
-                            <button id="btn-add-alarm" class="btn btn-primary premium-btn">추가</button>
+                        <div class="alarm-input-group">
+                            <input type="time" id="alarm-time-input" value="07:00" class="premium-time-input">
+                            <button id="btn-add-alarm" class="btn-add-fixed">추가</button>
                         </div>
                         
                         <div id="alarm-list-container" class="alarm-list-container">
@@ -60,7 +56,7 @@
                             <h3>🚀 앱 미리보기</h3>
                         </div>
                         <p class="helper-text" style="color:#cbd5e0;">기다리지 않고 15가지 미션을 바로 체험합니다.</p>
-                        <button id="btn-test-alarm" class="btn btn-danger premium-btn-danger">즉시 미션 시작 (테스트)</button>
+                        <button id="btn-test-alarm" class="btn premium-btn-secondary">즉시 미션 시작 (테스트)</button>
                     </div>
 
                     <div class="card premium-card schedule-box">
@@ -198,7 +194,7 @@
             </div>
 
             <div id="screen-stopwatch-tab" class="main-tab-screen">
-                <header><h1>⏱️ 기능 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
+                <header><h1>⏱️ 타이머 & 뉴스</h1><p class="subtitle">기상 직후 루틴과 이슈를 확인하세요</p></header>
                 <main>
                     <div class="stopwatch-premium-container">
                         <div class="stopwatch-circle-bg">
@@ -211,7 +207,10 @@
                         </div>
                     </div>
                     
-                    <div class="lap-records-container premium-card"><ul id="lap-list"></ul></div>
+                    <div class="lap-records-container premium-card">
+                        <div class="lap-header">⏱️ 랩타임 (시작 후 랩타임을 누르면 구간 기록이 저장)</div>
+                        <ul id="lap-list"></ul>
+                    </div>
                     
                     <div class="card news-section premium-card" style="margin-top: 20px;">
                         <h3 style="margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #fff;">📺 실시간 모닝 뉴스</h3>
@@ -439,6 +438,9 @@
                 <button class="nav-item" data-target="screen-settings-tab"><span class="nav-icon">⚙️</span><span class="nav-label">설정</span></button>
             </nav>
             
-        </div> </div> <script src="script.js"></script>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
