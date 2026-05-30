@@ -9,15 +9,11 @@ let survivalInterval = null;
 let isRecordingSleep = false; 
 let selectedMood = ""; 
 
-// 💡 일반 백색소음(파도, 비, 천둥)을 위한 오디오 객체
+// 💡 일반 백색소음(비, 천둥)을 위한 오디오 객체
 let sleepAudio = new Audio();
 sleepAudio.loop = true;
 sleepAudio.volume = 1.0; 
 let isPlayingNoise = false;
-
-// 💡 유튜브 API를 활용한 백색소음(모닥불, 귀뚜라미) 플레이어 객체
-let ytPlayers = {};
-let isYtReady = false;
 
 let stopwatchInterval = null;
 let stopwatchElapsedTime = 0; 
@@ -26,25 +22,6 @@ let stopwatchLapCount = 0;
 
 let isTestMode = false;
 let wakemePoints = parseInt(localStorage.getItem('wakeme_points') || '0');
-
-// 유튜브 Iframe API 동적 로드
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-const firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-// 유튜브 플레이어가 준비되면 숨겨진 iframe에 연결
-window.onYouTubeIframeAPIReady = function() {
-    isYtReady = true;
-    ytPlayers['bonfire'] = new YT.Player('yt-player-campfire', {
-        height: '10', width: '10', videoId: 'N_g3AiXF-q8',
-        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'N_g3AiXF-q8' }
-    });
-    ytPlayers['forest'] = new YT.Player('yt-player-forest', {
-        height: '10', width: '10', videoId: 'uNpanr3Jl3Q',
-        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'uNpanr3Jl3Q' }
-    });
-};
 
 // 15개 미션
 const missionPool = [
@@ -65,7 +42,7 @@ const missionPool = [
     { type: "rps", title: "가위바위보에서 AI 이기기", desc: "승부욕으로 뇌 깨우기! 인공지능을 상대로 먼저 3판을 이기세요.", target: 3 }
 ];
 
-// 💡 22개 메이저 아르카나 전체 (깨지지 않는 고퀄리티 이모지 카드)
+// 타로카드 22종 (이모지 카드 유지)
 const tarotCards = [
     { name: "0. THE FOOL (바보)", emoji: "🚶", desc: "새로운 여정과 모험이 기다리는 하루입니다. 두려움을 떨치고 직관을 믿고 나아가세요!" },
     { name: "I. THE MAGICIAN (마법사)", emoji: "🪄", desc: "새로운 시작과 무한한 가능성의 날입니다. 당신의 능력을 마음껏 펼쳐보세요." },
@@ -91,7 +68,7 @@ const tarotCards = [
     { name: "XXI. THE WORLD (세계)", emoji: "🌍", desc: "노력해 온 일들이 완벽한 결실을 맺거나 깔끔하게 정리되는 마무리의 날입니다. 스스로를 아낌없이 칭찬해 주세요." }
 ];
 
-// 💡 3가지 유튜브 뉴스 완벽 매칭
+// 유튜브 뉴스 영상 매칭 완료
 const mockNewsData = [
     { id: "XWFAHRsWQAo", title: "[속보] 26인 최종 명단 발표 | 북중미 월드컵 EP.1", src: "스포츠", desc: "북중미 월드컵 26인 최종 명단 발표 영상입니다." },
     { id: "W6urMb3qIr4", title: "ILLIT - It's Me [Music Bank] | KBS WORLD TV", src: "엔터테인먼트", desc: "ILLIT(아일릿)의 Music Bank 무대 교차편집 영상입니다." },
@@ -288,16 +265,15 @@ function initApp() {
         });
     }
 
-    // 💡 유튜브 영상의 소리만 추출하여 완벽하게 연동 (모닥불 & 귀뚜라미)
+    // 💡 백색소음 시스템 점검 알림 처리 (에러 원천 차단)
     const btnToggleNoise = document.getElementById('btn-toggle-noise');
     const noiseStatusTxt = document.getElementById('noise-status-txt');
     const noiseVisualizer = document.getElementById('noise-visualizer');
     const noiseCurrentText = document.getElementById('noise-current-text');
     const noiseItems = document.querySelectorAll('.noise-item');
     
-    // MP3 서버 링크 (파도, 비, 천둥 유지)
+    // MP3 서버 링크 (비, 천둥 전용)
     const mp3Urls = {
-        "waves": "https://assets.mixkit.co/active_storage/sfx/116/116-preview.mp3",
         "rain": "https://assets.mixkit.co/active_storage/sfx/1250/1250-preview.mp3",
         "thunder": "https://assets.mixkit.co/active_storage/sfx/1291/1291-preview.mp3"
     };
@@ -306,22 +282,25 @@ function initApp() {
 
     function stopAllNoises() {
         sleepAudio.pause();
-        if(isYtReady) {
-            if(ytPlayers['bonfire'] && typeof ytPlayers['bonfire'].pauseVideo === 'function') ytPlayers['bonfire'].pauseVideo();
-            if(ytPlayers['forest'] && typeof ytPlayers['forest'].pauseVideo === 'function') ytPlayers['forest'].pauseVideo();
-        }
     }
 
+    // 💡 모닥불, 귀뚜라미, 파도는 시스템 점검 안내 처리
     function playCurrentNoise() {
         stopAllNoises();
-        if (currentNoiseType === "bonfire") {
-            if(isYtReady && ytPlayers['bonfire']) ytPlayers['bonfire'].playVideo();
-        } else if (currentNoiseType === "forest") {
-            if(isYtReady && ytPlayers['forest']) ytPlayers['forest'].playVideo();
-        } else if (mp3Urls[currentNoiseType]) {
+        
+        if (["bonfire", "forest", "waves"].includes(currentNoiseType)) {
+            alert("🛠️ 해당 시스템은 현재 점검 중입니다.\n이용에 불편을 드려 죄송합니다.");
+            isPlayingNoise = false;
+            btnToggleNoise.textContent = "▶";
+            btnToggleNoise.classList.remove('playing');
+            noiseVisualizer.classList.remove('playing');
+            return;
+        }
+
+        if (mp3Urls[currentNoiseType]) {
             sleepAudio.src = mp3Urls[currentNoiseType];
             sleepAudio.play().catch(e => {
-                alert("오디오 재생 권한이 차단되었습니다. 화면을 터치하거나 볼륨을 확인해주세요.");
+                alert("🛠️ 오디오 재생 권한이 차단되었습니다. 미디어 볼륨을 확인해주세요.");
                 isPlayingNoise = false;
                 btnToggleNoise.textContent = "▶";
                 btnToggleNoise.classList.remove('playing');
@@ -391,7 +370,7 @@ function initApp() {
     const btnFortuneConfirmYes = document.getElementById('btn-fortune-confirm-yes');
     const btnFortuneCancel = document.getElementById('btn-fortune-cancel');
 
-    // 💡 타로카드 하루 한 번 제한 완전히 해제 (무제한)
+    // 타로카드 하루 한 번 제한 완전히 해제 (무제한)
     if(btnFortune) {
         btnFortune.addEventListener('click', () => {
             if(fortuneConfirmView) fortuneConfirmView.style.display = "block";
@@ -422,7 +401,7 @@ function initApp() {
     if(btnFortuneCancel) { btnFortuneCancel.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); }); }
     if(btnCloseFortune) btnCloseFortune.addEventListener('click', () => { if(fortuneModal) fortuneModal.classList.remove('active'); });
 
-    // 💡 아침 일기 클릭 안 되던 문제 원상복구(수정) 완료
+    // 아침 일기 복구
     const btnMoodDiary = document.getElementById('btn-mood-diary');
     const diaryModal = document.getElementById('diary-modal');
     const btnCloseDiary = document.getElementById('btn-close-diary');
@@ -476,6 +455,10 @@ function initApp() {
     function renderLaps() {
         if(!lapList) return;
         lapList.innerHTML = '';
+        if(savedLaps.length === 0) {
+            lapList.innerHTML = '<li style="justify-content:center; color:#718096; font-size:12px;">기록된 랩타임이 없습니다.</li>';
+            return;
+        }
         savedLaps.forEach((lap, idx) => {
             const li = document.createElement('li');
             li.innerHTML = `<span>랩 ${savedLaps.length - idx}</span><span>${lap}</span>`;
@@ -606,6 +589,7 @@ function initApp() {
     if(sSound) sSound.onclick = () => alert("현재 모바일 기기의 스피커가 기본 출력으로 설정되어 있습니다.");
     if(sNoti) sNoti.onclick = () => alert("시스템의 앱 알림 설정 창으로 이동합니다.");
     
+    // 💡 공지사항 업데이트 - 시스템 점검 고지 유지
     if(sNotice) sNotice.onclick = () => {
         openSettingsModal("📢 공지사항", `
             <b style="color:#f6e05e;">[업데이트] 웨이크미 v2.5 정식 배포!</b><br><br>
@@ -615,8 +599,11 @@ function initApp() {
             - 수면 주파수 애니메이션 추가<br>
             - 유튜브 기반 실시간 뉴스 지원<br>
             - 감정 일기장 이벤트 시작<br><br>
+            <b style="color:#fc8181;">[현재 점검 및 준비 중인 기능 안내]</b><br>
+            - 수면 유도 수면음은 일부 시스템 점검 중입니다.<br>
+            - 프리미엄 웨이크업 상품은 현재 준비 중입니다.<br><br>
             앞으로도 절대 다시 누울 수 없는 아침을 책임지겠습니다. 감사합니다!<br><br>
-            <span style="font-size:12px; color:#888;">- 2026년 5월 22일</span>
+            <span style="font-size:12px; color:#888;">- 2026년 5월 30일</span>
         `);
     };
 
