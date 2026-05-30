@@ -22,35 +22,47 @@
 .theme-mint { --bg-primary: #082925; --card-bg: #0f4039; --color-primary: #4fd1c5; --border-color: rgba(79, 209, 197, 0.15); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-body { background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
+body { background-color: #09090b; color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; overflow: hidden; }
 
-/* 💡 스마트폰 케이스 (프레임) 스타일 추가 */
+/* 스마트폰 케이스 (프레임) 스타일 */
 .phone-frame {
     position: relative;
-    width: 450px;
-    height: 820px;
+    width: 400px;
+    height: 800px;
     background: #000000;
     border-radius: 45px;
-    padding: 15px;
+    padding: 12px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
-                inset 0 0 0 3px #333333, 
+                inset 0 0 0 4px #222222, 
                 inset 0 0 0 6px #000000;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* 실제 렌즈가 있는 카메라 홀(노치) */
 .notch {
     position: absolute;
-    top: 15px;
+    top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    width: 120px;
-    height: 30px;
+    width: 100px;
+    height: 28px;
     background: #000000;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-radius: 20px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+}
+.camera-lens {
+    width: 12px;
+    height: 12px;
+    background: #111;
+    border-radius: 50%;
+    border: 1px solid #222;
+    box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1);
 }
 
 /* 스플래시 */
@@ -67,8 +79,8 @@ body { background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%); c
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* 컨테이너 및 탭 */
-.app-container { width: 100%; height: 100%; background: transparent; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
-.main-tab-screen, .screen { display: none; padding: 20px 15px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
+.app-container { width: 100%; height: 100%; background: var(--bg-primary); border-radius: 35px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s ease; }
+.main-tab-screen, .screen { display: none; padding: 55px 15px 90px 15px; width: 100%; height: calc(100% - 70px); overflow-y: auto; flex-direction: column; }
 .main-tab-screen.active, .screen.active { display: flex !important; }
 #screen-mission, #screen-survival { height: 100%; z-index: 50; position: absolute; top: 0; left: 0; background: var(--bg-primary); }
 .main-tab-screen::-webkit-scrollbar { width: 0; }
@@ -77,7 +89,7 @@ header { text-align: left; margin-bottom: 15px; padding-left: 5px; }
 header h1 { font-size: 26px; font-weight: 800; }
 .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-/* 💡 프리미엄 UI (오직 알람 로비와 스톱워치 기능탭에서만 쓰임) */
+/* 프리미엄 UI */
 .premium-card { background: rgba(31, 31, 35, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border-radius: 24px; padding: 20px; margin-bottom: 15px; transition: transform 0.2s, box-shadow 0.2s; }
 .premium-card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
 
@@ -85,14 +97,27 @@ header h1 { font-size: 26px; font-weight: 800; }
 .card-header-flex h3 { font-size: 16px; font-weight: 800; margin: 0; color: #fff; }
 .helper-text { font-size: 12px; color: #f6e05e; margin-bottom: 12px; font-weight: 600; opacity: 0.9; }
 
-.premium-btn { background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4); font-weight: bold; border-radius: 12px; cursor: pointer; padding: 12px 20px; transition: transform 0.1s;}
-.premium-btn:active { transform: scale(0.96); }
+/* 💡 버튼 강제 고정 (글씨 짤림/줄바꿈 완벽 방지) */
+.btn-add-fixed { white-space: nowrap; flex-shrink: 0; min-width: 80px; font-size: 16px; padding: 14px 20px; border-radius: 16px; background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4); font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+.btn-add-fixed:active { transform: scale(0.96); }
+
+/* 미션 시작 버튼 */
+.premium-btn-secondary { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4); font-weight: bold; border-radius: 12px; cursor: pointer; padding: 12px 20px; transition: transform 0.1s; width: 100%; }
+.premium-btn-secondary:active { transform: scale(0.96); }
+
 .premium-btn-danger { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white; border: none; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4); font-weight: bold; border-radius: 12px; cursor: pointer; padding: 12px 20px; transition: transform 0.1s;}
 .premium-btn-danger:active { transform: scale(0.96); }
 .premium-btn-outline { background: #2a2a2d; color: #cbd5e0; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; transition: 0.2s; border-radius: 12px; cursor: pointer; padding: 12px 20px;}
 .premium-btn-outline:hover { background: #3a3a40; border-color: rgba(255,255,255,0.2); }
+.btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
 
-.premium-input { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.05); }
+/* 💡 알람 시간 입력 그룹: 오른쪽 기본 아이콘 복구, 글씨 안 짤리게 공간 확보 */
+.alarm-input-group { display: flex; align-items: stretch; justify-content: center; gap: 10px; width: 100%; margin-bottom: 10px; }
+
+.premium-time-input { flex: 1; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 10px 15px; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; font-size: 24px; font-weight: 800; text-align: center; cursor: pointer; outline: none; letter-spacing: 1px; min-width: 140px; }
+/* 💡 오른쪽 기본 시계 아이콘 흰색으로 선명하게 보이게 설정 */
+.premium-time-input::-webkit-calendar-picker-indicator { filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%); cursor: pointer; width: 26px; height: 26px; opacity: 0.9; }
+
 .premium-textarea { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); color: white; font-size: 14px; width: 100%; height: 80px; outline: none; resize: none; margin-bottom: 10px; }
 .premium-textarea::placeholder { color: #718096; }
 
@@ -102,12 +127,6 @@ header h1 { font-size: 26px; font-weight: 800; }
 #clock { font-size: 42px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1; position: relative; }
 #date-string { font-size: 13px; opacity: 0.8; font-weight: 600; z-index: 1; position: relative; margin-top: 5px; }
 
-/* 다중 알람 리스트 고급화 */
-.input-group { display: flex; gap: 10px; align-items: center; }
-.time-icon { font-size: 20px; opacity: 0.8; }
-input[type="time"] { flex: 1; padding: 5px; border: none; background: transparent; color: white; font-size: 24px; font-weight: 800; text-align: center; cursor: pointer; outline: none; }
-input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sepia(100%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); cursor: pointer; width: 28px; height: 28px; opacity: 0.8; }
-#btn-add-alarm { padding: 12px 20px; border-radius: 12px; font-size: 14px; }
 .alarm-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
 .alarm-list-container::-webkit-scrollbar { width: 4px; }
 .alarm-list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
@@ -124,7 +143,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .pulse-dot { width: 8px; height: 8px; background-color: #f6e05e; border-radius: 50%; box-shadow: 0 0 0 rgba(246, 224, 94, 0.4); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(246, 224, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(246, 224, 94, 0); } }
 
-/* 💡 일반 카드 공통 서식 (수면, 날씨, 설정 탭을 위한 원래의 심플한 디자인 원상복구) */
+/* 일반 카드 공통 서식 */
 .card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: background 0.3s ease; border: none; box-shadow: none; }
 .card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px; }
 
@@ -133,7 +152,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .btn-primary { background-color: var(--color-primary); color: white; }
 .btn-danger { background-color: var(--color-danger); color: white; }
 .btn-success { background-color: #ffffff; color: #000000; }
-.btn-lg { width: 100%; padding: 16px; font-size: 16px; margin-top: 15px; }
 
 /* 설정 탭 전용 서식 */
 .settings-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 20px; margin-bottom: 15px; }
@@ -200,14 +218,14 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 @keyframes spinBorder { 100% { transform: rotate(360deg); } }
 
 /* 미세먼지 바 */
-.dust-bar-wrapper { grid-column: span 3 !important; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; margin-top: 5px; margin-bottom: 5px; background: var(--card-bg); border-radius: var(--radius);}
+.dust-bar-wrapper { grid-column: span 3 !important; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; margin-top: 5px; margin-bottom: 5px; background: rgba(255,255,255,0.05); border-radius: 12px;}
 .dust-title { font-size: 13px; color: #cbd5e0; font-weight: 600; }
 .dust-badge { font-size: 13px; font-weight: 800; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 12px; }
 .dust-badge.good { color: #63b3ed; }
 .dust-badge.normal { color: #68d391; }
 .dust-badge.bad { color: #fc8181; }
 
-/* 날씨 레이아웃 (심플 버전으로 원상복구) */
+/* 날씨 레이아웃 */
 .weather-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; width: 100% !important; margin-bottom: 15px !important; }
 .weather-grid .weather-card { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; background: var(--card-bg); border-radius: var(--radius); padding: 16px 8px;}
 
@@ -235,7 +253,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .weather-grid .weather-card:not(.seoul-card):not(.dust-card) .sky-icon { font-size: 24px !important; margin: 4px 0 !important; }
 .weather-grid .weather-card:not(.seoul-card):not(.dust-card) .temp { font-size: 14px !important; font-weight: 700 !important; color: var(--text-main) !important; }
 
-/* 메뉴 아이콘 (심플 버전으로 원상복구) */
+/* 메뉴 아이콘 */
 .morning-menu-grid.alternative-layout { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; margin-top: 10px !important; margin-bottom: 15px; }
 .morning-menu-grid.alternative-layout .menu-item { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 18px 5px !important; cursor: pointer; transition: background 0.2s, transform 0.1s; background: var(--card-bg); border-radius: var(--radius);}
 .morning-menu-grid.alternative-layout .menu-item:hover { background: rgba(255,255,255,0.05) !important; transform: translateY(-2px); }
@@ -253,17 +271,17 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .b-sub-btn { font-size: 11px; font-weight: bold; color: white; background: rgba(0,0,0,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
 .b-sub-text { font-size: 11px; color: #a0aec0; }
 
-/* 배너 1 (파란색) */
+/* 배너 1 */
 .banner-tip-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
 .banner-tip-new::before { content: "▲ ▼ ▲"; position: absolute; font-size: 80px; color: rgba(255,255,255,0.05); top: -20px; left: -10px; letter-spacing: -10px; z-index: 0; }
 .b-icon-cat { font-size: 45px; z-index: 2; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2)); transform: scaleX(-1); }
 
-/* 배너 2 (프리미엄 블랙&골드) */
+/* 배너 2 */
 .banner-premium { background: linear-gradient(135deg, #1f1f23 0%, #121214 100%); color: white; border: 1px solid rgba(246, 224, 94, 0.4); }
 .text-gold { color: #f6e05e; }
 .b-icon-crown { font-size: 40px; z-index: 2; filter: drop-shadow(0 0 10px rgba(246,224,94,0.4)); }
 
-/* 💡 기능(스톱워치) 탭 전용 프리미엄 퀄리티 UI */
+/* 기능(스톱워치) 탭 전용 프리미엄 UI 유지 */
 .stopwatch-premium-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; padding: 30px 20px; background: rgba(31, 31, 35, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .stopwatch-circle-bg { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #2d3748 0%, #1a202c 100%); border: 4px solid #4f46e5; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5), inset 0 0 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; margin-bottom: 25px; position: relative; }
 .premium-stopwatch-text { font-size: 38px; font-weight: 900; font-family: monospace; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); letter-spacing: 1px; }
@@ -276,6 +294,12 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .btn-sw-sub { background: #4a5568; color: #e2e8f0; border: 2px solid #718096; }
 .btn-sw-reset { background: #2d3748; color: #a0aec0; border: 2px solid #4a5568; }
 
+/* 랩타임 기록 영역 */
+.lap-records-container { overflow-y: auto; max-height: 200px; background: var(--card-bg); border-radius: var(--radius); padding: 10px 15px;}
+.lap-header { font-size: 12px; font-weight: bold; color: #a0aec0; text-align: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+#lap-list { list-style: none; }
+#lap-list li { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; }
+
 /* 뉴스 섹션 서식 */
 .news-list { display: flex; flex-direction: column; gap: 10px; }
 .news-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; gap: 12px; cursor: pointer; transition: 0.2s; align-items: center; border: 1px solid transparent; }
@@ -284,10 +308,6 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .news-text { flex: 1; }
 .news-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
 .news-src { font-size: 11px; color: #a0aec0; }
-
-.lap-records-container { overflow-y: auto; max-height: 200px; background: var(--card-bg); border-radius: var(--radius); padding: 10px 15px;}
-#lap-list { list-style: none; }
-#lap-list li { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; }
 
 /* 미션 및 모달 엔진 등 */
 .alarm-flash-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(229,62,62,0.12); pointer-events: none; animation: flash 1s infinite alternate; }
@@ -317,13 +337,13 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .timer-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--color-danger); display: flex; justify-content: center; align-items: center; font-size: 16px; margin: 40px auto; }
 #survival-countdown { font-size: 36px; font-weight: 800; color: var(--color-danger); }
 
-/* 모달 오버레이 (모든 팝업창은 심플한 디자인으로 원상복구 완료) */
+/* 모달 오버레이 */
 .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--card-bg); width: 100%; max-width: 360px; border-radius: var(--radius); padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* 하단 네비게이션 프리미엄화 유지 */
+/* 하단 네비게이션 */
 .bottom-nav-bar.style-quad { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(24, 24, 28, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; z-index: 10; padding: 0 5px; }
 .bottom-nav-bar.style-quad .nav-item { flex: 1; width: auto; background: none; border: none; color: #71717a; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 100%; justify-content: center; transition: 0.2s;}
 .nav-item.active { color: #ffffff; transform: translateY(-2px); }
@@ -331,7 +351,7 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(100%) sep
 .nav-label { font-size: 10px; font-weight: 600; }
 .bottom-nav-bar.style-quad .v-line { width: 1px; height: 26px; background-color: var(--border-color); flex-shrink: 0; margin: 0; opacity: 0.4; transition: background-color 0.3s ease; }
 
-/* 💡 타로 모달 전용 프리미엄 디자인 (이모지 카드) */
+/* 타로 모달 전용 디자인 */
 #fortune-confirm-view { text-align: center; width: 100%; }
 .tarot-container { background: rgba(255,255,255,0.03); border-radius: 16px; padding: 20px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 .tarot-emoji-card { font-size: 80px; width: 140px; height: 180px; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); margin-bottom: 15px; animation: floatAnim 3s infinite ease-in-out; }
